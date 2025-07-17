@@ -30,8 +30,9 @@ class _LoginContaState extends State<LoginConta> {
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {}),
         centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child:Column( 
         children: [
           Padding(
             padding: EdgeInsetsGeometry.only(top: 78, bottom: 80),
@@ -67,7 +68,7 @@ class _LoginContaState extends State<LoginConta> {
           ),
 
           Padding(
-            padding: EdgeInsetsGeometry.only(bottom: 22),
+            padding: EdgeInsetsGeometry.only(bottom: 18),
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -121,7 +122,7 @@ class _LoginContaState extends State<LoginConta> {
             child: Container(
               width: 140,
               height: 18,
-              margin: EdgeInsets.only(top: 6, left: 35),
+              margin: EdgeInsets.only(top: 6, left: 15),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -268,14 +269,13 @@ class _LoginContaState extends State<LoginConta> {
           ),
 
           Padding(
-            padding: EdgeInsetsGeometry.only(top: 18),
+            padding: EdgeInsetsGeometry.only(top:18),
             child: Row(
               children: [
                 Expanded(
                   child: Divider(
                     color: Color(0xFF767474),
                     thickness: 1,
-                    endIndent: 11,
                   ),
                 ),
                 Text(
@@ -311,13 +311,13 @@ class _LoginContaState extends State<LoginConta> {
                   child: Divider(
                     color: Color(0xFF767474),
                     thickness: 1,
-                    indent: 11,
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -60,6 +60,7 @@ flutter:
     -  assets/treeIpe.svg
     -  assets/nomeIbie.svg
     -  assets/googleIcon.png
+    -  assets/
 
   fonts:
     -  family: Walkingrush
@@ -76,7 +77,10 @@ flutter:
           weight: 600
         - asset: assets/fonts/Comfortaa/Comfortaa-Bold.ttf
           weight: 700
-
+    - family: Poppins
+      fonts: 
+        - asset: assets/fonts/Poppins/Poppins-Regular.ttf
+          weight: 400
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
