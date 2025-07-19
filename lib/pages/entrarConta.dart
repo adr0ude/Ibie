@@ -30,6 +30,7 @@ class _LoginContaState extends State<LoginConta> {
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {}),
         centerTitle: true,
       ),
+      
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child:Column( 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projetoteste/pages/cadastroContas.dart';
+import 'package:projetoteste/pages/cadastrarFoto.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CadastroContaCliente(),
+      home: CadastrarFoto(),
     );
   }
 }

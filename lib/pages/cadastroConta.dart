@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projetoteste/widgets/loginPrompt.dart';
 
 class CadastroContaCliente extends StatefulWidget {
   const CadastroContaCliente({super.key});
@@ -42,7 +43,7 @@ class _CadastroContaClienteState extends State<CadastroContaCliente> {
         centerTitle: true,
       ),
 
-      body: SingleChildScrollView(
+      body: Padding(
         padding: EdgeInsets.all(22),
         child: Form(
           key: _formKey,
@@ -214,49 +215,11 @@ class _CadastroContaClienteState extends State<CadastroContaCliente> {
                   ),
                 ],
               ),
+              
               SizedBox(height: 18),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Divider(color: Color(0xFF767474), thickness: 1),
-                    ),
-                    Text(
-                      'Já possui uma conta?',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        wordSpacing: -0.3,
-                      ),
-                    ),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: EdgeInsetsGeometry.all(4),
-                          child: Text(
-                            'Logar',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF71A151),
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(color: Color(0xFF767474), thickness: 1),
-                    ),
-                  ],
+              LoginPrompt(
+                onLoginTap: (){}
                 ),
-              ),
             ],
           ),
         ),
