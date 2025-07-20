@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class CustomPurpleButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
+  final Size? minimumSize;
 
   const CustomPurpleButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.minimumSize,
   });
 
   @override
@@ -16,7 +18,7 @@ class CustomPurpleButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF9A31C9),
         foregroundColor: const Color(0xFF9A31C9),
-        minimumSize: const Size(175, 40),
+        minimumSize: minimumSize ?? const Size(175, 40),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),

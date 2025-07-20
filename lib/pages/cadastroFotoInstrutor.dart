@@ -5,14 +5,14 @@ import 'package:projetoteste/widgets/botaoBranco.dart';
 import 'package:projetoteste/widgets/botaoRoxo.dart';
 import 'package:projetoteste/widgets/loginPrompt.dart';
 
-class CadastrarFoto extends StatefulWidget {
-  const CadastrarFoto({super.key});
+class CadastrarFotoInstrutor extends StatefulWidget {
+  const CadastrarFotoInstrutor({super.key});
 
   @override
-  State<CadastrarFoto> createState() => _CadastrarFotoState();
+  State<CadastrarFotoInstrutor> createState() => _CadastrarFotoInstrutorState();
 }
 
-class _CadastrarFotoState extends State<CadastrarFoto> {
+class _CadastrarFotoInstrutorState extends State<CadastrarFotoInstrutor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,53 +92,36 @@ class _CadastrarFotoState extends State<CadastrarFoto> {
 
             SizedBox(height: 28),
             Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                Positioned.fill(
-                  child: Center(
-                    child: SizedBox(
-                      height: 5,
-                      width: double.infinity,
-                      child: Row(
-                        children: [
-                          Expanded(child: Container(color: Color(0xFF71A151))),
-                          Expanded(child: Container(color: Color(0xFFD9D9D9))),
-                        ],
-                      ),
+                alignment: Alignment.centerLeft,
+                children: [
+                  Positioned.fill(
+                    child: Center(
+                      child: Container(height: 5, color: Color(0xFF71A151)),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFF71A151),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFF71A151),
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFF71A151),
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFD9D9D9),
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFFD9D9D9),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                    ],
+                  ),
+                ],
+              ),
 
             SizedBox(height: 18),
             LoginPrompt(onLoginTap: () {}),

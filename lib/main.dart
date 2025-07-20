@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projetoteste/pages/telaPreferencias.dart';
+import 'package:projetoteste/pages/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: PreferenciasCadastro(),
+      home: Login(),
     );
   }
 }
