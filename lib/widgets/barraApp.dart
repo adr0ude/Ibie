@@ -3,11 +3,19 @@ import 'package:flutter/material.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBack;
+  final VoidCallback? onSearch;
+  final VoidCallback? onSkip;
+  final bool showSkip;
+  final bool showSearch;
 
   const CustomAppBar({
     super.key,
     required this.title,
     this.onBack,
+    this.onSearch,
+    this.onSkip,
+    this.showSkip = false,
+    this.showSearch = false,
   });
 
   @override
@@ -29,6 +37,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: onBack ?? () => Navigator.of(context).pop(),
       ),
       centerTitle: true,
+      actions: [
+        if(showSkip == true)
+          TextButton(
+            onPressed: onSkip,
+            child: const Text(
+              'Pular',
+                    style: TextStyle(
+                      fontFamily: 'Comfortaa',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF9A31C9),
+                    ),
+            ),
+          ),
+        if(showSearch == true)
+        IconButton(icon: const Icon(Icons.search, color: Colors.black),
+        onPressed: onSearch,)
+      ],
     );
   }
 
