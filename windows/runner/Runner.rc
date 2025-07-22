@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "projetoteste" "\0"
+            VALUE "CompanyName", "com.ibie" "\0"
+            VALUE "FileDescription", "ibie" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "projetoteste" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "projetoteste.exe" "\0"
-            VALUE "ProductName", "projetoteste" "\0"
+            VALUE "InternalName", "ibie" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.ibie. All rights reserved." "\0"
+            VALUE "OriginalFilename", "ibie.exe" "\0"
+            VALUE "ProductName", "ibie" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

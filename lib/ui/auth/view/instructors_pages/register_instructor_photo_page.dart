@@ -1,0 +1,174 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:ibie/ui/widgets/custom_app_bar.dart';
+import 'package:ibie/ui/widgets/custom_white_button.dart';
+import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/login_prompt.dart';
+import 'package:ibie/utils/results.dart';
+import 'package:ibie/utils/show_error_message.dart';
+import 'package:ibie/utils/show_image_options.dart';
+
+import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
+
+class RegisterInstructorPhotoPage extends StatefulWidget {
+  const RegisterInstructorPhotoPage({super.key, required this.viewModel});
+
+  final RegisterInstructorViewmodel viewModel;
+
+  @override
+  State<RegisterInstructorPhotoPage> createState() => _RegisterInstructorPhotoPageState();
+}
+
+class _RegisterInstructorPhotoPageState extends State<RegisterInstructorPhotoPage> {
+  late final RegisterInstructorViewmodel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = widget.viewModel;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFFF4F5F9),
+      appBar: CustomAppBar(
+        title: 'Cadastro de Conta',
+        showSkip: true,
+        onSkip: () {
+          Navigator.pushReplacementNamed(context, '/successInstructor');
+        },
+      ),
+
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 22),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              Text(
+                'Insira uma foto de perfil:',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+        
+              SizedBox(height: 140),
+              Center(
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      width: 283,
+                      height: 283,
+                      alignment: Alignment.bottomCenter,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Color(0xFF71A151)),
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/perfil.svg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      right: 7,
+                      child: GestureDetector(
+                        onTap: () {
+                          showImageOptions(context: context);
+                        },
+                        child: Container(
+                          width: 70,
+                          height: 70,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFF71A151),
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+        
+              SizedBox(height: 140),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomWhiteButton(
+                    label: 'Cancelar', 
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/login');
+                    }, 
+                    size: Size(175, 40)
+                  ),
+                  CustomPurpleButton(
+                    label: 'Registrar', 
+                    onPressed: () async {
+                      final result = await viewModel.signUpEmail();
+                      switch (result) {
+                        case Ok():
+                          Navigator.pushReplacementNamed(context, '/successInstructor');
+                        case Error():
+                          showErrorMessage(context, result.errorMessage);
+                      }
+                    }, 
+                    size: Size(175,40),
+                  ),
+                ],
+              ), 
+        
+              SizedBox(height: 28),
+              Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Positioned.fill(
+                      child: Center(
+                        child: Container(height: 5, color: Color(0xFF71A151)),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFF71A151),
+                          ),
+                        ),
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFFD9D9D9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+        
+              SizedBox(height: 18),
+              LoginPrompt(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
