@@ -37,13 +37,13 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                   ),
                 ),
-        
+
                 SvgPicture.asset(
                   'assets/Vector.svg',
                   height: 100,
                   fit: BoxFit.fill,
                 ),
-        
+
                 Padding(
                   padding: EdgeInsetsGeometry.symmetric(vertical: 17),
                   child: Center(
@@ -58,9 +58,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             color: Color(0xFF71A151),
                           ),
                         ),
-        
+
                         SizedBox(height: 17),
-        
+
                         Text(
                           'Descubra eventos culturais, \nartísticos, recreativos e formativos \nperto de você. \nEncontre, participe e conecte-se\n com o que você ama!',
                           textAlign: TextAlign.center,
@@ -71,9 +71,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             color: Color(0xFF71A151),
                           ),
                         ),
-        
+
                         SizedBox(height: 38),
-        
+
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF9A31C9),
@@ -96,9 +96,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             ),
                           ),
                         ),
-        
+
                         SizedBox(height: 14),
-        
+
                         OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.white,

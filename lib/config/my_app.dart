@@ -1,3 +1,5 @@
+// lib/config/my_app.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,8 +16,10 @@ import 'package:ibie/data/repositories/login_repository.dart';
 import 'package:ibie/data/repositories/sign_up_repository.dart';
 import 'package:ibie/data/repositories/user_repository.dart';
 
-// First Page
-import 'package:ibie/ui/auth/view/welcome_page.dart';
+// First Page - WelcomePage
+import 'package:ibie/ui/auth/view/welcome_page.dart'; // Importa a WelcomePage
+// Importa a tela GerenciarAtividadesScreen (mantém o import, mesmo se não for a home)
+import 'package:ibie/ui/activity_manager/gerenciar_atividades_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -42,16 +46,17 @@ class MyApp extends StatelessWidget {
           ),
         ),
         ChangeNotifierProvider(
-          create: (context) => UserRepository(
-            preferencesService: context.read(),
-          ),
+          create: (context) =>
+              UserRepository(preferencesService: context.read()),
         ),
       ],
       child: Builder(
         builder: (context) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: WelcomePage(),
+            // AQUI VOCÊ VOLTA PARA A WelcomePage
+            home: const WelcomePage(), // <--- Mude de volta para WelcomePage!
+            // home: const GerenciarAtividadesScreen(), // Comente ou remova esta linha
             routes: appRoutes,
           );
         },
