@@ -52,10 +52,8 @@ class VerDetalhesActivityScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Mantém a imagem alinhada à esquerda
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // PARTE SUPERIOR DA TELA DE DETALHES (IMAGEM, TÍTULO, SUBTÍTULO, SOBRE A ATIVIDADE)
             Image.network(
               atividade.imagemUrl,
               fit: BoxFit.cover,
@@ -77,8 +75,7 @@ class VerDetalhesActivityScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment
-                    .center, // Centraliza o conteúdo dentro do padding
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     atividade.titulo.replaceAll('\n', ' '),
@@ -119,12 +116,8 @@ class VerDetalhesActivityScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  // REMOVIDO: Wrap com os chips de informação e o SizedBox(height: 30) que o seguia
-                  const SizedBox(
-                    height: 30,
-                  ), // Espaçamento para o chip de "alunos inscritos"
-                  // CONTEÚDO NOVO DA TELA "VER DETALHES" - COMEÇA AQUI
-                  // Chip "13 alunos inscritos" (MAIOR E PARECIDO COM BOTÃO)
+
+                  const SizedBox(height: 30),
                   _buildInfoChip(
                     Icons.person,
                     '${listaDeAlunos.length} alunos inscritos',
@@ -135,7 +128,6 @@ class VerDetalhesActivityScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // Título "Lista de Inscritos"
                   const Text(
                     'Lista de Inscritos',
                     style: TextStyle(
@@ -147,9 +139,8 @@ class VerDetalhesActivityScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
 
-                  // Lista de alunos inscritos com quadrado branco e scroll
                   Container(
-                    height: 250, // Altura fixa para o scroll
+                    height: 250,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -188,7 +179,6 @@ class VerDetalhesActivityScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // Título "Principais Feedbacks"
                   const Text(
                     'Principais Feedbacks:',
                     style: TextStyle(
@@ -200,7 +190,6 @@ class VerDetalhesActivityScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
 
-                  // Lista de cards de feedbacks
                   Column(
                     children: feedbacks.map((feedback) {
                       return Card(
@@ -226,16 +215,15 @@ class VerDetalhesActivityScreen extends StatelessWidget {
                       );
                     }).toList(),
                   ),
-                ], // Fim da Column principal do Padding
+                ],
               ),
             ),
-          ], // Fim da Column do SingleChildScrollView
+          ],
         ),
       ),
     );
   }
 
-  // Widget auxiliar para construir os chips de informação
   Widget _buildInfoChip(
     IconData icon,
     String text,

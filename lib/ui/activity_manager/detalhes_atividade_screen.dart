@@ -3,23 +3,22 @@
 import 'package:flutter/material.dart';
 import 'package:ibie/models/atividades_cards.dart';
 import 'package:ibie/ui/activity_manager/ver_detalhes_activity_screen.dart';
-import 'package:ibie/ui/activity_manager/editar_atividade_screen.dart'; // Certifique-se que este import existe
+import 'package:ibie/ui/activity_manager/editar_atividade_screen.dart';
 
 class DetalhesAtividadeScreen extends StatelessWidget {
   final Atividade atividade;
   final String instructorName;
-  final String activityStatus; // <--- NOVO PARÂMETRO PARA O STATUS DA ATIVIDADE
+  final String activityStatus;
 
   const DetalhesAtividadeScreen({
     super.key,
     required this.atividade,
     required this.instructorName,
-    required this.activityStatus, // <--- ADICIONADO AO CONSTRUTOR
+    required this.activityStatus,
   });
 
   @override
   Widget build(BuildContext context) {
-    // A função navigateToVerDetalhes agora depende do activityStatus para ser chamada
     void navigateToVerDetalhes() {
       Navigator.push(
         context,
@@ -27,13 +26,11 @@ class DetalhesAtividadeScreen extends StatelessWidget {
           builder: (context) => VerDetalhesActivityScreen(
             atividade: atividade,
             instructorName: instructorName,
-            // Não precisa passar activityStatus para ver_detalhes, ela não usa botões
           ),
         ),
       );
     }
 
-    // Condição para exibir os botões de ação
     final bool showActionButtons = activityStatus == 'ATIVA';
 
     return Scaffold(
@@ -150,13 +147,12 @@ class DetalhesAtividadeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // RENDERIZA OS BOTÕES SOMENTE SE showActionButtons FOR TRUE
                   if (showActionButtons) ...[
                     _buildActionButton(
                       context,
                       'Ver detalhes',
                       const Color(0xFF9A31C9),
-                      navigateToVerDetalhes, // Navega para VerDetalhesActivityScreen
+                      navigateToVerDetalhes,
                     ),
                     const SizedBox(height: 15),
                     _buildActionButton(
@@ -323,7 +319,6 @@ class DetalhesAtividadeScreen extends StatelessWidget {
     );
   }
 
-  // Widget auxiliar para construir os chips de informação
   Widget _buildInfoChip(IconData icon, String text, Color chipColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -357,7 +352,6 @@ class DetalhesAtividadeScreen extends StatelessWidget {
     );
   }
 
-  // Widget auxiliar para construir os botões de ação
   Widget _buildActionButton(
     BuildContext context,
     String text,
