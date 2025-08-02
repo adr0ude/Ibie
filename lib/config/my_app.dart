@@ -13,6 +13,7 @@ import 'package:ibie/data/services/shared_preferences_service.dart';
 import 'package:ibie/data/repositories/login_repository.dart';
 import 'package:ibie/data/repositories/sign_up_repository.dart';
 import 'package:ibie/data/repositories/user_repository.dart';
+import 'package:ibie/data/repositories/activity_repository.dart';
 
 // First Page
 import 'package:ibie/ui/auth/view/welcome_page.dart';
@@ -45,6 +46,10 @@ class MyApp extends StatelessWidget {
           create: (context) => UserRepository(
             preferencesService: context.read(),
           ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) =>
+              ActivityRepository(databaseService: context.read()),
         ),
       ],
       child: Builder(

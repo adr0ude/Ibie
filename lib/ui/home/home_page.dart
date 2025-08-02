@@ -106,18 +106,18 @@ class _HomePageState extends State<HomePage> {
           final temMaisDeCinco = atividadesDaCategoria.length > 5;
 
           return ExpansionTile(
-              iconColor: Color(0xFF9A31C9),
-              collapsedIconColor: Color(0xFF9A31C9),
-              initiallyExpanded: true,
-              title: Text(
-                entry.key,
-                style: const TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
+            iconColor: Color(0xFF9A31C9),
+            collapsedIconColor: Color(0xFF9A31C9),
+            initiallyExpanded: true,
+            title: Text(
+              entry.key,
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
               ),
-              children: [
+            ),
+            children: [
               const SizedBox(height: 10),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -154,6 +154,14 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         }).toList(),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/activityForm');
+        },
+        backgroundColor: Color(0xFF9A31C9),
+        child: const Icon(Icons.add),
       ),
     );
   }

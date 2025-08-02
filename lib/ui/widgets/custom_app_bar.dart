@@ -37,15 +37,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 4.0,
       shadowColor: const Color.fromARGB(150, 0, 0, 0),
       leading: hideBack
-    ? null
-    : IconButton(
-        icon: SvgPicture.asset(
-          'assets/arrow_back_icon.svg',
-          width: 18,
-          height: 18,
-        ),
-        onPressed: onBack ?? () => Navigator.of(context).pop(),
-      ),
+          ? null
+          : IconButton(
+              icon: SvgPicture.asset(
+                'assets/arrow_back_icon.svg',
+                width: 18,
+                height: 18,
+              ),
+              onPressed: onBack ?? () => Navigator.of(context).pop(),
+            ),
       centerTitle: true,
       actions: [
         if (showSkip == true)

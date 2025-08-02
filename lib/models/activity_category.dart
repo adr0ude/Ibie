@@ -3,6 +3,9 @@ class ActivityCategory {
   final String icon;
 
   const ActivityCategory(this.name, this.icon);
+
+  @override
+  String toString() => name;
 }
 
 const List<ActivityCategory> defaultCategories = [
