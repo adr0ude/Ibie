@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:ibie/models/user.dart';
 import 'package:ibie/utils/results.dart';
+import 'package:ibie/models/atividades_cards.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firestore;
@@ -35,7 +36,10 @@ class DatabaseService {
     }
   }
 
-  Future<Result<void>> registerCategories(String userId, List<String> categories) async {
+  Future<Result<void>> registerCategories(
+    String userId,
+    List<String> categories,
+  ) async {
     try {
       await _firestore.collection('users').doc(userId).update({
         'categories': categories,
@@ -45,5 +49,24 @@ class DatabaseService {
     } catch (e) {
       return Result.error(Exception("Erro ao salvar as categorias do usuário"));
     }
+  }
+
+  Future<List<Atividade>> buscarAtividades() async {
+    final snapshot = await _firestore.collection('courses').get();
+    
+    return snapshot.docs.map((doc) {
+
+      final data = doc.data();
+      
+      return Atividade(
+        categoria: data['categoria'],
+        titulo: data['titulo'],
+        professor: data['professor_name'],
+        dataHora: data['dataHora'],
+        local: data['local'],
+        imagem: data['imagem'] ?? '',
+        preco: data['preco'],
+      );
+    }).toList();
   }
 }

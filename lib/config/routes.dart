@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ibie/data/services/database_service.dart';
 import 'package:provider/provider.dart';
 
 // Pages
@@ -55,9 +56,16 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   },
   '/successStudent': (context) => SuccessStudentPage(),
   '/successInstructor': (context) => SuccessInstructorPage(),
-  '/home': (context) => HomePage(
+  '/home': (context) {
+  final userRepository = Provider.of<UserRepository>(context, listen: false);
+  final databaseService = Provider.of<DatabaseService>(context, listen: false);
+
+  return HomePage(
     viewModel: HomeViewmodel(
-      userRepository: context.read<UserRepository>(),
+      userRepository: userRepository,
+      databaseService: databaseService,
     ),
-  ),
+  );
+  },
+  
 };

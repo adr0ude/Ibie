@@ -4,7 +4,7 @@ class Atividade {
   final String professor;
   final String dataHora;
   final String local;
-  final String imagemUrl;
+  final String imagem;
   final String preco;
 
   Atividade({
@@ -13,7 +13,8 @@ class Atividade {
     required this.professor,
     required this.dataHora,
     required this.local,
-    required this.imagemUrl,
+    required this.imagem,
     required this.preco,
   });
+
 }

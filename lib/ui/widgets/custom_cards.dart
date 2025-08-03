@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ibie/models/atividades_cards.dart';
 
 class CustomCards extends StatelessWidget {
@@ -6,13 +7,9 @@ class CustomCards extends StatelessWidget {
 
   const CustomCards({required this.atividade, super.key});
 
-  void _onCardTap(BuildContext context) {
-    print('ok');
-  }
+  void _onCardTap(BuildContext context) {}
 
-  void _onProfessorTap(BuildContext context) {
-    print('ok');
-  }
+  void _onProfessorTap(BuildContext context) {}
 
   @override
   Widget build(BuildContext context) {
@@ -23,22 +20,33 @@ class CustomCards extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         elevation: 4,
         margin: EdgeInsets.symmetric(vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: const BorderSide(
-          color: Color(0xFFF3CEED),
-          width: 4,
-        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(color: Color(0xFFF3CEED), width: 4),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              atividade.imagemUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 213,
-            ),
+            atividade.imagem != null && atividade.imagem.isNotEmpty
+                ? Image.network(
+                    atividade.imagem,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 213,
+                  )
+                : Container(
+                    width: double.infinity,
+                    height: 213,
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      'assets/placeholder.svg',
+                      width: double.infinity,
+                      height: 213,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16,),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -53,7 +61,7 @@ class CustomCards extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      SizedBox(width: 4,),
+                      SizedBox(width: 4),
                       const Icon(
                         Icons.person,
                         size: 16,
@@ -68,7 +76,7 @@ class CustomCards extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      SizedBox(width: 4,),
+                      SizedBox(width: 4),
                       const Icon(
                         Icons.calendar_today,
                         size: 16,
@@ -80,7 +88,7 @@ class CustomCards extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      SizedBox(width: 4,),
+                      SizedBox(width: 4),
                       const Icon(
                         Icons.location_on,
                         size: 16,
