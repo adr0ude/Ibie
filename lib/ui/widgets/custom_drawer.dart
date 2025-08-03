@@ -77,7 +77,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
             SizedBox(height: 12),
             Text(
-              widget.type.toUpperCase(),
+              widget.type.toLowerCase() == 'student'
+                  ? 'ALUNO'
+                  : widget.type.toLowerCase() == 'instructor'
+                  ? 'INSTRUTOR'
+                  : widget.type.toUpperCase(),
               style: TextStyle(
                 fontFamily: 'Comfortaa',
                 fontWeight: FontWeight.w600,
@@ -86,11 +90,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
             ),
             SizedBox(height: 18),
-            CustomWhiteButton(label: 'Perfil', onPressed: () {}, size: Size(280, 50),),
-            SizedBox(height: 9,),
-            CustomWhiteButton(label: 'Minhas Atividades', onPressed: () {}, size: Size(280, 50),),
-            SizedBox(height: 280,),
-            CustomGreenButton(label: 'Sair', onPressed: () {}, size: Size(280, 50),)
+            CustomWhiteButton(
+              label: 'Perfil',
+              onPressed: () {},
+              size: Size(280, 50),
+            ),
+            SizedBox(height: 9),
+            CustomWhiteButton(
+              label: 'Minhas Atividades',
+              onPressed: () {},
+              size: Size(280, 50),
+            ),
+            SizedBox(height: 280),
+            CustomGreenButton(
+              label: 'Sair',
+              onPressed: () {},
+              size: Size(280, 50),
+            ),
           ],
         ),
       ),
