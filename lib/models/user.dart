@@ -9,7 +9,8 @@ class User {
   final String phone;
   final String email;
   final String password;
-  
+  final String biography;
+
   const User({
     required this.id,
     required this.type,
@@ -21,6 +22,7 @@ class User {
     required this.phone,
     required this.email,
     required this.password,
+    required this.biography,
   });
 
   User copyWith({
@@ -34,6 +36,7 @@ class User {
     String? phone,
     String? email,
     String? password,
+    String? biography,
   }) {
     return User(
       id: id ?? this.id,
@@ -46,6 +49,7 @@ class User {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       password: password ?? this.password,
+      biography: biography ?? this.biography,
     );
   }
 
@@ -61,10 +65,10 @@ class User {
       phone: map['phone'] ?? '',
       email: map['email'] ?? '',
       password: map['password'] ?? '',
+      biography: map['biography'] ?? '',
     );
   }
 
-// método para criar um User a partir de um documento Firestore
   factory User.fromDocumentSnapshot(Map<String, dynamic> doc, String id) {
     return User(
       id: id,
@@ -77,10 +81,10 @@ class User {
       phone: doc['phone'] ?? '',
       email: doc['email'] ?? '',
       password: doc['password'] ?? '',
+      biography: doc['biography'] ?? '',
     );
   }
 
-  // método para converter um User para um mapa para salvar no Firestore
   Map<String, dynamic> toMap() {
     return {
       'type': type,
@@ -92,6 +96,7 @@ class User {
       'phone': phone,
       'email': email,
       'password': password,
+      'biography': biography,
     };
   }
 }

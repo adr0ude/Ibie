@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "302337770518",
-    "project_id": "ibie-e41bf",
-    "storage_bucket": "ibie-e41bf.firebasestorage.app"
+    "project_number": "641111216926",
+    "project_id": "ibie-793ca",
+    "storage_bucket": "ibie-793ca.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:302337770518:android:f7151b2fd9e44b9e50e137",
+        "mobilesdk_app_id": "1:641111216926:android:ec9010ce1555602fb62f0f",
         "android_client_info": {
-          "package_name": "com.ibie.app"
+          "package_name": "com.app.ibie"
         }
       },
       "oauth_client": [
         {
-          "client_id": "302337770518-p3amnmeknhhu8rv3n5ekvl00kihphd6p.apps.googleusercontent.com",
+          "client_id": "641111216926-qb8lutihosaj5s9r1dud4lb09q2ogkel.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.ibie.app",
+            "package_name": "com.app.ibie",
             "certificate_hash": "420a201afa8afa3ebd67dac514bdcce015d90074"
           }
         },
         {
-          "client_id": "302337770518-vui18ms75ss7sft7cpc30huqlsgqj11e.apps.googleusercontent.com",
+          "client_id": "641111216926-j7heb09a7a3dm8sddk3cbgs5vlvmalko.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAF4pKrvbyNGQkCPrj8BleSaBvu2-DaiFA"
+          "current_key": "AIzaSyDnmNVJDQgPf6SSxwv-ytvc4ylw0abm2Tk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "302337770518-vui18ms75ss7sft7cpc30huqlsgqj11e.apps.googleusercontent.com",
+              "client_id": "641111216926-j7heb09a7a3dm8sddk3cbgs5vlvmalko.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

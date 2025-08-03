@@ -6,6 +6,7 @@ import 'package:ibie/models/user.dart';
 import 'package:ibie/data/services/auth_service.dart';
 import 'package:ibie/data/services/database_service.dart';
 import 'package:ibie/data/services/shared_preferences_service.dart';
+import 'package:ibie/data/services/storage_service.dart';
 
 abstract class ISignUpRepository extends ChangeNotifier {
   Future<Result<void>> signUpEmail({required User user});
@@ -17,13 +18,16 @@ class SignUpRepository extends ISignUpRepository {
     required AuthService authService,
     required DatabaseService databaseService,
     required SharedPreferencesService preferencesService,
+    required StorageService storageService,
   })  : _authService = authService,
         _databaseService = databaseService,
-        _preferencesService = preferencesService;
+        _preferencesService = preferencesService,
+        _storageService = storageService;
 
   final AuthService _authService;
   final DatabaseService _databaseService;
   final SharedPreferencesService _preferencesService;
+  final StorageService _storageService;
 
   @override
   Future<Result<void>> signUpEmail({required User user}) async {
@@ -33,6 +37,17 @@ class SignUpRepository extends ISignUpRepository {
       switch (authResult) {
         case Ok(value: final firebaseUser):
           user = user.copyWith(id: firebaseUser.uid);
+
+          if(user.photo.isNotEmpty) {
+            final imageResult = await _storageService.uploadUserImage(user.photo);
+            switch(imageResult) {
+              case Ok(value: final imageUrl):
+                user = user.copyWith(photo: imageUrl);
+                break;
+              case Error(error: final e):
+                return Result.error(e);
+            }
+          }
 
           final databaseResult = await _databaseService.setUserData(user);
           switch (databaseResult) {

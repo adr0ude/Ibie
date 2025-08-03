@@ -35,7 +35,10 @@ class DatabaseService {
     }
   }
 
-  Future<Result<void>> registerCategories(String userId, List<String> categories) async {
+  Future<Result<void>> registerCategories(
+    String userId,
+    List<String> categories,
+  ) async {
     try {
       await _firestore.collection('users').doc(userId).update({
         'categories': categories,
@@ -44,6 +47,22 @@ class DatabaseService {
       return const Result.ok(null);
     } catch (e) {
       return Result.error(Exception("Erro ao salvar as categorias do usuário"));
+    }
+  }
+
+  Future<Result<void>> updateUserData(User user) async {
+    try {
+      DocumentReference userRef = _firestore.collection('users').doc(user.id);
+
+      final userDocSnapshot = await userRef.get();
+      if (!userDocSnapshot.exists) {
+        return Result.error(Exception("Usuário não encontrado"));
+      }
+
+      await userRef.update(user.toMap());
+      return const Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception("Erro ao atualizar dados do usuário"));
     }
   }
 }

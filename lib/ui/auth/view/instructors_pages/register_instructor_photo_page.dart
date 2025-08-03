@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
+import 'package:ibie/ui/widgets/custom_profile_avatar.dart';
 import 'package:ibie/ui/widgets/custom_white_button.dart';
 import 'package:ibie/ui/widgets/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/login_prompt.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
-import 'package:ibie/utils/show_image_options.dart';
 
 import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
 
@@ -17,10 +16,12 @@ class RegisterInstructorPhotoPage extends StatefulWidget {
   final RegisterInstructorViewmodel viewModel;
 
   @override
-  State<RegisterInstructorPhotoPage> createState() => _RegisterInstructorPhotoPageState();
+  State<RegisterInstructorPhotoPage> createState() =>
+      _RegisterInstructorPhotoPageState();
 }
 
-class _RegisterInstructorPhotoPageState extends State<RegisterInstructorPhotoPage> {
+class _RegisterInstructorPhotoPageState
+    extends State<RegisterInstructorPhotoPage> {
   late final RegisterInstructorViewmodel viewModel;
 
   @override
@@ -57,112 +58,83 @@ class _RegisterInstructorPhotoPageState extends State<RegisterInstructorPhotoPag
                   color: Colors.black,
                 ),
               ),
-        
               SizedBox(height: 140),
-              Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      width: 283,
-                      height: 283,
-                      alignment: Alignment.bottomCenter,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFFFFFFF),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Color(0xFF71A151)),
-                      ),
-                      child: SvgPicture.asset(
-                        'assets/perfil.svg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      right: 7,
-                      child: GestureDetector(
-                        onTap: () {
-                          showImageOptions(context: context);
-                        },
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFF71A151),
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              ListenableBuilder(
+                listenable: viewModel,
+                builder: (context, child) {
+                  return CustomProfileAvatar(
+                    photo: viewModel.photo,
+                    onCamera: () async => await viewModel.pickImage('camera'),
+                    onGallery: () async => await viewModel.pickImage('gallery'),
+                    onDelete: () => viewModel.photo = '',
+                    size: 300,
+                    svgSize: 230,
+                  );
+                },
               ),
-        
               SizedBox(height: 140),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomWhiteButton(
-                    label: 'Cancelar', 
+                    label: 'Cancelar',
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/login');
-                    }, 
-                    size: Size(175, 40)
+                    },
+                    size: Size(175, 40),
                   ),
                   CustomPurpleButton(
-                    label: 'Registrar', 
+                    label: 'Registrar',
                     onPressed: () async {
                       final result = await viewModel.signUpEmail();
                       switch (result) {
                         case Ok():
-                          Navigator.pushReplacementNamed(context, '/successInstructor');
+                          Navigator.pushReplacementNamed(
+                            context,
+                            '/successInstructor',
+                          );
                         case Error():
                           showErrorMessage(context, result.errorMessage);
                       }
-                    }, 
-                    size: Size(175,40),
+                    },
+                    size: Size(175, 40),
                   ),
                 ],
-              ), 
-        
+              ),
+
               SizedBox(height: 28),
               Stack(
-                  alignment: Alignment.centerLeft,
-                  children: [
-                    Positioned.fill(
-                      child: Center(
-                        child: Container(height: 5, color: Color(0xFF71A151)),
+                alignment: Alignment.centerLeft,
+                children: [
+                  Positioned.fill(
+                    child: Center(
+                      child: Container(height: 5, color: Color(0xFF71A151)),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFF71A151),
+                        ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFF71A151),
-                          ),
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFD9D9D9),
                         ),
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFFD9D9D9),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-        
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
               SizedBox(height: 18),
               LoginPrompt(),
             ],

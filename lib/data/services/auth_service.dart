@@ -77,4 +77,14 @@ class AuthService {
       return Result.error(Exception("Erro ao entrar usando o Google"));
     }
   }
+
+  Future<Result<void>> sendPasswordResetEmail(String email) async {
+    _firebaseAuth.setLanguageCode("pt");
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return const Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception("Erro ao enviar email de redefinição de senha"));
+    }
+  }
 }

@@ -1,4 +1,4 @@
-package com.ibie.app
+package com.app.ibie
 
 import io.flutter.embedding.android.FlutterActivity
 

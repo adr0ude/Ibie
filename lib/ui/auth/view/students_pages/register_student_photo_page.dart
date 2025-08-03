@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
+import 'package:ibie/ui/widgets/custom_profile_avatar.dart';
 import 'package:ibie/ui/widgets/custom_white_button.dart';
 import 'package:ibie/ui/widgets/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/login_prompt.dart';
-import 'package:ibie/utils/show_image_options.dart';
 
 import 'package:ibie/ui/auth/viewModel/register_student_viewmodel.dart';
 
@@ -57,48 +56,19 @@ class _RegisterStudentPhotoPageState extends State<RegisterStudentPhotoPage> {
               ),
         
               SizedBox(height: 140),
-              Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      width: 283,
-                      height: 283,
-                      alignment: Alignment.bottomCenter,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Color(0xFF71A151)),
-                        color: Color(0xFFFFFFFF),
-                      ),
-                      child: SvgPicture.asset(
-                        'assets/perfil.svg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      right: 7,
-                      child: GestureDetector(
-                        onTap: () {
-                          showImageOptions(context: context);
-                        },
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFF71A151),
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              
+              ListenableBuilder(
+                listenable: viewModel,
+                builder: (context, child) {
+                  return CustomProfileAvatar(
+                    photo: viewModel.photo,
+                    onCamera: () async => await viewModel.pickImage('camera'),
+                    onGallery: () async => await viewModel.pickImage('gallery'),
+                    onDelete: () => viewModel.photo = '',
+                    size: 300,
+                    svgSize: 230,
+                  );
+                },
               ),
         
               SizedBox(height: 140),

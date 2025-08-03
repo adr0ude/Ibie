@@ -16,7 +16,7 @@ class CustomWhiteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFFFFFFF),
         foregroundColor: Color(0xFF9A31C9),
         side: BorderSide(color: Color(0xFF9A31C9), width: 1.5),
         minimumSize: size ?? const Size(331, 40),

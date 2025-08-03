@@ -8,6 +8,8 @@ import 'package:ibie/config/routes.dart';
 import 'package:ibie/data/services/auth_service.dart';
 import 'package:ibie/data/services/database_service.dart';
 import 'package:ibie/data/services/shared_preferences_service.dart';
+import 'package:ibie/data/services/image_service.dart';
+import 'package:ibie/data/services/storage_service.dart';
 
 // Repositories
 import 'package:ibie/data/repositories/login_repository.dart';
@@ -27,11 +29,14 @@ class MyApp extends StatelessWidget {
         Provider(create: (context) => AuthService()),
         Provider(create: (context) => DatabaseService()),
         Provider(create: (context) => SharedPreferencesService()),
+        Provider(create: (context) => ImageService()),
+        Provider(create: (context) => StorageService()),
         ChangeNotifierProvider(
           create: (context) => SignUpRepository(
             authService: context.read(),
             databaseService: context.read(),
             preferencesService: context.read(),
+            storageService: context.read(),
           ),
         ),
         ChangeNotifierProvider(
@@ -44,6 +49,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => UserRepository(
             preferencesService: context.read(),
+            databaseService: context.read(),
+            authService: context.read(),
+            imageService: context.read(),
+            storageService: context.read(),
           ),
         ),
       ],

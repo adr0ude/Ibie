@@ -4,7 +4,11 @@ import 'package:ibie/ui/widgets/custom_white_button.dart';
 import 'package:ibie/ui/widgets/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_green_button.dart';
 
-Future<void> showImageOptions({required BuildContext context}) async {
+Future<void> showImageOptions({
+  required BuildContext context, 
+  required VoidCallback onCamera, 
+  required VoidCallback onGallery, 
+  required VoidCallback onDelete}) async {
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -35,6 +39,7 @@ Future<void> showImageOptions({required BuildContext context}) async {
                 label: 'Tirar Foto',
                 onPressed: () {
                   Navigator.pop(context);
+                  onCamera();
                 },
                 size: Size(354, 52),
               ),
@@ -46,6 +51,7 @@ Future<void> showImageOptions({required BuildContext context}) async {
                 label: 'Escolher Foto',
                 onPressed: () {
                   Navigator.pop(context);
+                  onGallery();
                 },
                 size: Size(354, 52),
               ),
@@ -57,6 +63,7 @@ Future<void> showImageOptions({required BuildContext context}) async {
                 label: 'Remover Foto Atual',
                 onPressed: () {
                   Navigator.pop(context);
+                  onDelete();
                 },
                 size: Size(354, 52),
               ),

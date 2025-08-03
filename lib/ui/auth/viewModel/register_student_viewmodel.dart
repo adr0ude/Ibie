@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
 import 'package:ibie/data/repositories/sign_up_repository.dart';
+import 'package:ibie/data/repositories/user_repository.dart';
 import 'package:ibie/models/user.dart';
 import 'package:ibie/utils/results.dart';
 
 class RegisterStudentViewmodel extends ChangeNotifier {
   RegisterStudentViewmodel({
     required ISignUpRepository signUpRepository,
-  }) : _signUpRepository = signUpRepository;
+    required IUserRepository userRepository,
+  }) : _signUpRepository = signUpRepository,
+       _userRepository = userRepository;
 
   final ISignUpRepository _signUpRepository;
+  final IUserRepository _userRepository;
 
   bool _isLoading = false;
   String _name = '';
@@ -24,6 +28,7 @@ class RegisterStudentViewmodel extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String? get city => _city;
+  String get photo => _photo;
   List<String> get selectedCategories => _selectedCategories;
 
   void changeList(String category) {
@@ -83,6 +88,7 @@ class RegisterStudentViewmodel extends ChangeNotifier {
       phone: _phone,
       email: _email,
       password: _password,
+      biography: ''
     );
   }
 
@@ -133,16 +139,16 @@ class RegisterStudentViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  /*
-  Future<Result<void>> signInGoogle() async {
+  
+  Future<Result<void>> pickImage(String source) async {
     try {
       _isLoading = true;
       notifyListeners();
-      
-      final result = await _signUpRepository.signUpGoogle();
-      
-      switch (result) {
-        case Ok():
+      final photoResult = await _userRepository.pickProfileImage(source: source);
+
+      switch (photoResult) {
+        case Ok(value: final picture):
+          _photo = picture!;
           return const Result.ok(null);
         case Error(error: final e):
           return Result.error(e);
@@ -152,5 +158,4 @@ class RegisterStudentViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  */
 }

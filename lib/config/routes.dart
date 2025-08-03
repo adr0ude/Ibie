@@ -12,12 +12,14 @@ import 'package:ibie/ui/auth/view/students_pages/preferences_page.dart';
 import 'package:ibie/ui/auth/view/students_pages/register_student_photo_page.dart';
 import 'package:ibie/ui/auth/view/students_pages/success_student_page.dart';
 import 'package:ibie/ui/home/home_page.dart';
+import 'package:ibie/ui/profile/profile_page.dart';
 
 // View Models
 import 'package:ibie/ui/auth/viewModel/login_viewmodel.dart';
 import 'package:ibie/ui/auth/viewModel/register_student_viewmodel.dart';
 import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
 import 'package:ibie/ui/home/home_viewmodel.dart';
+import 'package:ibie/ui/profile/profile_viewmodel.dart';
 
 // Repositories
 import 'package:ibie/data/repositories/login_repository.dart';
@@ -34,11 +36,13 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   '/registerStudent': (context) => RegisterStudentPage(
     viewModel: RegisterStudentViewmodel(
       signUpRepository: context.read<SignUpRepository>(),
+      userRepository: context.read<UserRepository>(),
     ),
   ),
   '/registerInstructor': (context) => RegisterInstructorPage(
     viewModel: RegisterInstructorViewmodel(
       signUpRepository: context.read<SignUpRepository>(),
+      userRepository: context.read<UserRepository>()
     ),
   ),
   '/registerStudentPhoto': (context) {
@@ -57,6 +61,11 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   '/successInstructor': (context) => SuccessInstructorPage(),
   '/home': (context) => HomePage(
     viewModel: HomeViewmodel(
+      userRepository: context.read<UserRepository>(),
+    ),
+  ),
+  '/profile': (context) => ProfilePage(
+    viewModel: ProfileViewmodel(
       userRepository: context.read<UserRepository>(),
     ),
   ),

@@ -14,6 +14,7 @@ class SharedPreferencesService {
   static const _keyPhone = 'userPhone';
   static const _keyEmail = 'userEmail';
   static const _keyPassword = 'userPassword';
+  static const _keyBiography = 'userBiography';
 
   final Future<SharedPreferences> _preferences;
 
@@ -55,6 +56,7 @@ class SharedPreferencesService {
       final phone = preferences.getString(_keyPhone);
       final email = preferences.getString(_keyEmail);
       final password = preferences.getString(_keyPassword);
+      final biography = preferences.getString(_keyBiography);
       
 
       final User user = User(
@@ -68,6 +70,7 @@ class SharedPreferencesService {
         phone: phone ?? '',
         email: email ?? '',
         password: password ?? '',
+        biography: biography ?? '',
       );
 
       return Result.ok(user);

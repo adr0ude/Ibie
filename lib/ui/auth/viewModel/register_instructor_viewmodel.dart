@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
 import 'package:ibie/data/repositories/sign_up_repository.dart';
+import 'package:ibie/data/repositories/user_repository.dart';
 import 'package:ibie/models/user.dart';
 import 'package:ibie/utils/results.dart';
 
 class RegisterInstructorViewmodel extends ChangeNotifier {
   RegisterInstructorViewmodel({
     required ISignUpRepository signUpRepository,
-  }) : _signUpRepository = signUpRepository;
+    required IUserRepository userRepository,
+  }) : _signUpRepository = signUpRepository,
+       _userRepository = userRepository;
 
   final ISignUpRepository _signUpRepository;
+  final IUserRepository _userRepository;
 
   bool _isLoading = false;
   String _name = '';
@@ -23,6 +27,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String? get city => _city;
+  String get photo => _photo;
 
   bool get isFormValid =>
       _email.isNotEmpty &&
@@ -72,6 +77,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
       phone: _phone,
       email: _email,
       password: _password,
+      biography: '',
     );
   }
 
@@ -88,6 +94,25 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
 
       switch (result) {
         case Ok():
+          return const Result.ok(null);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> pickImage(String source) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      final photoResult = await _userRepository.pickProfileImage(source: source);
+
+      switch (photoResult) {
+        case Ok(value: final picture):
+          _photo = picture!;
           return const Result.ok(null);
         case Error(error: final e):
           return Result.error(e);
