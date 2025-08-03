@@ -116,7 +116,6 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                     },
                   ),
                 ),
-
                 SizedBox(height: 10),
                 FormField<String>(
                   builder: (FormFieldState<String> state) {
@@ -246,7 +245,7 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                         if (_formKey.currentState!.validate()) {
                           Navigator.pushNamed(
                             context,
-                            '/registerInstructorPhoto',
+                            '/activityFormLocation',
                             arguments: widget.viewModel,
                           );
                         }

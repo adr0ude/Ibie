@@ -25,7 +25,7 @@ class ActivityFormViewModel extends ChangeNotifier {
   String _time = '';
   String _location = '';
   String _street = '';
-  String? _number;
+  int? _number;
   String _neighborhood = '';
   String _city = '';
   String _cep = '';
@@ -37,6 +37,7 @@ class ActivityFormViewModel extends ChangeNotifier {
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
+  String get city => _city;
 
   List<ActivityCategory> get availableCategories => defaultCategories;
   String get selectedCategory => _category;
@@ -55,7 +56,7 @@ class ActivityFormViewModel extends ChangeNotifier {
   set time(String value) => _time = value.trim();
   set location(String value) => _location = value.trim();
   set street(String value) => _street = value.trim();
-  set number(String? value) => _number = value?.trim();
+  set number(int? value) => _number = value;
   set neighborhood(String value) => _neighborhood = value.trim();
   set city(String value) => _city = value.trim();
   set cep(String value) => _cep = value.trim();
@@ -65,6 +66,10 @@ class ActivityFormViewModel extends ChangeNotifier {
       _accessibilityResources = value;
   set accessibilityDescription(String? value) =>
       _accessibilityDescription = value?.trim();
+  bool isValidDate(String input) {
+    final parsed = DateTime.tryParse(input);
+    return parsed != null;
+  }
 
   bool get isFormValid =>
       _title.isNotEmpty &&

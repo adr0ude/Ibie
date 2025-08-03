@@ -13,6 +13,8 @@ import 'package:ibie/ui/auth/view/students_pages/register_student_photo_page.dar
 import 'package:ibie/ui/auth/view/students_pages/success_student_page.dart';
 import 'package:ibie/ui/home/home_page.dart';
 import 'package:ibie/ui/activity_form/view/activity_form_details_page.dart';
+import 'package:ibie/ui/activity_form/view/activity_form_location_page.dart';
+import 'package:ibie/ui/activity_form/view/activity_form_resources_page.dart';
 
 // View Models
 import 'package:ibie/ui/auth/viewModel/login_viewmodel.dart';
@@ -63,10 +65,20 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   '/home': (context) => HomePage(
     viewModel: HomeViewmodel(userRepository: context.read<UserRepository>()),
   ),
-  '/activityForm': (context) => ActivityFormDetailsPage(
+  '/activityFormDetails': (context) => ActivityFormDetailsPage(
     viewModel: ActivityFormViewModel(
       activityRepository: context.read<ActivityRepository>(),
       userRepository: context.read<UserRepository>(),
     ),
   ),
+  '/activityFormLocation': (context) {
+    final viewModel =
+        ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
+    return ActivityFormLocationPage(viewModel: viewModel);
+  },
+  '/activityFormResources': (context) {
+    final viewModel =
+        ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
+    return ActivityFormResourcesPage(viewModel: viewModel);
+  },
 };

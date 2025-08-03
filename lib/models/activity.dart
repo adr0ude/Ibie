@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Activity {
   final String id;
   final String title;
@@ -8,7 +10,7 @@ class Activity {
   final String time;
   final String location;
   final String street;
-  final String? number;
+  final int? number;
   final String neighborhood;
   final String city;
   final String cep;
@@ -52,7 +54,7 @@ class Activity {
     String? time,
     String? location,
     String? street,
-    String? number,
+    int? number,
     String? neighborhood,
     String? city,
     String? cep,
@@ -114,7 +116,7 @@ class Activity {
       accessibilityDescription: map['accessibilityDescription'],
       documentUrl: map['documentUrl'],
       userId: map['userId'] ?? "",
-      status: map['userId'] ?? "",
+      status: map['status'] ?? "",
     );
   }
 

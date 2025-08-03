@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/activityForm');
+          Navigator.pushNamed(context, '/activityFormDetails');
         },
         backgroundColor: Color(0xFF9A31C9),
         child: const Icon(Icons.add),
