@@ -295,6 +295,7 @@ class _ActivityFormLocationPagePageState
                           Navigator.pushNamed(
                             context,
                             '/activityFormResources',
+                            arguments: widget.viewModel,
                           );
                         }
                       },

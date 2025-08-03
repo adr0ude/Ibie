@@ -19,38 +19,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Atividade> atividade = [
-    Atividade(
-      categoria: 'Artes',
-      titulo: 'Curso de Ballet Clássico',
-      professor: 'Maria Luiza',
-      dataHora: '15/08/2025 | 16:00',
-      local: 'Ubajara',
-      imagemUrl:
-          'https://offloadmedia.feverup.com/secretmedianetwork.com/wp-content/uploads/2024/12/14141440/11_narslt-1024x683.jpg',
-      preco: '50,00',
-    ),
-    Atividade(
-      categoria: 'Artes',
-      titulo: 'Curso de Ballet Clássico',
-      professor: 'Maria Luiza',
-      dataHora: '15/08/2025 | 16:00',
-      local: 'Ubajara',
-      imagemUrl:
-          'https://offloadmedia.feverup.com/secretmedianetwork.com/wp-content/uploads/2024/12/14141440/11_narslt-1024x683.jpg',
-      preco: '50,00',
-    ),
-    Atividade(
-      categoria: 'Cultura',
-      titulo: 'Curso de Ballet Clássico',
-      professor: 'Maria Luiza',
-      dataHora: '15/08/2025 | 16:00',
-      local: 'Ubajara',
-      imagemUrl:
-          'https://offloadmedia.feverup.com/secretmedianetwork.com/wp-content/uploads/2024/12/14141440/11_narslt-1024x683.jpg',
-      preco: '50,00',
-    ),
-  ];
 
   late Map<String, List<Atividade>> categorias;
 
@@ -66,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   void _listarCategorias() {
     categorias = {};
-    for (var atividades in atividade) {
+    for (var atividades in viewModel.atividade) {
       categorias.putIfAbsent(atividades.categoria, () => []).add(atividades);
     }
   }
@@ -75,6 +43,9 @@ class _HomePageState extends State<HomePage> {
     final result = await viewModel.init();
     switch (result) {
       case Ok():
+        setState(() {
+          _listarCategorias();
+        });
         break;
       case Error():
         if (mounted) {
@@ -137,9 +108,7 @@ class _HomePageState extends State<HomePage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      print("Ver mais de ${entry.key}");
-                    },
+                    onPressed: () {},
                     child: const Text(
                       'Ver mais',
                       style: TextStyle(

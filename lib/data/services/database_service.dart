@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ibie/models/user.dart';
 import 'package:ibie/models/activity.dart';
 import 'package:ibie/utils/results.dart';
+import 'package:ibie/models/atividades_cards.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firestore;
@@ -91,5 +92,23 @@ class DatabaseService {
     } catch (e) {
       return Result.error(Exception('Erro ao excluir atividade: $e'));
     }
+  }
+
+  Future<List<Atividade>> buscarAtividades() async {
+    final snapshot = await _firestore.collection('courses').get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+
+      return Atividade(
+        categoria: data['categoria'],
+        titulo: data['titulo'],
+        professor: data['professor_name'],
+        dataHora: data['dataHora'],
+        local: data['local'],
+        imagem: data['imagem'] ?? '',
+        preco: data['preco'],
+      );
+    }).toList();
   }
 }

@@ -6,7 +6,7 @@ class Atividade {
   final String professor;
   final String dataHora;
   final String local;
-  final String imagemUrl;
+  final String imagem;
   final String preco;
 
   Atividade({
@@ -15,7 +15,7 @@ class Atividade {
     required this.professor,
     required this.dataHora,
     required this.local,
-    required this.imagemUrl,
+    required this.imagem,
     required this.preco,
   });
 
@@ -26,7 +26,7 @@ class Atividade {
       professor: professorName,
       dataHora: '${activity.date} às ${activity.time}',
       local: activity.location,
-      imagemUrl: activity.documentUrl ?? 'assets/default.jpg',
+      imagem: activity.documentUrl ?? 'assets/default.jpg',
       preco: activity.fee != null && activity.fee! > 0
           ? 'R\$ ${activity.fee!.toStringAsFixed(2)}'
           : 'Grátis',

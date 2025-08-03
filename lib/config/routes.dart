@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ibie/data/services/database_service.dart';
 import 'package:provider/provider.dart';
 
 // Pages
@@ -63,7 +64,10 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   '/successStudent': (context) => SuccessStudentPage(),
   '/successInstructor': (context) => SuccessInstructorPage(),
   '/home': (context) => HomePage(
-    viewModel: HomeViewmodel(userRepository: context.read<UserRepository>()),
+    viewModel: HomeViewmodel(
+      userRepository: context.read<UserRepository>(),
+      databaseService: context.read<DatabaseService>(),
+    ),
   ),
   '/activityFormDetails': (context) => ActivityFormDetailsPage(
     viewModel: ActivityFormViewModel(
