@@ -12,7 +12,7 @@ import 'package:ibie/data/services/storage_service.dart';
 abstract class IUserRepository extends ChangeNotifier {
   Future<Result<User>> getUserData();
   Future<Result<void>> updateUserData({required User user, String? newPhoto});
-  Future<Result<void>> sendPasswordResetEmail();
+  Future<Result<void>> sendPasswordResetEmail({String? email});
   Future<Result<String?>> pickProfileImage({required String source});
   Future<Result<void>> deleteProfileImage({required User user});
 }
@@ -123,14 +123,20 @@ class UserRepository extends IUserRepository {
   @override
   Future<Result<void>> deleteProfileImage({required User user}) async {
     try {
-      final deleteResult = await _storageService.deleteImage(user.photo); // deleta a antiga
+      final deleteResult = await _storageService.deleteImage(
+        user.photo,
+      ); // deleta a antiga
       switch (deleteResult) {
         case Ok():
           user = user.copyWith(photo: '');
-          final databaseResult = await _databaseService.updateUserData(user); // atualiza
+          final databaseResult = await _databaseService.updateUserData(
+            user,
+          ); // atualiza
           switch (databaseResult) {
             case Ok():
-              final preferencesResult = await _preferencesService.saveUserData(user: user);
+              final preferencesResult = await _preferencesService.saveUserData(
+                user: user,
+              );
               switch (preferencesResult) {
                 case Ok():
                   return const Result.ok(null);
@@ -150,24 +156,33 @@ class UserRepository extends IUserRepository {
   }
 
   @override
-  Future<Result<void>> sendPasswordResetEmail() async {
+  Future<Result<void>> sendPasswordResetEmail({String? email}) async {
     try {
-      final userResult = await _preferencesService.getUserData();
+      if (email != null) {
+        final sendResult = await _authService.sendPasswordResetEmail(email);
 
-      switch (userResult) {
-        case Ok(value: final user):
-          final sendResult = await _authService.sendPasswordResetEmail(
-            user.email,
-          );
+        switch (sendResult) {
+          case Ok():
+            return const Result.ok(null);
+          case Error(error: final e):
+            return Result.error(e);
+        }
+      } else {
+        final userResult = await _preferencesService.getUserData();
 
-          switch (sendResult) {
-            case Ok():
-              return const Result.ok(null);
-            case Error(error: final e):
-              return Result.error(e);
-          }
-        case Error(error: final e):
-          return Result.error(e);
+        switch (userResult) {
+          case Ok(value: final user):
+            final sendResult = await _authService.sendPasswordResetEmail(user.email);
+
+            switch (sendResult) {
+              case Ok():
+                return const Result.ok(null);
+              case Error(error: final e):
+                return Result.error(e);
+            }
+          case Error(error: final e):
+            return Result.error(e);
+        }
       }
     } finally {
       notifyListeners();

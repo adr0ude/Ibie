@@ -10,6 +10,7 @@ class CustomProfileAvatar extends StatelessWidget {
   final VoidCallback onDelete;
   final double size;
   final double svgSize;
+  final bool showCamera;
 
   const CustomProfileAvatar({
     super.key,
@@ -19,6 +20,7 @@ class CustomProfileAvatar extends StatelessWidget {
     required this.onDelete,
     this.size = 300,
     this.svgSize = 230,
+    this.showCamera = true,
   });
 
   @override
@@ -55,42 +57,44 @@ class CustomProfileAvatar extends StatelessWidget {
                   : null,
             ),
           ),
-          Positioned(
-            right: 7,
-            child: GestureDetector(
-              onTap: () {
-                showImageOptions(
-                  context: context,
-                  onCamera: () {
-                    onCamera();
-                  },
-                  onGallery: () {
-                    onGallery();
-                  },
-                  onDelete: () {
-                    onDelete();
-                  },
-                );
-              },
-              child: Container(
-                width: size * 0.23,
-                height: size * 0.23,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF71A151),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Padding(
-                  padding: const EdgeInsets.all(6.5),
-                  child: SvgPicture.asset(
-                    'assets/camera_icon.svg',
-                    width: 30,
-                    height: 30,
+          if (showCamera) ...[
+            Positioned(
+              right: 7,
+              child: GestureDetector(
+                onTap: () {
+                  showImageOptions(
+                    context: context,
+                    onCamera: () {
+                      onCamera();
+                    },
+                    onGallery: () {
+                      onGallery();
+                    },
+                    onDelete: () {
+                      onDelete();
+                    },
+                  );
+                },
+                child: Container(
+                  width: size * 0.23,
+                  height: size * 0.23,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF71A151),
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.5),
+                    child: SvgPicture.asset(
+                      'assets/camera_icon.svg',
+                      width: 30,
+                      height: 30,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

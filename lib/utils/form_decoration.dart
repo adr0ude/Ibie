@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-InputDecoration decorationForm(String label, {bool enabled = true, Size? size}) {
+InputDecoration decorationForm(String label, {bool enabled = true, Size? size, double? fontSize}) {
 
   final verticalPadding = size != null ? (size.height - 20).clamp(0, double.infinity) / 2 : 10.0;
   
@@ -32,9 +32,9 @@ InputDecoration decorationForm(String label, {bool enabled = true, Size? size}) 
       borderRadius: BorderRadius.circular(8),
       borderSide: const BorderSide(color: Color(0xFF9A31C9), width: 1),
     ),
-    labelStyle: const TextStyle(
+    labelStyle: TextStyle(
       fontFamily: 'Comfortaa',
-      fontSize: 20,
+      fontSize: fontSize ?? 20,
       fontWeight: FontWeight.w300,
       color: Color(0xFF767474),
     ),

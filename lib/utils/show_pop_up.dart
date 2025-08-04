@@ -23,6 +23,7 @@ Future<void> showPopUp(
             children: [
               Text(
                 title,
+                textAlign: TextAlign.start,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 20,

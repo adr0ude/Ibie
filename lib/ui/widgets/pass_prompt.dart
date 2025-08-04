@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ibie/ui/profile/profile_viewmodel.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
+import 'package:ibie/utils/show_ok_message.dart';
 import 'package:ibie/utils/show_pop_up.dart';
 
 class PassPrompt extends StatelessWidget {
@@ -22,7 +23,7 @@ class PassPrompt extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 showPopUp(
-                  context: context, 
+                  context: context,
                   title: 'Redefinir senha', 
                   text: 'Deseja receber um email para redefinição de senha?', 
                   onPressed: () async {
@@ -30,6 +31,7 @@ class PassPrompt extends StatelessWidget {
                       switch (result) {
                         case Ok():
                           Navigator.pushReplacementNamed(context, '/login');
+                          showOkMessage(context, 'E-mail enviado');
                         case Error():
                           showErrorMessage(context, result.errorMessage);
                       }

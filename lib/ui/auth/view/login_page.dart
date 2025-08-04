@@ -6,6 +6,8 @@ import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
+import 'package:ibie/utils/show_ok_message.dart';
+import 'package:ibie/utils/show_pop_up.dart';
 import 'package:ibie/utils/show_sign_up_options.dart';
 
 import 'package:ibie/ui/auth/viewModel/login_viewmodel.dart';
@@ -88,7 +90,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: SizedBox(
                       width: 365,
                       child: TextFormField(
-                        //controller: _nomeController,
                         onChanged: (value) => viewModel.email = value,
                         decoration: decorationForm("E-mail *"),
                         style: TextStyle(
@@ -109,7 +110,6 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     width: 365,
                     child: TextFormField(
-                      //controller: _passwordController,
                       onChanged: (value) => viewModel.password = value,
                       decoration: decorationForm("Senha *"),
                       style: TextStyle(
@@ -152,7 +152,8 @@ class _LoginPageState extends State<LoginPage> {
                               horizontal: -4,
                               vertical: -4,
                             ),
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
                           ),
                           SizedBox(width: 4),
                           Text(
@@ -183,7 +184,27 @@ class _LoginPageState extends State<LoginPage> {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      if (viewModel.email.isEmpty) {
+                        showErrorMessage(context, 'Informe um e-mail');
+                      } else {
+                        showPopUp(
+                          context: context,
+                          title: 'Redefinir senha',
+                          text: 'Deseja receber um email para redefinição de senha?',
+                          onPressed: () async {
+                            final result = await viewModel.sendEmail();
+                            switch (result) {
+                              case Ok():
+                                Navigator.pop(context);
+                                showOkMessage(context, 'E-mail enviado');
+                              case Error():
+                                showErrorMessage(context, result.errorMessage);
+                            }
+                          },
+                        );
+                      }
+                    },
                     child: Padding(
                       padding: EdgeInsets.all(4),
                       child: Text(
@@ -217,74 +238,7 @@ class _LoginPageState extends State<LoginPage> {
               },
               size: Size(354, 52),
             ),
-
-            Padding(
-              padding: EdgeInsetsGeometry.only(top: 25, bottom: 18),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      color: Color(0xFF767474),
-                      thickness: 1,
-                      endIndent: 11,
-                    ),
-                  ),
-                  Text(
-                    'Realize Login pela sua conta Google',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w300,
-                      color: Color(0xFF767474),
-                      wordSpacing: -0.3,
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      color: Color(0xFF767474),
-                      thickness: 1,
-                      indent: 11,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF9A31C9),
-                side: BorderSide(color: Color(0xFF9A31C9), width: 1.5),
-                fixedSize: Size(173, 60),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(10),
-                ),
-              ),
-              onPressed: () {},
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/googleIcon.png',
-                    width: 33,
-                    height: 33,
-                    fit: BoxFit.none,
-                  ),
-                  SizedBox(width: 16),
-                  Text(
-                    'Google',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF9A31C9),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            SizedBox(height: 100),
             Padding(
               padding: EdgeInsetsGeometry.only(top: 18),
               child: Row(

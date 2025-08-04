@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 
 import 'package:ibie/data/repositories/login_repository.dart';
+import 'package:ibie/data/repositories/user_repository.dart';
 import 'package:ibie/utils/results.dart';
 
 class LoginViewmodel extends ChangeNotifier {
   LoginViewmodel({
     required ILoginRepository loginRepository,
-  }) : _loginRepository = loginRepository;
+    required IUserRepository userRepository,
+  }) : _loginRepository = loginRepository,
+       _userRepository = userRepository;
 
   final ILoginRepository _loginRepository;
+  final IUserRepository _userRepository;
 
   bool _isLoading = false;
   String _email = '';
   String _password = '';
 
   bool get isLoading => _isLoading;
+  String get email => _email;
 
   bool get isFormValid =>
       _email.isNotEmpty &&
@@ -41,6 +46,22 @@ class LoginViewmodel extends ChangeNotifier {
       switch (result) {
         case Ok():
           return const Result.ok(null);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> sendEmail() async {
+    try {
+      _isLoading = true;
+      final result = await _userRepository.sendPasswordResetEmail();
+      switch (result) {
+        case Ok():
+          return Result.ok(null);
         case Error(error: final e):
           return Result.error(e);
       }

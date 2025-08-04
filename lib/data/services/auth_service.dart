@@ -8,11 +8,9 @@ class AuthService {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
-  AuthService({
-    FirebaseAuth? firebaseAuth,
-    GoogleSignIn? googleSignIn,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn();
+  AuthService({FirebaseAuth? firebaseAuth, GoogleSignIn? googleSignIn})
+    : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+      _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   Future<Result<String>> getUserUid() async {
     try {
@@ -28,7 +26,10 @@ class AuthService {
     }
   }
 
-  Future<Result<User>> signUpEmail({required String email, required String password}) async {
+  Future<Result<User>> signUpEmail({
+    required String email,
+    required String password,
+  }) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -69,7 +70,9 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await _firebaseAuth.signInWithCredential(credential);
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
       return Result.ok(userCredential);
     } on FirebaseAuthException catch (e) {
       return Result.error(Exception(getFirebaseAuthErrorMessage(e.code)));
@@ -84,7 +87,9 @@ class AuthService {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
       return const Result.ok(null);
     } catch (e) {
-      return Result.error(Exception("Erro ao enviar email de redefinição de senha"));
+      return Result.error(
+        Exception("Erro ao enviar email de redefinição de senha"),
+      );
     }
   }
 }
