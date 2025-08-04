@@ -33,9 +33,25 @@ class ActivityRepository extends IActivityRepository {
 
   @override
   Future<Result<void>> createActivity(Activity activity) async {
-    final result = await _databaseService.createActivity(activity);
-    notifyListeners();
-    return result;
+    try {
+      final userResult = await _preferencesService.getUserData();
+
+      switch (userResult) {
+        case Ok(value: final user):
+          final updatedActivity = activity.copyWith(
+            userId: user.id,
+            userName: user.name,
+          );
+
+          final result = await _databaseService.createActivity(updatedActivity);
+          return result;
+
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
   }
 
   @override

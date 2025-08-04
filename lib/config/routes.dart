@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ibie/ui/activities/general/activity_details_page.dart';
-import 'package:ibie/ui/activities/general/activity_details_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // Pages
@@ -16,6 +14,10 @@ import 'package:ibie/ui/auth/view/students_pages/success_student_page.dart';
 import 'package:ibie/ui/home/home_page.dart';
 import 'package:ibie/ui/profile/profile_page.dart';
 import 'package:ibie/ui/activities/my_activities/my_activities_page.dart';
+import 'package:ibie/ui/activities/general/activity_details_page.dart';
+import 'package:ibie/ui/activity_form/view/activity_form_details_page.dart';
+import 'package:ibie/ui/activity_form/view/activity_form_location_page.dart';
+import 'package:ibie/ui/activity_form/view/activity_form_resources_page.dart';
 
 // View Models
 import 'package:ibie/ui/auth/viewModel/login_viewmodel.dart';
@@ -24,6 +26,8 @@ import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
 import 'package:ibie/ui/home/home_viewmodel.dart';
 import 'package:ibie/ui/profile/profile_viewmodel.dart';
 import 'package:ibie/ui/activities/my_activities/my_activities_viewmodel.dart';
+import 'package:ibie/ui/activities/general/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_form/activity_form_viewmodel.dart';
 
 // Repositories
 import 'package:ibie/data/repositories/login_repository.dart';
@@ -94,4 +98,20 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
       activityRepository: context.read<ActivityRepository>(),
     ),
   ),
+  '/activityFormDetails': (context) => ActivityFormDetailsPage(
+    viewModel: ActivityFormViewModel(
+      activityRepository: context.read<ActivityRepository>(),
+      userRepository: context.read<UserRepository>(),
+    ),
+  ),
+  '/activityFormLocation': (context) {
+    final viewModel =
+        ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
+    return ActivityFormLocationPage(viewModel: viewModel);
+  },
+  '/activityFormResources': (context) {
+    final viewModel =
+        ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
+    return ActivityFormResourcesPage(viewModel: viewModel);
+  },
 };

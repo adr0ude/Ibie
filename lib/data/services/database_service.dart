@@ -171,7 +171,7 @@ class DatabaseService {
         'userName': activity.userName, // nome do professor
         'title': activity.title,
         'image': activity.image,
-        'status': 'ativa',
+        'status': 'ATIVA',
       });
 
       return Result.ok(null);
