@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+//import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:ibie/ui/widgets/custom_white_button.dart';
 import 'package:ibie/ui/widgets/custom_purple_button.dart';
@@ -167,11 +167,13 @@ class _ActivityFormResourcesPagePageState
                       Stack(
                         alignment: Alignment.center,
                         children: [
+                          /*
                           SvgPicture.asset(
                             'assets/images/upload.svg',
                             width: double.infinity,
                             fit: BoxFit.contain,
                           ),
+                          */
 
                           Padding(
                             padding: const EdgeInsets.symmetric(

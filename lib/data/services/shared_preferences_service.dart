@@ -15,6 +15,7 @@ class SharedPreferencesService {
   static const _keyEmail = 'userEmail';
   static const _keyPassword = 'userPassword';
   static const _keyBiography = 'userBiography';
+  static const _hasShowCompleteProfileMessage = 'hasShowCompleteProfileMessage';
 
   final Future<SharedPreferences> _preferences;
 
@@ -35,6 +36,7 @@ class SharedPreferencesService {
       await preferences.setString(_keyPhone, user.phone);
       await preferences.setString(_keyEmail, user.email);
       await preferences.setString(_keyPassword, user.password);
+      await preferences.setString(_keyBiography, user.biography);
 
       return const Result.ok(null);
     } catch (e) {
@@ -57,7 +59,6 @@ class SharedPreferencesService {
       final email = preferences.getString(_keyEmail);
       final password = preferences.getString(_keyPassword);
       final biography = preferences.getString(_keyBiography);
-      
 
       final User user = User(
         id: id ?? '',
@@ -79,7 +80,30 @@ class SharedPreferencesService {
     }
   }
 
-  Future<Result<void>> clearUserData() async {
+  Future<Result<void>> saveStateCompleteProfileMessage({required bool state}) async {
+    try {
+      final preferences = await _preferences;
+      await preferences.setBool(_hasShowCompleteProfileMessage, state);
+
+      return const Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception("Erro ao salvar os dados localmente"));
+    }
+  }
+
+  Future<Result<bool>> getStateCompleteProfileMessage() async {
+    try {
+      final preferences = await _preferences;
+
+      final state = preferences.getBool(_hasShowCompleteProfileMessage);
+
+      return Result.ok(state ?? false);
+    } catch (e) {
+      return Result.error(Exception("Erro ao acessar os dados localmente"));
+    }
+  }
+
+  Future<Result<void>> clearData() async {
     try {
       final preferences = await _preferences;
       await preferences.clear();

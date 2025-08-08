@@ -16,8 +16,7 @@ class ActivityFormLocationPage extends StatefulWidget {
   final ActivityFormViewModel viewModel;
 
   @override
-  State<ActivityFormLocationPage> createState() =>
-      _ActivityFormLocationPagePageState();
+  State<ActivityFormLocationPage> createState() => _ActivityFormLocationPagePageState();
 }
 
 class _ActivityFormLocationPagePageState
@@ -300,11 +299,7 @@ class _ActivityFormLocationPagePageState
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           viewModel.goToNextPage();
-                          Navigator.pushNamed(
-                            context,
-                            '/activityFormResources',
-                            arguments: widget.viewModel,
-                          );
+                          Navigator.pushNamed(context, '/activityFormResources', arguments: widget.viewModel);
                         }
                       },
                       size: Size(175, 40),

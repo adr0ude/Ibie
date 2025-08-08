@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+
 import 'package:ibie/ui/widgets/custom_dropdown.dart';
 import 'package:ibie/ui/widgets/custom_profile_avatar.dart';
-
 import 'package:ibie/ui/widgets/custom_white_button.dart';
 import 'package:ibie/ui/widgets/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/pass_prompt.dart';
+import 'package:ibie/ui/profile/profile_viewmodel.dart';
+
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/list_cities.dart';
-
-import 'package:ibie/ui/profile/profile_viewmodel.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/utils/show_ok_message.dart';
@@ -99,8 +99,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                 onDelete: () => showPopUp(
                                   context: context,
                                   title: 'Remover foto de perfil',
-                                  text:
-                                      'Deseja realmente remover sua foto de perfil?',
+                                  text: 'Deseja realmente remover sua foto de perfil?',
                                   onPressed: () async {
                                     final result = await viewModel
                                         .deletePhoto();
@@ -108,10 +107,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                       case Ok():
                                         _init();
                                       case Error():
-                                        showErrorMessage(
-                                          context,
-                                          result.errorMessage,
-                                        );
+                                        showErrorMessage(context, result.errorMessage);
                                     }
                                     Navigator.of(context).pop();
                                   },
@@ -158,8 +154,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                               width: 365,
                               child: TextFormField(
                                 controller: _biographyController,
-                                onChanged: (value) =>
-                                    viewModel.biography = value,
+                                onChanged: (value) => viewModel.biography = value,
                                 decoration: decorationForm(
                                   "Escreva uma mini biografia...",
                                   size: Size(365, 100),

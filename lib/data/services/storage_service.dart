@@ -9,7 +9,7 @@ class StorageService {
   StorageService({SupabaseClient? client})
     : _client = client ?? Supabase.instance.client;
 
-  Future<Result<void>> deleteImage(String imageUrl) async {
+  Future<Result<void>> deleteImage({required String imageUrl}) async {
     try {
       final uri = Uri.parse(imageUrl);
       final pathSegments = uri.pathSegments;
@@ -28,7 +28,7 @@ class StorageService {
     }
   }
 
-  Future<Result<String>> uploadUserImage(String imagePath) async {
+  Future<Result<String>> uploadUserImage({required String imagePath}) async {
     try {
       final file = File(imagePath);
       final fileName = '${DateTime.now().millisecondsSinceEpoch}${p.extension(file.path)}';

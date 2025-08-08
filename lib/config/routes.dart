@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ibie/ui/activities/instructor_details/instructor_details_page.dart';
+import 'package:ibie/ui/activities/instructor_details/instructor_details_view_model.dart';
 import 'package:provider/provider.dart';
 
 // Pages
@@ -14,7 +16,7 @@ import 'package:ibie/ui/auth/view/students_pages/success_student_page.dart';
 import 'package:ibie/ui/home/home_page.dart';
 import 'package:ibie/ui/profile/profile_page.dart';
 import 'package:ibie/ui/activities/my_activities/my_activities_page.dart';
-import 'package:ibie/ui/activities/general/activity_details_page.dart';
+import 'package:ibie/ui/activities/activity_details/activity_details_page.dart';
 import 'package:ibie/ui/activity_form/view/activity_form_details_page.dart';
 import 'package:ibie/ui/activity_form/view/activity_form_location_page.dart';
 import 'package:ibie/ui/activity_form/view/activity_form_resources_page.dart';
@@ -26,7 +28,7 @@ import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
 import 'package:ibie/ui/home/home_viewmodel.dart';
 import 'package:ibie/ui/profile/profile_viewmodel.dart';
 import 'package:ibie/ui/activities/my_activities/my_activities_viewmodel.dart';
-import 'package:ibie/ui/activities/general/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
 import 'package:ibie/ui/activity_form/activity_form_viewmodel.dart';
 
 // Repositories
@@ -90,6 +92,15 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
         activityRepository: context.read<ActivityRepository>(),
       ),
       activityId: activityId,
+    );
+  },
+  '/instructor': (context) {
+    final instructorId = ModalRoute.of(context)!.settings.arguments as String;
+    return InstructorDetailsPage(
+      viewModel: InstructorDetailsViewModel(
+        activityRepository: context.read<ActivityRepository>(),
+      ),
+      instructorId: instructorId,
     );
   },
   '/myActivities': (context) => MyActivitiesPage(

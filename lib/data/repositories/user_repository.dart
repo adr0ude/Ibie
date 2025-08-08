@@ -15,6 +15,9 @@ abstract class IUserRepository extends ChangeNotifier {
   Future<Result<void>> sendPasswordResetEmail({String? email});
   Future<Result<String?>> pickProfileImage({required String source});
   Future<Result<void>> deleteProfileImage({required User user});
+  Future<Result<void>> logOut();
+  Future<Result<bool>> getStateCompleteProfileMessage();
+  Future<Result<void>> setStateCompleteProfileMessage({required bool state});
 }
 
 class UserRepository extends IUserRepository {
@@ -52,18 +55,13 @@ class UserRepository extends IUserRepository {
   }
 
   @override
-  Future<Result<void>> updateUserData({
-    required User user,
-    String? newPhoto,
-  }) async {
+  Future<Result<void>> updateUserData({required User user, String? newPhoto}) async {
     try {
       if (newPhoto != null) {
         // se há uma nova foto
         if (user.photo.isNotEmpty) {
           // se já havia uma foto
-          final deleteResult = await _storageService.deleteImage(
-            user.photo,
-          ); // deleta a antiga
+          final deleteResult = await _storageService.deleteImage(imageUrl: user.photo); // deleta a antiga
           switch (deleteResult) {
             case Ok():
               break;
@@ -71,9 +69,7 @@ class UserRepository extends IUserRepository {
               return Result.error(e);
           }
         }
-        final imageResult = await _storageService.uploadUserImage(
-          newPhoto,
-        ); // upload da nova
+        final imageResult = await _storageService.uploadUserImage(imagePath: newPhoto); // upload da nova
         switch (imageResult) {
           case Ok(value: final imageUrl):
             user = user.copyWith(photo: imageUrl);
@@ -87,9 +83,7 @@ class UserRepository extends IUserRepository {
         // se há uma nova foto
         if (newPhoto.isEmpty && user.photo.isNotEmpty) {
           // ela é vazia e a antiga não
-          final deleteResult = await _storageService.deleteImage(
-            user.photo,
-          ); // deleta a antiga
+          final deleteResult = await _storageService.deleteImage(imageUrl: user.photo); // deleta a antiga
           switch (deleteResult) {
             case Ok():
               break;
@@ -100,7 +94,7 @@ class UserRepository extends IUserRepository {
         }
       }
 
-      final databaseResult = await _databaseService.updateUserData(user);
+      final databaseResult = await _databaseService.updateUserData(user: user);
       switch (databaseResult) {
         case Ok():
           final preferencesResult = await _preferencesService.saveUserData(
@@ -123,15 +117,11 @@ class UserRepository extends IUserRepository {
   @override
   Future<Result<void>> deleteProfileImage({required User user}) async {
     try {
-      final deleteResult = await _storageService.deleteImage(
-        user.photo,
-      ); // deleta a antiga
+      final deleteResult = await _storageService.deleteImage(imageUrl: user.photo); // deleta a antiga
       switch (deleteResult) {
         case Ok():
           user = user.copyWith(photo: '');
-          final databaseResult = await _databaseService.updateUserData(
-            user,
-          ); // atualiza
+          final databaseResult = await _databaseService.updateUserData(user: user); // atualiza
           switch (databaseResult) {
             case Ok():
               final preferencesResult = await _preferencesService.saveUserData(
@@ -146,7 +136,6 @@ class UserRepository extends IUserRepository {
             case Error(error: final e):
               return Result.error(e);
           }
-
         case Error(error: final e):
           return Result.error(e);
       }
@@ -159,8 +148,7 @@ class UserRepository extends IUserRepository {
   Future<Result<void>> sendPasswordResetEmail({String? email}) async {
     try {
       if (email != null) {
-        final sendResult = await _authService.sendPasswordResetEmail(email);
-
+        final sendResult = await _authService.sendPasswordResetEmail(email: email);
         switch (sendResult) {
           case Ok():
             return const Result.ok(null);
@@ -169,11 +157,9 @@ class UserRepository extends IUserRepository {
         }
       } else {
         final userResult = await _preferencesService.getUserData();
-
         switch (userResult) {
           case Ok(value: final user):
-            final sendResult = await _authService.sendPasswordResetEmail(user.email);
-
+            final sendResult = await _authService.sendPasswordResetEmail(email: user.email);
             switch (sendResult) {
               case Ok():
                 return const Result.ok(null);
@@ -193,7 +179,6 @@ class UserRepository extends IUserRepository {
   Future<Result<String?>> pickProfileImage({required String source}) async {
     try {
       Result<String?> imageResult;
-
       if (source == 'camera') {
         imageResult = await _imageService.pickImageFromCamera();
       } else if (source == 'gallery') {
@@ -201,7 +186,6 @@ class UserRepository extends IUserRepository {
       } else {
         return Result.error(Exception('Fonte inválida'));
       }
-
       switch (imageResult) {
         case Ok(value: final newImage):
           if (newImage != null) {
@@ -209,6 +193,57 @@ class UserRepository extends IUserRepository {
           } else {
             return Result.ok(null);
           }
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<Result<void>> logOut() async {
+    try {
+      final logoutResult = await _authService.logOutFirebase();
+      switch (logoutResult) {
+        case Ok():
+          final preferencesResult = await _preferencesService.clearData();
+          switch(preferencesResult) {
+            case Ok():
+              return Result.ok(null);
+            case Error(error: final e):
+              return Result.error(e);
+          }
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<Result<bool>> getStateCompleteProfileMessage() async {
+    try {
+      final stateResult = await _preferencesService.getStateCompleteProfileMessage();
+      switch (stateResult) {
+        case Ok(value: final state):
+          return Result.ok(state);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<Result<void>> setStateCompleteProfileMessage({required bool state}) async {
+    try {
+      final stateResult = await _preferencesService.saveStateCompleteProfileMessage(state: state);
+      switch (stateResult) {
+        case Ok():
+          return Result.ok(null);
         case Error(error: final e):
           return Result.error(e);
       }

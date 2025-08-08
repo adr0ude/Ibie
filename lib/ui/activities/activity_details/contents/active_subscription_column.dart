@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ibie/ui/widgets/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/feedback_box.dart';
-import 'package:ibie/ui/activities/general/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/utils/show_ok_message.dart';

@@ -39,7 +39,7 @@ class SignUpRepository extends ISignUpRepository {
           user = user.copyWith(id: firebaseUser.uid);
 
           if(user.photo.isNotEmpty) {
-            final imageResult = await _storageService.uploadUserImage(user.photo);
+            final imageResult = await _storageService.uploadUserImage(imagePath: user.photo);
             switch(imageResult) {
               case Ok(value: final imageUrl):
                 user = user.copyWith(photo: imageUrl);
@@ -49,22 +49,25 @@ class SignUpRepository extends ISignUpRepository {
             }
           }
 
-          final databaseResult = await _databaseService.setUserData(user);
+          final databaseResult = await _databaseService.setUserData(user: user);
           switch (databaseResult) {
             case Ok():
-
-              final preferencesResult = await _preferencesService.saveUserData(user: user);
-                switch (preferencesResult) {
-                  case Ok():
-                    return const Result.ok(null);
-                  case Error(error: final e):
-                    return Result.error(e);
-                }
-
+              final saveUserResult = await _preferencesService.saveUserData(user: user);
+              switch (saveUserResult) {
+                case Ok():
+                  final saveStateResult = await _preferencesService.saveStateCompleteProfileMessage(state: false);
+                  switch (saveStateResult) {
+                    case Ok():
+                      return const Result.ok(null);
+                    case Error(error: final e):
+                      return Result.error(e);
+                  }
+                case Error(error: final e):
+                  return Result.error(e);
+              }
             case Error(error: final e):
               return Result.error(e);
           }
-
         case Error(error: final e):
           return Result.error(e);
       }
@@ -79,15 +82,13 @@ class SignUpRepository extends ISignUpRepository {
       final userResult = await _preferencesService.getUserData();
       switch (userResult) {
         case Ok(value: final user):
-
-          final databaseResult = await _databaseService.registerCategories(user.id, categories);
+          final databaseResult = await _databaseService.registerCategories(userId: user.id, categories: categories);
           switch (databaseResult) {
             case Ok():
               return const Result.ok(null);
             case Error(error: final e):
               return Result.error(e);
           }
-          
         case Error(error: final e):
           return Result.error(e);
       }

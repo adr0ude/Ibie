@@ -25,7 +25,7 @@ class CustomCardHome extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Color.fromRGBO(0, 0, 0, 0.1),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),
@@ -72,14 +72,17 @@ class CustomCardHome extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(width: 4),
-                        const Icon(
-                          Icons.person,
-                          size: 16,
-                          color: Color(0xFF9A31C9),
+                        SvgPicture.asset(
+                          'assets/professor_icon.svg',
+                          width: 16,
+                          height: 16,
+                          fit: BoxFit.contain,
                         ),
                         SizedBox(width: 6),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, '/instructor', arguments: activity.userId);
+                          },
                           child: Text(
                             "Professor(a) ${activity.userName}",
                             style: TextStyle(
@@ -92,10 +95,11 @@ class CustomCardHome extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(width: 4),
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 16,
-                          color: Color(0xFF71A151),
+                        SvgPicture.asset(
+                          'assets/calendar_icon.svg',
+                          width: 16,
+                          height: 16,
+                          fit: BoxFit.contain,
                         ),
                         SizedBox(width: 4),
                         Text(activity.date),
@@ -104,10 +108,11 @@ class CustomCardHome extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(width: 4),
-                        const Icon(
-                          Icons.location_on,
-                          size: 16,
-                          color: Color(0xFF9A31C9),
+                        SvgPicture.asset(
+                          'assets/location_icon.svg',
+                          width: 16,
+                          height: 16,
+                          fit: BoxFit.contain,
                         ),
                         SizedBox(width: 4),
                         Text(activity.location),

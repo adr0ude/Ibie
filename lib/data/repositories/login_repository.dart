@@ -15,9 +15,9 @@ class LoginRepository extends ILoginRepository {
     required AuthService authService,
     required DatabaseService databaseService,
     required SharedPreferencesService preferencesService,
-  })  : _authService = authService,
-        _databaseService = databaseService,
-        _preferencesService = preferencesService;
+  }) : _authService = authService,
+       _databaseService = databaseService,
+       _preferencesService = preferencesService;
 
   final AuthService _authService;
   final DatabaseService _databaseService;
@@ -26,26 +26,28 @@ class LoginRepository extends ILoginRepository {
   @override
   Future<Result<void>> loginEmail({required String email, required String password}) async {
     try {
-      final authResult = await _authService.loginEmail(email, password);
+      final authResult = await _authService.loginEmail(email: email, password: password);
       switch (authResult) {
         case Ok(value: final firebaseUser):
-
-          final fetchResult = await _databaseService.fetchUserData(firebaseUser.uid);
+          final fetchResult = await _databaseService.fetchUserData(userId: firebaseUser.uid);
           switch (fetchResult) {
             case Ok(value: final user):
-
-              final saveResult = await _preferencesService.saveUserData(user: user);
-              switch (saveResult) {
+              final saveUserResult = await _preferencesService.saveUserData(user: user);
+              switch (saveUserResult) {
                 case Ok():
-                  return const Result.ok(null);
+                  final saveStateResult = await _preferencesService.saveStateCompleteProfileMessage(state: false);
+                  switch (saveStateResult) {
+                    case Ok():
+                      return const Result.ok(null);
+                    case Error(error: final e):
+                      return Result.error(e);
+                  }
                 case Error(error: final e):
                   return Result.error(e);
               }
-
             case Error(error: final e):
               return Result.error(e);
-          }     
-          
+          }
         case Error(error: final e):
           return Result.error(e);
       }

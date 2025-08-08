@@ -10,11 +10,13 @@ class CustomDrawer extends StatefulWidget {
     required this.name,
     required this.photo,
     required this.type,
+    required this.onLogOut,
   });
 
   final String name;
   final String photo;
   final String type;
+  final VoidCallback onLogOut;
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -98,7 +100,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           CustomGreenButton(
             label: 'Sair',
             onPressed: () {
-              Navigator.pushNamed(context, '/welcome');
+              widget.onLogOut();
             },
             size: Size(280, 50),
           ),

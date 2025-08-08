@@ -96,6 +96,7 @@ class ActivityFormViewModel extends ChangeNotifier {
     return parsed != null;
   }
 
+/*
   bool get isFormValid =>
       _title.isNotEmpty &&
       _description.isNotEmpty &&
@@ -113,6 +114,7 @@ class ActivityFormViewModel extends ChangeNotifier {
       _accessibilityDescription.isNotEmpty &&
       _accessibilityResources.isNotEmpty;
 
+*/
   void loadActivity(Activity activity) {
     _id = activity.id;
     _title = activity.title;
@@ -136,9 +138,11 @@ class ActivityFormViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> submitForm() async {
+    /*
     if (!isFormValid) {
-      return Result.error(Exception("Preencha todos os campos obrigatórios."));
+      return Result.error(Exception("Preencha todos os campos obrigatórios"));
     }
+    */
 
     _isLoading = true;
     notifyListeners();
@@ -177,13 +181,13 @@ class ActivityFormViewModel extends ChangeNotifier {
             accessibilityDescription: _accessibilityDescription,
             comments: [],
             image: _image,
-            status: 'ATIVA',
+            status: 'active',
           );
 
           if (isEditing) {
-            return await _activityRepository.updateActivity(activity);
+            return await _activityRepository.updateActivity(activity: activity);
           } else {
-            return await _activityRepository.createActivity(activity);
+            return await _activityRepository.createActivity(activity: activity);
           }
 
         case Error(error: final e):

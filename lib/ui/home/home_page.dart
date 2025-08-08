@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ibie/models/activity.dart';
 
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/custom_drawer.dart';
 import 'package:ibie/utils/results.dart';
+import 'package:ibie/utils/show_complete_profile.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/ui/widgets/custom_card_home.dart';
 
@@ -29,15 +29,42 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _init() async {
-    final result = await viewModel.init();
-    switch (result) {
+    final initResult = await viewModel.init();
+    switch (initResult) {
       case Ok():
         setState(() {});
-        break;
       case Error():
         if (mounted) {
-          showErrorMessage(context, result.errorMessage);
+          showErrorMessage(context, initResult.errorMessage);
+          break;
         }
+    }
+    final messageResult = await viewModel.getCompleteProfileMessage();
+    switch (messageResult) {
+      case Ok():
+        if (!viewModel.hasShowCompleteProfileMessage) {
+          final setResult = await viewModel.setCompleteProfileMessage();
+          switch (setResult) {
+            case Ok():
+              setState(() {});
+            case Error():
+              showErrorMessage(context, setResult.errorMessage);
+          }
+          if (viewModel.type == 'instructor' && viewModel.biography.isEmpty) {
+            showCompleteProfile(
+              context: context,
+              onContinue: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacementNamed(context, '/profile');
+              },
+            );
+          }
+        }
+      case Error():
+        if (mounted) {
+          showErrorMessage(context, messageResult.errorMessage);
+        }
+        break;
     }
   }
 
@@ -54,6 +81,15 @@ class _HomePageState extends State<HomePage> {
         name: viewModel.name,
         photo: viewModel.photo,
         type: viewModel.type,
+        onLogOut: () async {
+          final logOutResult = await viewModel.logOut();
+          switch (logOutResult) {
+            case Ok():
+              Navigator.pushReplacementNamed(context, '/welcome');
+            case Error():
+              showErrorMessage(context, logOutResult.errorMessage);
+          }
+        },
       ),
 
       body: viewModel.isLoading
@@ -116,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/activityFormDetails');
               },
               backgroundColor: const Color(0xFF9A31C9),
-              child: const Icon(Icons.add),
+              child: const Icon(Icons.add, color: Colors.white,),
             )
           : null,
     );

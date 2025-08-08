@@ -1,36 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ibie/models/enrolled_activity.dart';
+import 'package:ibie/models/activity.dart';
 
-class CustomSummaryCard extends StatelessWidget {
-  final EnrolledActivity activity;
+class CustomInstructorCourseCard extends StatelessWidget {
+  final Activity activity;
   final VoidCallback onCardTap;
-  final VoidCallback onProfessorTap;
 
-  const CustomSummaryCard({
+  const CustomInstructorCourseCard({
     super.key,
     required this.activity,
     required this.onCardTap,
-    required this.onProfessorTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color statusColor;
-    switch (activity.status.toLowerCase()) {
-      case 'active':
-        statusColor = Colors.green;
-        break;
-      case 'completed':
-        statusColor = Colors.grey;
-        break;
-      case 'canceled':
-        statusColor = Colors.red;
-        break;
-      default:
-        statusColor = Colors.grey;
-    }
-
     return InkWell(
       onTap: onCardTap,
       borderRadius: BorderRadius.circular(10),
@@ -68,7 +51,7 @@ class CustomSummaryCard extends StatelessWidget {
                       ),
                     ),
                     child: Image.network(
-                      activity.activity.image,
+                      activity.image,
                       width: 122,
                       height: 109,
                       fit: BoxFit.cover,
@@ -98,7 +81,7 @@ class CustomSummaryCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              activity.activity.title,
+                              activity.title,
                               style: const TextStyle(
                                 fontFamily: 'Comfortaa',
                                 fontWeight: FontWeight.bold,
@@ -111,48 +94,49 @@ class CustomSummaryCard extends StatelessWidget {
                             Row(
                               children: [
                                 SvgPicture.asset(
-                                  'assets/professor_icon.svg',
+                                  'assets/calendar_icon.svg',
                                   width: 18,
                                   height: 18,
                                 ),
                                 const SizedBox(width: 5),
                                 Expanded(
-                                  child: GestureDetector(
-                                    onTap: onProfessorTap,
-                                    child: Text(
-                                      "Professor(a) ${activity.activity.userName}",
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xFF000000),
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                  child: Text(
+                                    activity.date,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF000000),
+                                      decoration: TextDecoration.underline,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/location_icon.svg',
+                                  width: 18,
+                                  height: 18,
+                                ),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    activity.city,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF000000),
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                           ],
-                        ),
-                        Positioned(
-                          bottom: -5,
-                          right: 2,
-                          child: Text(
-                            activity.status.toLowerCase() == 'completed'
-                            ? 'CONCLUÍDA'
-                            : activity.status.toLowerCase() == 'active'
-                            ? 'ATIVA'
-                            : activity.status.toLowerCase() == 'canceled'
-                            ? 'CANCELADA'
-                            : activity.status.toUpperCase(),
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: statusColor,
-                            ),
-                          ),
                         ),
                       ],
                     ),

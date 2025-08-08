@@ -11,6 +11,7 @@ class CustomProfileAvatar extends StatelessWidget {
   final double size;
   final double svgSize;
   final bool showCamera;
+  final Color color;
 
   const CustomProfileAvatar({
     super.key,
@@ -21,6 +22,7 @@ class CustomProfileAvatar extends StatelessWidget {
     this.size = 300,
     this.svgSize = 230,
     this.showCamera = true,
+    this.color = const Color(0xFF71A151),
   });
 
   @override
@@ -34,7 +36,7 @@ class CustomProfileAvatar extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.green, width: 1),
+              border: Border.all(color: color, width: 1),
             ),
             child: CircleAvatar(
               radius: size / 2,

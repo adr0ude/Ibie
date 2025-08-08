@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ibie/ui/activities/general/activity_details_viewmodel.dart';
-import 'package:ibie/ui/activities/general/contents/active_subscription_column.dart';
-import 'package:ibie/ui/activities/general/contents/completed_subscription_column.dart';
-import 'package:ibie/ui/activities/general/contents/is_not_subscribed_column.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activities/activity_details/contents/active_subscription_column.dart';
+import 'package:ibie/ui/activities/activity_details/contents/completed_subscription_column.dart';
+import 'package:ibie/ui/activities/activity_details/contents/is_not_subscribed_column.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
@@ -64,7 +65,12 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                       width: double.infinity,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.broken_image);
+                        return SvgPicture.asset(
+                          'assets/placeholder.svg',
+                          width: 16,
+                          height: 16,
+                          fit: BoxFit.contain,
+                        );
                       },
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
@@ -109,48 +115,51 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                         SizedBox(height: 20),
                         Container(
                           width: 400,
+                          margin: EdgeInsets.all(5),
+                          padding: EdgeInsets.all(13),
                           decoration: BoxDecoration(
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             border: Border(
-                              right: BorderSide(
-                                width: 3,
-                                color: Color(0xFFF3CEED),
-                              ),
+                              right: BorderSide(color: Color(0xFFF3CEED), width: 2),
                               bottom: BorderSide(
-                                width: 3,
                                 color: Color(0xFFF3CEED),
+                                width: 2,
                               ),
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
+                                color: Colors.black45,
+                                blurRadius: 6,
+                                offset: Offset(0, 3),
                               ),
                             ],
-                            color: Colors.white,
                           ),
-                          padding: const EdgeInsets.all(12.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Sobre a atividade",
+                                'Sobre a atividade',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: const Color(0xFF913AC1),
+                                  color: const Color(0xFF9A31C9),
                                   fontFamily: 'Comfortaa',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.3,
                                 ),
                               ),
                               SizedBox(height: 8),
                               Text(
                                 viewModel.description,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Comfortaa',
-                                ),
                                 textAlign: TextAlign.justify,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  wordSpacing: -0.5,
+                                  letterSpacing: -0.3,
+                                ),
                               ),
                             ],
                           ),
@@ -176,19 +185,19 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                           Builder(
                             builder: (_) {
                               final summary = viewModel.activities.firstWhere(
-                                (a) => a.id == widget.activityId,
+                                (a) => a.activity.id == widget.activityId,
                               );
 
                               switch (summary.status.toLowerCase()) {
-                                case 'ativa':
+                                case 'active':
                                   return ActiveSubscriptionColumn(
                                     viewModel: viewModel,
                                   );
-                                case 'concluída':
+                                case 'completed':
                                   return CompletedSubscriptionColumn(
                                     viewModel: viewModel,
                                   );
-                                case 'cancelada':
+                                case 'canceled':
                                   return IsNotSubscribedColumn(
                                     viewModel: viewModel,
                                   );

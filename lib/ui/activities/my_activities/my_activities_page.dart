@@ -109,13 +109,13 @@ class _MyActivitiesPageState extends State<MyActivitiesPage> {
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(22),
                   child: Column(
-                    children: viewModel.activities.map((activity) {
+                    children: viewModel.activities.map((a) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: CustomSummaryCard(
-                          activity: activity,
+                          activity: a,
                           onCardTap: () {
-                            Navigator.pushNamed(context, '/activity', arguments: activity.id);
+                            Navigator.pushNamed(context, '/activity', arguments: a.activity.id);
                           },
                           onProfessorTap: () {
                             print('professor clicado');

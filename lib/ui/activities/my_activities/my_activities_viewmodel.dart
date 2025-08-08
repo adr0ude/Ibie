@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ibie/data/repositories/activity_repository.dart';
 
 import 'package:ibie/data/repositories/user_repository.dart';
-import 'package:ibie/models/summary_activity.dart';
+import 'package:ibie/models/enrolled_activity.dart';
 import 'package:ibie/utils/results.dart';
 
 class MyActivitiesViewmodel extends ChangeNotifier {
@@ -18,14 +18,14 @@ class MyActivitiesViewmodel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  List<SummaryActivity> _activities = [];
-  List<SummaryActivity> get activities => _activities;
+  List<EnrolledActivity> _activities = [];
+  List<EnrolledActivity> get activities => _activities;
 
   Future<Result<void>> init() async {
     try {
       _isLoading = true;
 
-      final activitiesResult = await _activityRepository.getMyActivities();
+      final activitiesResult = await _activityRepository.getEnrolledActivities();
       switch (activitiesResult) {
         case Ok(value: final activities):
           _activities = activities;

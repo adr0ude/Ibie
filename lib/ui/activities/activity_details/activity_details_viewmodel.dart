@@ -3,7 +3,7 @@ import 'package:ibie/data/repositories/activity_repository.dart';
 
 import 'package:ibie/data/repositories/user_repository.dart';
 import 'package:ibie/models/activity.dart';
-import 'package:ibie/models/summary_activity.dart';
+import 'package:ibie/models/enrolled_activity.dart';
 import 'package:ibie/utils/results.dart';
 
 class ActivityDetailsViewmodel extends ChangeNotifier {
@@ -29,8 +29,8 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
   String get vacancies => _activity?.vacancies ?? '';
   List<String> get comments => _activity?.comments ?? [];
 
-  List<SummaryActivity> _activities = [];
-  List<SummaryActivity> get activities => _activities;
+  List<EnrolledActivity> _activities = [];
+  List<EnrolledActivity> get activities => _activities;
 
   String _comment = '';
   set comment(String value) {
@@ -40,7 +40,7 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
   bool get isSubscribed {
     final activityId = _activity?.id;
 
-    return _activities.any((a) => a.id == activityId);
+    return _activities.any((a) => a.activity.id == activityId);
   }
 
   Future<Result<void>> init(String activityId) async {
@@ -51,7 +51,7 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
       switch (activityResult) {
         case Ok(value: final activity):
           _activity = activity;
-          final activitiesResult = await _activityRepository.getMyActivities(); // pegar a lista de atividades inscritas
+          final activitiesResult = await _activityRepository.getEnrolledActivities(); // pegar a lista de atividades inscritas
           switch (activitiesResult) {
             case Ok(value: final activities):
               _activities = activities;
