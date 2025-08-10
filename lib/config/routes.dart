@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_instructor_page.dart';
-import 'package:ibie/ui/activities/instructor_details/instructor_details_page.dart';
-import 'package:ibie/ui/activities/instructor_details/instructor_details_view_model.dart';
 import 'package:provider/provider.dart';
 
 // Pages
@@ -14,23 +11,26 @@ import 'package:ibie/ui/auth/view/students_pages/register_student_page.dart';
 import 'package:ibie/ui/auth/view/students_pages/preferences_page.dart';
 import 'package:ibie/ui/auth/view/students_pages/register_student_photo_page.dart';
 import 'package:ibie/ui/auth/view/students_pages/success_student_page.dart';
-import 'package:ibie/ui/home/home_page.dart';
+import 'package:ibie/ui/home/view/home_page.dart';
 import 'package:ibie/ui/profile/profile_page.dart';
-import 'package:ibie/ui/activities/my_activities/my_activities_page.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_page.dart';
-import 'package:ibie/ui/activity_form/view/activity_form_details_page.dart';
-import 'package:ibie/ui/activity_form/view/activity_form_location_page.dart';
-import 'package:ibie/ui/activity_form/view/activity_form_resources_page.dart';
+import 'package:ibie/ui/my_activities/my_activities_page.dart';
+import 'package:ibie/ui/activity_details/activity_details_page.dart';
+import 'package:ibie/ui/activity_registration/view/activity_form_details_page.dart';
+import 'package:ibie/ui/activity_registration/view/activity_form_location_page.dart';
+import 'package:ibie/ui/activity_registration/view/activity_form_resources_page.dart';
+import 'package:ibie/ui/instructor_details/instructor_details_page.dart';
+import 'package:ibie/ui/activity_details/activity_details_instructor_page.dart';
 
 // View Models
-import 'package:ibie/ui/auth/viewModel/login_viewmodel.dart';
-import 'package:ibie/ui/auth/viewModel/register_student_viewmodel.dart';
-import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
-import 'package:ibie/ui/home/home_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/login_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/register_student_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/register_instructor_viewmodel.dart';
+import 'package:ibie/ui/home/view_model/home_viewmodel.dart';
 import 'package:ibie/ui/profile/profile_viewmodel.dart';
-import 'package:ibie/ui/activities/my_activities/my_activities_viewmodel.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
-import 'package:ibie/ui/activity_form/activity_form_viewmodel.dart';
+import 'package:ibie/ui/my_activities/my_activities_viewmodel.dart';
+import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_registration/activity_form_viewmodel.dart';
+import 'package:ibie/ui/instructor_details/instructor_details_view_model.dart';
 
 // Repositories
 import 'package:ibie/data/repositories/login_repository.dart';
@@ -42,6 +42,36 @@ class ActivityDetailsArgs {
   final ActivityDetailsViewmodel viewModel;
   final String activityId;
   ActivityDetailsArgs(this.viewModel, this.activityId);
+}
+
+class ActivityFormDetailsArgs {
+  final bool isEditing;
+  final String activityId;
+
+ ActivityFormDetailsArgs({
+    this.isEditing = false,
+    this.activityId = '',
+  });
+}
+
+class ActivityFormLocationArgs {
+  final ActivityFormViewmodel viewModel;
+  final bool isEditing;
+
+ ActivityFormLocationArgs({
+    required this.viewModel,
+    this.isEditing = false,
+  });
+}
+
+class ActivityFormResourcesArgs {
+  final ActivityFormViewmodel viewModel;
+  final bool isEditing;
+
+ ActivityFormResourcesArgs({
+    required this.viewModel,
+    this.isEditing = false,
+  });
 }
 
 Map<String, Widget Function(BuildContext)> appRoutes = {
@@ -112,19 +142,30 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
       userRepository: context.read<UserRepository>(),
     ),
   ),
-  '/activityFormDetails': (context) => ActivityFormDetailsPage(
-    viewModel: ActivityFormViewModel(
-      activityRepository: context.read<ActivityRepository>(),
-      userRepository: context.read<UserRepository>(),
-    ),
-  ),
+  '/activityFormDetails': (context) {
+    final args = ModalRoute.of(context)!.settings.arguments as ActivityFormDetailsArgs;
+    return ActivityFormDetailsPage(
+      isEditing: args.isEditing,
+      activityId: args.activityId,
+      viewModel: ActivityFormViewmodel(
+        activityRepository: context.read<ActivityRepository>(),
+        userRepository: context.read<UserRepository>(),
+      ),
+    );
+  },
   '/activityFormLocation': (context) {
-    final viewModel = ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
-    return ActivityFormLocationPage(viewModel: viewModel);
+    final args = ModalRoute.of(context)!.settings.arguments as ActivityFormLocationArgs;
+    return ActivityFormLocationPage(
+      isEditing: args.isEditing,
+      viewModel: args.viewModel,
+    );
   },
   '/activityFormResources': (context) {
-    final viewModel = ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
-    return ActivityFormResourcesPage(viewModel: viewModel);
+    final args = ModalRoute.of(context)!.settings.arguments as ActivityFormResourcesArgs;
+    return ActivityFormResourcesPage(
+      isEditing: args.isEditing,
+      viewModel: args.viewModel,
+    );
   },
   '/activityDetailsInstructor': (context) {
     final args = ModalRoute.of(context)!.settings.arguments as ActivityDetailsArgs;

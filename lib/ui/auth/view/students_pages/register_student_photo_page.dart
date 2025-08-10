@@ -6,7 +6,7 @@ import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
 import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/login_prompt.dart';
 
-import 'package:ibie/ui/auth/viewModel/register_student_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/register_student_viewmodel.dart';
 
 class RegisterStudentPhotoPage extends StatefulWidget {
   const RegisterStudentPhotoPage({super.key, required this.viewModel});
@@ -84,9 +84,11 @@ class _RegisterStudentPhotoPageState extends State<RegisterStudentPhotoPage> {
                   ),
                   CustomPurpleButton(
                     label: 'Próximo', 
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/preferences', arguments: widget.viewModel);
-                    }, 
+                    onPressed: !viewModel.isLoading
+                      ? () {
+                        Navigator.pushNamed(context, '/preferences', arguments: widget.viewModel);
+                      }
+                      : null, 
                     size: Size(175,40),
                   ),
                 ],

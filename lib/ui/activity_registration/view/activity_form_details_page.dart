@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ibie/models/activity_category.dart';
+import 'package:ibie/config/routes.dart';
 
 import 'package:ibie/ui/widgets/progress_bar.dart';
 import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
@@ -6,27 +8,55 @@ import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/custom_dropdown.dart';
 import 'package:ibie/utils/form_decoration.dart';
+import 'package:ibie/utils/results.dart';
+import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/utils/show_pop_up.dart';
 
-import 'package:ibie/ui/activity_form/activity_form_viewmodel.dart';
+import 'package:ibie/ui/activity_registration/activity_form_viewmodel.dart';
 
 class ActivityFormDetailsPage extends StatefulWidget {
-  const ActivityFormDetailsPage({super.key, required this.viewModel});
+  const ActivityFormDetailsPage({super.key, required this.viewModel, this.isEditing = false, this.activityId = ''});
 
-  final ActivityFormViewModel viewModel;
+  final ActivityFormViewmodel viewModel;
+  final bool isEditing;
+  final String activityId;
 
   @override
-  State<ActivityFormDetailsPage> createState() =>
-      _ActivityFormDetailsPagePageState();
+  State<ActivityFormDetailsPage> createState() => _ActivityFormDetailsPageState();
 }
 
-class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
-  late final ActivityFormViewModel viewModel;
+class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
+  late final ActivityFormViewmodel viewModel;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _targetAudienceController = TextEditingController();
+  final TextEditingController _vacanciesController = TextEditingController();
+  final TextEditingController _feeController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     viewModel = widget.viewModel;
+
+    if(widget.isEditing) {
+      _initEditing(widget.activityId);
+    }
+  }
+
+  Future<void> _initEditing(String activityId) async {
+    final result = await viewModel.initEditing(activityId);
+    switch (result) {
+      case Ok():
+        _titleController.text = viewModel.title;
+        _descriptionController.text = viewModel.description;
+        _targetAudienceController.text = viewModel.targetAudience;
+        _vacanciesController.text = viewModel.vacancies;
+        _feeController.text = viewModel.fee;
+      case Error():
+        if (mounted) {
+          showErrorMessage(context, result.errorMessage);
+        }
+    }
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -35,7 +65,7 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
-      appBar: CustomAppBar(title: 'Cadastro de Nova Atividade'),
+      appBar: CustomAppBar(title: widget.isEditing ? 'Editar Atividade' : 'Cadastro de Nova Atividade'),
 
       body: SingleChildScrollView(
         child: Padding(
@@ -71,9 +101,16 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    onChanged: (value) => viewModel.title = value,
+                    controller: _titleController,
+                    onChanged: (value) {
+                      if (widget.isEditing) {
+                        viewModel.titleEditing = value;
+                      } else {
+                        viewModel.title = value;
+                      }
+                    },
                     maxLength: 100,
-                    decoration: decorationForm("Título da Atividade *"),
+                    decoration: decorationForm("Título da Atividade *"), 
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
@@ -82,9 +119,9 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe o título da atividade.';
+                        return 'Informe o título da atividade';
                       } else if (value.length > 100) {
-                        return 'O título excede o limite de caracteres.';
+                        return 'O título excede o limite de caracteres';
                       }
                       return null;
                     },
@@ -94,7 +131,14 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    onChanged: (value) => viewModel.description = value,
+                    controller: _descriptionController,
+                    onChanged: (value) {
+                      if (widget.isEditing) {
+                        viewModel.descriptionEditing = value;
+                      } else {
+                        viewModel.description = value;
+                      }
+                    },
                     maxLength: 500,
                     minLines: 1,
                     maxLines: 6,
@@ -108,9 +152,9 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe a descrição da atividade.';
+                        return 'Informe a descrição da atividade';
                       } else if (value.length > 500) {
-                        return 'A descrição excede o limite de caracteres.';
+                        return 'A descrição excede o limite de caracteres';
                       }
                       return null;
                     },
@@ -123,21 +167,25 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomDropdown<String>(
-                          value: viewModel.selectedCategory.isNotEmpty
-                              ? viewModel.selectedCategory
-                              : null,
+                          value: defaultCategories.any((c) => c.name == viewModel.selectedCategory)
+                            ? viewModel.selectedCategory
+                            : null,
                           label: "Categoria *",
-                          items: viewModel.availableCategories
+                          items: defaultCategories
                               .map((c) => c.name)
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              viewModel.category = value!;
+                              if (widget.isEditing) {
+                                viewModel.categoryEditing = value!;
+                                viewModel.category = value;
+                              } else {
+                                viewModel.category = value!;
+                              }
                               state.didChange(value);
                             });
                           },
-                          validator: (value) =>
-                              value == null ? 'Selecione uma categoria.' : null,
+                          validator: (value) => value == null ? 'Selecione uma categoria' : null,
                         ),
                         if (state.hasError)
                           Padding(
@@ -158,12 +206,18 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                     );
                   },
                 ),
-
                 SizedBox(height: 29),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    onChanged: (value) => viewModel.targetAudience = value,
+                    controller: _targetAudienceController,
+                    onChanged: (value) {
+                      if (widget.isEditing) {
+                        viewModel.targetAudienceEditing = value;
+                      } else {
+                        viewModel.targetAudience = value;
+                      }
+                    },
                     maxLength: 100,
                     decoration: decorationForm("Público-Alvo"),
                     style: TextStyle(
@@ -174,7 +228,7 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                     ),
                     validator: (value) {
                       if (value != null && value.length > 100) {
-                        return 'O público-alvo excede o limite de caracteres.';
+                        return 'O público-alvo excede o limite de caracteres';
                       }
                       return null;
                     },
@@ -184,9 +238,16 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
+                    controller: _vacanciesController,
                     keyboardType: TextInputType.number,
                     decoration: decorationForm("Número de Vagas"),
-                    onChanged: (value) => viewModel.vacancies = value,
+                    onChanged: (value) {
+                      if (widget.isEditing) {
+                        viewModel.vacanciesEditing = value;
+                      } else {
+                        viewModel.vacancies = value;
+                      }
+                    },
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
@@ -199,10 +260,10 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                       }
                       final number = int.tryParse(value.trim());
                       if (number == null) {
-                        return 'Informe um número válido.';
+                        return 'Informe um número válido';
                       }
                       if (number <= 0) {
-                        return 'O número de vagas deve ser maior que zero.';
+                        return 'O número de vagas deve ser maior que zero';
                       }
                       return null;
                     },
@@ -212,20 +273,25 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    decoration: decorationForm(
-                      "Valor da Inscrição",
-                    ).copyWith(prefixText: 'R\$ '),
+                    controller: _feeController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    decoration: decorationForm("Valor da Inscrição").copyWith(prefixText: 'R\$ '),
                     onChanged: (value) {
                       final sanitized = value.trim().replaceAll(',', '.');
                       final number = double.tryParse(sanitized);
 
-                      if (number != null && number == 0) {
-                        viewModel.fee = "GRATUITO";
+                      if (widget.isEditing) {
+                        if (number != null && number == 0) {
+                          viewModel.feeEditing = "GRATUITO";
+                        } else {
+                          viewModel.feeEditing = value;
+                        }
                       } else {
-                        viewModel.fee = value;
+                        if (number != null && number == 0) {
+                          viewModel.fee = "GRATUITO";
+                        } else {
+                          viewModel.fee = value;
+                        }
                       }
                     },
                     style: TextStyle(
@@ -238,19 +304,15 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                       if (value == null || value.trim().isEmpty) {
                         return null;
                       }
-
                       final sanitized = value.trim().replaceAll(',', '.');
                       final number = double.tryParse(sanitized);
-
                       if (number == null) {
-                        return 'Informe um valor válido.';
+                        return 'Informe um valor válido';
                       }
-
                       if (number < 0) {
-                        return 'O valor não pode ser negativo.';
+                        return 'O valor não pode ser negativo';
                       }
-
-                      return null; // Tudo certo
+                      return null;
                     },
                   ),
                 ),
@@ -267,8 +329,7 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                         showPopUp(
                           context: context,
                           title: 'Cancelar Cadastro',
-                          text:
-                              'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                          text: 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/home');
                           },
@@ -281,20 +342,14 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           viewModel.goToNextPage();
-                          Navigator.pushNamed(
-                            context,
-                            '/activityFormLocation',
-                            arguments: widget.viewModel,
-                          );
+                          Navigator.pushNamed(context, '/activityFormLocation', arguments: ActivityFormLocationArgs(viewModel: viewModel, isEditing: widget.isEditing));
                         }
                       },
                       size: Size(175, 40),
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
-
-                SizedBox(height: 6),
+                SizedBox(height: 36),
               ],
             ),
           ),

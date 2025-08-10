@@ -8,7 +8,7 @@ import 'package:ibie/ui/widgets/login_prompt.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
 
-import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/register_instructor_viewmodel.dart';
 
 class RegisterInstructorPhotoPage extends StatefulWidget {
   const RegisterInstructorPhotoPage({super.key, required this.viewModel});
@@ -84,18 +84,17 @@ class _RegisterInstructorPhotoPageState extends State<RegisterInstructorPhotoPag
                   ),
                   CustomPurpleButton(
                     label: 'Registrar',
-                    onPressed: () async {
-                      final result = await viewModel.signUpEmail();
-                      switch (result) {
-                        case Ok():
-                          Navigator.pushReplacementNamed(
-                            context,
-                            '/successInstructor',
-                          );
-                        case Error():
-                          showErrorMessage(context, result.errorMessage);
+                    onPressed: !viewModel.isLoading
+                      ? () async {
+                        final result = await viewModel.signUpEmail();
+                        switch (result) {
+                          case Ok():
+                            Navigator.pushReplacementNamed(context, '/successInstructor');
+                          case Error():
+                            showErrorMessage(context, result.errorMessage);
+                        }
                       }
-                    },
+                      : null,
                     size: Size(175, 40),
                   ),
                 ],

@@ -9,6 +9,15 @@ class AuthService {
   AuthService({FirebaseAuth? firebaseAuth})
     : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
+  Future<Result<User?>> getInitialUser() async {
+    try {
+      final result = await _firebaseAuth.authStateChanges().first;
+      return Result.ok(result);
+    } catch (e) {
+      return Result.error(Exception("Erro ao verificar o estado do usuário"));
+    }
+  }
+  
   Future<Result<String>> getUserUid() async {
     try {
       User? user = _firebaseAuth.currentUser;

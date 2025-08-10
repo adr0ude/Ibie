@@ -1,5 +1,3 @@
-// lib/config/my_app.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +17,9 @@ import 'package:ibie/data/repositories/sign_up_repository.dart';
 import 'package:ibie/data/repositories/user_repository.dart';
 import 'package:ibie/data/repositories/activity_repository.dart';
 
-// First Page - WelcomePage
-import 'package:ibie/ui/auth/view/welcome_page.dart';
+// First Page - Splash Page
+import 'package:ibie/ui/home/view/splash_page.dart';
+import 'package:ibie/ui/home/view_model/splash_page_viewmodel.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -71,7 +70,11 @@ class MyApp extends StatelessWidget {
         builder: (context) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: const WelcomePage(),
+            home: SplashPage(
+              viewModel: SplashPageViewModel(
+                loginRepository: context.read<LoginRepository>(),
+              ),
+            ),
             routes: appRoutes,
           );
         },

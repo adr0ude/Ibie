@@ -42,6 +42,12 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
   List<String> _studentsList = [];
   List<String> get studentsList => _studentsList;
 
+  List<String> _favorites = [];
+  bool get isFavorite {
+    if (_activity == null) return false;
+    return _favorites.contains(_activity!.id);
+  }
+
   String _comment = '';
   set comment(String value) {
     _comment = value.trim();
@@ -68,13 +74,44 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
               switch (activitiesResult) {
                 case Ok(value: final activities):
                   _activities = activities;
-                  return Result.ok(null);
+                  final favoritesResult = await _activityRepository.getFavorites(userId: user.id); // pegar a lista de atividades favoritas
+                  switch (favoritesResult) {
+                    case Ok(value: final favorites):
+                      _favorites = favorites;
+                      return Result.ok(null);
+                    case Error(error: final e):
+                      return Result.error(e);
+                  }
                case Error(error: final e):
                   return Result.error(e);
               }
             case Error(error: final e):
               return Result.error(e);
           }
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> listFavorites() async {
+    try {
+      _isLoading = true;
+      final userResult = await _userRepository.getUserData();
+      switch (userResult) {
+        case Ok(value: final user):
+          _user = user;
+          final favoritesResult = await _activityRepository.getFavorites(userId: user.id); // pegar a lista de atividades favoritas
+            switch (favoritesResult) {
+              case Ok(value: final favorites):
+                _favorites = favorites;
+                return Result.ok(null);
+              case Error(error: final e):
+                return Result.error(e);
+            }
         case Error(error: final e):
           return Result.error(e);
       }
@@ -105,9 +142,7 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
   Future<Result<void>> unsubscribe() async {
     try {
       _isLoading = true;
-      final activityResult = await _activityRepository.unsubscribe(
-        activity: _activity!,
-      );
+      final activityResult = await _activityRepository.unsubscribe(activity: _activity!);
       switch (activityResult) {
         case Ok():
           return Result.ok(null);
@@ -125,6 +160,22 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
       _isLoading = true;
       final sendResult = await _activityRepository.sendFeedback(comment: _comment, activity: _activity!);
       switch (sendResult) {
+        case Ok():
+          return Result.ok(null);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> markAsCompleted(String activityId) async {
+    try {
+      _isLoading = true;
+      final markResult = await _activityRepository.markAsCompleted(activityId: activityId);
+      switch (markResult) {
         case Ok():
           return Result.ok(null);
         case Error(error: final e):
@@ -158,6 +209,38 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
       _isLoading = true;
       final deleteResult = await _activityRepository.deleteActivity(activityId: activityId);
       switch (deleteResult) {
+        case Ok():
+          return Result.ok(null);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> favorite() async {
+    try {
+      _isLoading = true;
+      final favoriteResult = await _activityRepository.favoriteActivity(activityId: activity!.id);
+      switch (favoriteResult) {
+        case Ok():
+          return Result.ok(null);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> unfavorite() async {
+    try {
+      _isLoading = true;
+      final unfavoriteResult = await _activityRepository.unfavoriteActivity(activityId: activity!.id);
+      switch (unfavoriteResult) {
         case Ok():
           return Result.ok(null);
         case Error(error: final e):

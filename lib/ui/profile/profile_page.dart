@@ -307,25 +307,27 @@ class _ProfilePagePageState extends State<ProfilePage> {
                               ),
                               CustomPurpleButton(
                                 label: 'Salvar',
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    showPopUp(
-                                      context: context,
-                                      title: 'Salvar alterações',
-                                      text: 'Deseja salvar as alterações?',
-                                      onPressed: () async {
-                                        final result = await viewModel.updateUserData();
-                                        showOkMessage(context, 'Alteração bem-sucedida');
-                                        switch (result) {
-                                          case Ok():
-                                            Navigator.pushReplacementNamed(context, '/home');
-                                          case Error():
-                                            showErrorMessage(context, result.errorMessage);
-                                        }
-                                      },
-                                    );
+                                onPressed: !viewModel.isLoading
+                                  ? () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      showPopUp(
+                                        context: context,
+                                        title: 'Salvar alterações',
+                                        text: 'Deseja salvar as alterações?',
+                                        onPressed: () async {
+                                          final result = await viewModel.updateUserData();
+                                          showOkMessage(context, 'Alteração bem-sucedida');
+                                          switch (result) {
+                                            case Ok():
+                                              Navigator.pushReplacementNamed(context, '/home');
+                                            case Error():
+                                              showErrorMessage(context, result.errorMessage);
+                                          }
+                                        },
+                                      );
+                                    }
                                   }
-                                },
+                                  : null,
                                 size: Size(175, 40),
                               ),
                             ],

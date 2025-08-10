@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
-import 'package:ibie/ui/activities/activity_details/contents/details_instructor_column.dart';
+import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_details/contents/details_instructor_column.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';

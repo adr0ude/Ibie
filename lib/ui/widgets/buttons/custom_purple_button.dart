@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class CustomPurpleButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final FutureOr<void> Function()? onPressed;
   final Size? size;
 
   const CustomPurpleButton({
@@ -20,8 +21,9 @@ class CustomPurpleButton extends StatelessWidget {
         foregroundColor: const Color(0xFF9A31C9),
         minimumSize: size ?? const Size(331, 40),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        disabledBackgroundColor: Color(0xFF9A31C9).withAlpha(128),
       ),
-      onPressed: onPressed,
+      onPressed: onPressed == null ? null : () => onPressed!(),
       child: Text(
         label,
         style: const TextStyle(

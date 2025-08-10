@@ -8,7 +8,7 @@ import 'package:ibie/ui/widgets/login_prompt.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/list_cities.dart';
 
-import 'package:ibie/ui/auth/viewModel/register_instructor_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/register_instructor_viewmodel.dart';
 
 class RegisterInstructorPage extends StatefulWidget {
   const RegisterInstructorPage({super.key, required this.viewModel});
@@ -59,7 +59,6 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
                     onChanged: (value) => viewModel.name = value,
                     decoration: decorationForm("Nome Completo *"),
                     style: TextStyle(
@@ -80,7 +79,6 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _cpfController,
                     onChanged: (value) => viewModel.cpf = value,
                     decoration: decorationForm("CPF *"),
                     style: TextStyle(
@@ -101,7 +99,6 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
                     onChanged: (value) => viewModel.dateBirth = value,
                     decoration: decorationForm("Data de Nascimento *"),
                     style: TextStyle(
@@ -162,7 +159,6 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _phoneController,
                     onChanged: (value) => viewModel.phone = value,
                     decoration: decorationForm("Número de Telefone *"),
                     style: TextStyle(
@@ -184,7 +180,6 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _emailController,
                     decoration: decorationForm("E-mail *"),
                     onChanged: (value) => viewModel.email = value,
                     style: TextStyle(
@@ -206,7 +201,6 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _passwordController,
                     onChanged: (value) => viewModel.password = value,
                     decoration: decorationForm("Senha *"),
                     style: TextStyle(

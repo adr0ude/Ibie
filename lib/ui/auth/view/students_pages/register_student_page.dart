@@ -8,7 +8,7 @@ import 'package:ibie/ui/widgets/login_prompt.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/list_cities.dart';
 
-import 'package:ibie/ui/auth/viewModel/register_student_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/register_student_viewmodel.dart';
 
 class RegisterStudentPage extends StatefulWidget {
   const RegisterStudentPage({super.key, required this.viewModel});
@@ -80,7 +80,6 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _cpfController,
                     onChanged: (value) => viewModel.cpf = value,
                     decoration: decorationForm("CPF *"),
                     style: TextStyle(
@@ -101,7 +100,6 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
                     onChanged: (value) => viewModel.dateBirth = value,
                     decoration: decorationForm("Data de Nascimento *"),
                     style: TextStyle(

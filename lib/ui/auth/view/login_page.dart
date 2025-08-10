@@ -10,7 +10,7 @@ import 'package:ibie/utils/show_ok_message.dart';
 import 'package:ibie/utils/show_pop_up.dart';
 import 'package:ibie/utils/show_sign_up_options.dart';
 
-import 'package:ibie/ui/auth/viewModel/login_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/login_viewmodel.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.viewModel});
@@ -194,27 +194,29 @@ class _LoginPageState extends State<LoginPage> {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () {
-                      if (viewModel.email.isEmpty) {
-                        showErrorMessage(context, 'Informe um e-mail');
-                      } else {
-                        showPopUp(
-                          context: context,
-                          title: 'Redefinir senha',
-                          text: 'Deseja receber um email para redefinição de senha?',
-                          onPressed: () async {
-                            final result = await viewModel.sendEmail();
-                            switch (result) {
-                              case Ok():
-                                Navigator.pop(context);
-                                showOkMessage(context, 'E-mail enviado');
-                              case Error():
-                                showErrorMessage(context, result.errorMessage);
-                            }
-                          },
-                        );
+                    onTap: !viewModel.isLoading
+                      ? () {
+                        if (viewModel.email.isEmpty) {
+                          showErrorMessage(context, 'Informe um e-mail');
+                        } else {
+                          showPopUp(
+                            context: context,
+                            title: 'Redefinir senha',
+                            text: 'Deseja receber um email para redefinição de senha?',
+                            onPressed: () async {
+                              final result = await viewModel.sendEmail();
+                              switch (result) {
+                                case Ok():
+                                  Navigator.pop(context);
+                                  showOkMessage(context, 'E-mail enviado');
+                                case Error():
+                                  showErrorMessage(context, result.errorMessage);
+                              }
+                            },
+                          );
+                        }
                       }
-                    },
+                      : null,
                     child: Padding(
                       padding: EdgeInsets.all(4),
                       child: Text(
@@ -235,17 +237,19 @@ class _LoginPageState extends State<LoginPage> {
 
             CustomPurpleButton(
               label: 'Entrar',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  final result = await viewModel.loginEmail();
-                  switch (result) {
-                    case Ok():
-                      Navigator.pushReplacementNamed(context, '/home');
-                    case Error():
-                      showErrorMessage(context, result.errorMessage);
+              onPressed: !viewModel.isLoading
+                ? () async {
+                  if (_formKey.currentState!.validate()) {
+                    final result = await viewModel.loginEmail();
+                    switch (result) {
+                      case Ok():
+                        Navigator.pushReplacementNamed(context, '/home');
+                      case Error():
+                        showErrorMessage(context, result.errorMessage);
+                    }
                   }
                 }
-              },
+                : null,
               size: Size(354, 52),
             ),
             SizedBox(height: 100),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ibie/config/routes.dart';
 import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
 
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/cards/custom_student_summary_card.dart';
 import 'package:ibie/ui/widgets/cards/custom_instructor_summary_card.dart';
-import 'package:ibie/ui/activities/my_activities/contents/empty_screen_instructor.dart';
-import 'package:ibie/ui/activities/my_activities/contents/empty_screen_student.dart';
-import 'package:ibie/ui/activities/my_activities/my_activities_viewmodel.dart';
+import 'package:ibie/ui/my_activities/contents/empty_screen_instructor.dart';
+import 'package:ibie/ui/my_activities/contents/empty_screen_student.dart';
+import 'package:ibie/ui/my_activities/my_activities_viewmodel.dart';
 
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
@@ -147,7 +148,7 @@ class _MyActivitiesPageState extends State<MyActivitiesPage> {
                     label: 'Adicionar atividade',
                     isGreen: true,
                     onPressed: () {
-                      Navigator.pushNamed(context, '/activityFormDetails');
+                      Navigator.pushNamed(context, '/activityFormDetails', arguments: ActivityFormDetailsArgs());
                     },
                     size: Size(354, 52),
                   ),

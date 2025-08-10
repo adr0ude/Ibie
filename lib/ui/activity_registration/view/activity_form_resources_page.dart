@@ -13,26 +13,34 @@ import 'package:ibie/ui/widgets/progress_bar.dart';
 import 'package:ibie/utils/show_ok_message.dart';
 import 'package:ibie/utils/show_pop_up.dart';
 
-import 'package:ibie/ui/activity_form/activity_form_viewmodel.dart';
+import 'package:ibie/ui/activity_registration/activity_form_viewmodel.dart';
 
 class ActivityFormResourcesPage extends StatefulWidget {
-  const ActivityFormResourcesPage({super.key, required this.viewModel});
+  const ActivityFormResourcesPage({super.key, required this.viewModel, this.isEditing = false});
 
-  final ActivityFormViewModel viewModel;
+  final ActivityFormViewmodel viewModel;
+  final bool isEditing;
 
   @override
-  State<ActivityFormResourcesPage> createState() =>
-      _ActivityFormResourcesPagePageState();
+  State<ActivityFormResourcesPage> createState() => _ActivityFormResourcesPageState();
 }
 
-class _ActivityFormResourcesPagePageState
-    extends State<ActivityFormResourcesPage> {
-  late final ActivityFormViewModel viewModel;
+class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
+  final TextEditingController _accessibilityDescriptionController = TextEditingController();
+  late final ActivityFormViewmodel viewModel;
 
   @override
   void initState() {
     super.initState();
     viewModel = widget.viewModel;
+
+    if(widget.isEditing) {
+      _initEditing();
+    }
+  }
+
+  Future<void> _initEditing() async {
+    _accessibilityDescriptionController.text = viewModel.accessibilityDescription;
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -42,7 +50,7 @@ class _ActivityFormResourcesPagePageState
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
       appBar: CustomAppBar(
-        title: 'Cadastro de Nova Atividade',
+        title: widget.isEditing ? 'Editar Atividade' : 'Cadastro de Nova Atividade',
         onBack: () {
           viewModel.goToPreviousPage();
           Navigator.pop(context);
@@ -88,17 +96,20 @@ class _ActivityFormResourcesPagePageState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomDropdown<String>(
-                          value:
-                              listAcessibility.contains(
-                                viewModel.selectedAccessibility,
-                              )
+                          value: listAcessibility.contains(viewModel.selectedAccessibility)
                               ? viewModel.selectedAccessibility
                               : null,
                           label: "Recursos de Acessibilidade",
                           items: listAcessibility,
                           onChanged: (value) {
                             setState(() {
-                              viewModel.accessibilityResources = value!;
+                              if (widget.isEditing) {
+                                viewModel.accessibilityResourcesEditing = value!;
+                                viewModel.accessibilityResources = value;
+                              } else {
+                                viewModel.accessibilityResources = value!;
+                              }
+                              state.didChange(value);
                               state.didChange(value);
                             });
                           },
@@ -108,13 +119,13 @@ class _ActivityFormResourcesPagePageState
                           SizedBox(
                             width: 365,
                             child: TextFormField(
+                              controller: _accessibilityDescriptionController,
                               maxLength: 200,
                               minLines: 1,
                               maxLines: 6,
                               textAlignVertical: TextAlignVertical.top,
                               decoration: decorationForm("Descrição *"),
-                              onChanged: (value) =>
-                                  viewModel.accessibilityDescription = value,
+                              onChanged: (value) => viewModel.accessibilityDescription = value,
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
                                 fontSize: 20,
@@ -158,8 +169,7 @@ class _ActivityFormResourcesPagePageState
                     return CustomActivityImage(
                       image: viewModel.image,
                       onCamera: () async => await viewModel.pickImage('camera'),
-                      onGallery: () async =>
-                          await viewModel.pickImage('gallery'),
+                      onGallery: () async => await viewModel.pickImage('gallery'),
                       onDelete: () => viewModel.image = '',
                     );
                   },
@@ -175,30 +185,53 @@ class _ActivityFormResourcesPagePageState
                     CustomWhiteButton(
                       label: 'Cancelar',
                       onPressed: () {
-                        showPopUp(
-                          context: context,
-                          title: 'Cancelar Cadastro',
-                          text:
-                              'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/home');
-                          },
-                        );
+                        if(widget.isEditing) {
+                          showPopUp(
+                            context: context,
+                            title: 'Cancelar Edição',
+                            text: 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, '/home');
+                            },
+                          );
+                        } else {
+                          showPopUp(
+                            context: context,
+                            title: 'Cancelar Cadastro',
+                            text: 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, '/home');
+                            },
+                          );
+                        }
                       },
                       size: Size(175, 40),
                     ),
                     CustomPurpleButton(
                       label: 'Salvar',
-                      onPressed: () async {
-                        final result = await viewModel.submitForm();
-                        showOkMessage(context, 'Cadastro bem-sucedido');
-                        switch (result) {
-                          case Ok():
-                            Navigator.pushReplacementNamed(context, '/home');
-                          case Error():
-                            showErrorMessage(context, result.errorMessage);
+                      onPressed: !viewModel.isLoading
+                        ? () async {
+                          if(widget.isEditing) {
+                            final updateResult = await viewModel.updateActivity();
+                            switch (updateResult) {
+                              case Ok():
+                                showOkMessage(context, 'Edição bem-sucedida');
+                                Navigator.pushReplacementNamed(context, '/home');
+                              case Error():
+                                showErrorMessage(context, updateResult.errorMessage);
+                            }
+                          } else {
+                            final createResult = await viewModel.createActivity();
+                            switch (createResult) {
+                              case Ok():
+                                showOkMessage(context, 'Cadastro bem-sucedido');
+                                Navigator.pushReplacementNamed(context, '/home');
+                              case Error():
+                                showErrorMessage(context, createResult.errorMessage);
+                            }
+                          }
                         }
-                      },
+                        : null,
                       size: Size(175, 40),
                     ),
                   ],

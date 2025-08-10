@@ -9,7 +9,7 @@ import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/models/activity_category.dart';
 
-import 'package:ibie/ui/auth/viewModel/register_student_viewmodel.dart';
+import 'package:ibie/ui/auth/view_model/register_student_viewmodel.dart';
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key, required this.viewModel});
@@ -74,6 +74,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   final categoria = entry.value;
                   final bool cores = true;
                   final bool ativa = viewModel.selectedCategories.contains(categoria.name);
+                  // ignore: dead_code
                   final Color cor = cores ? (index == 0 || index == 3 || index == 4 ? Color(0xFF9A31C9) : Color(0xFF71A151)) : Color(0xFFC3E29E);
                   final Color corContainer = ativa ? Color(0xFFC3E29E) : Color(0xFFFFFFFF);
 
@@ -135,15 +136,17 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 ),
                 CustomPurpleButton(
                   label: 'Registrar', 
-                  onPressed: () async {
-                    final result = await viewModel.signUpEmail();
-                    switch (result) {
-                      case Ok():
-                        Navigator.pushReplacementNamed(context, '/successStudent');
-                      case Error():
-                        showErrorMessage(context, result.errorMessage);
+                  onPressed: !viewModel.isLoading
+                    ? () async {
+                      final result = await viewModel.signUpEmail();
+                      switch (result) {
+                        case Ok():
+                          Navigator.pushReplacementNamed(context, '/successStudent');
+                        case Error():
+                          showErrorMessage(context, result.errorMessage);
+                      }
                     }
-                  }, 
+                    : null, 
                   size: Size(175, 40)
                 ),
               ],

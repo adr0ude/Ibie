@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:ibie/ui/widgets/buttons/custom_favorite_button.dart';
 import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/feedback_box.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/utils/show_ok_message.dart';
 import 'package:ibie/utils/show_pop_up.dart';
 
-class IsNotSubscribedColumn extends StatelessWidget {
+class IsNotSubscribedColumn extends StatefulWidget {
   final ActivityDetailsViewmodel viewModel;
 
   const IsNotSubscribedColumn({super.key, required this.viewModel});
 
   @override
+  State<IsNotSubscribedColumn> createState() => _IsNotSubscribedColumnState();
+}
+
+class _IsNotSubscribedColumnState extends State<IsNotSubscribedColumn> {
+  @override
   Widget build(BuildContext context) {
+    final viewModel = widget.viewModel;
+
     return Column(
       children: [
         Container(
@@ -79,28 +86,63 @@ class IsNotSubscribedColumn extends StatelessWidget {
             children: [
               CustomPurpleButton(
                 label: 'Inscrever-se',
-                onPressed: () {
-                  showPopUp(
-                    context: context,
-                    title: 'Realizar Inscrição',
-                    text:'Você confirma a sua inscrição na atividade ${viewModel.title}?',
-                    onPressed: () async {
-                      final subscribeResult = await viewModel.subscribe();
-                      Navigator.pop(context);
-                      switch (subscribeResult) {
-                        case Ok():
-                          showOkMessage(context, 'Inscrição bem-sucedida');
-                          Navigator.pushReplacementNamed(context, '/home');
-                        case Error():
-                          showErrorMessage(context, subscribeResult.errorMessage);
-                      }
-                    },
-                  );
-                },
+                onPressed: !viewModel.isLoading
+                  ? () {
+                    showPopUp(
+                      context: context,
+                      title: 'Realizar Inscrição',
+                      text: 'Você confirma a sua inscrição na atividade ${viewModel.title}?',
+                      onPressed: () async {
+                        final subscribeResult = await viewModel.subscribe();
+                        Navigator.pop(context);
+                        switch (subscribeResult) {
+                          case Ok():
+                            showOkMessage(context, 'Inscrição bem-sucedida');
+                            Navigator.pushReplacementNamed(context, '/home');
+                          case Error():
+                            showErrorMessage(context, subscribeResult.errorMessage);
+                        }
+                      },
+                    );
+                  }
+                  : null,
                 size: const Size(285, 40),
               ),
               const SizedBox(width: 5),
-              CustomFavoriteButton(onPressed: () {}),
+              CustomFavoriteButton(
+                onPressed: !viewModel.isLoading
+                  ? () async {
+                    if (viewModel.isFavorite) {
+                      final unfavoriteResult = await viewModel.unfavorite();
+                      switch (unfavoriteResult) {
+                        case Ok():
+                          break;
+                        case Error():
+                          showErrorMessage(context, unfavoriteResult.errorMessage);
+                      }
+                    } else {
+                      final favoriteResult = await viewModel.favorite();
+                      switch (favoriteResult) {
+                        case Ok():
+                          break;
+                        case Error():
+                          showErrorMessage(context, favoriteResult.errorMessage);
+                      }
+                    }
+                    final listResult = await viewModel.listFavorites();
+                    switch (listResult) {
+                      case Ok():
+                        break;
+                      case Error():
+                        showErrorMessage(context, listResult.errorMessage);
+                    }
+                    setState(() {});
+                  }
+                  : null,
+                icon: viewModel.isFavorite
+                    ? "assets/favorite-star-icon.svg"
+                    : "assets/unfavorite-star-icon.svg",
+              ),
             ],
           ),
         ),

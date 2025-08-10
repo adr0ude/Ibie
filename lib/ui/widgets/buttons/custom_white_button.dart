@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class CustomWhiteButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final FutureOr<void> Function()? onPressed;
   final Size? size;
   final bool isDisabled;
   final bool isGreen;
@@ -27,7 +28,7 @@ class CustomWhiteButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10),
         ),
       ),
-      onPressed: onPressed,
+      onPressed: onPressed == null ? null : () => onPressed!(),
       child: Text(
         label,
         style: TextStyle(

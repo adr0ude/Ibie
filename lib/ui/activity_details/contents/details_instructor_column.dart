@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:ibie/ui/widgets/feedback_box.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
 
 class DetailsInstructorColumn extends StatelessWidget {
   final ActivityDetailsViewmodel viewModel;

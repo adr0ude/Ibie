@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
-import 'package:ibie/ui/activities/activity_details/contents/active_subscription_column.dart';
-import 'package:ibie/ui/activities/activity_details/contents/completed_subscription_column.dart';
-import 'package:ibie/ui/activities/activity_details/contents/is_not_subscribed_column.dart';
+import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_details/contents/active_subscription_column.dart';
+import 'package:ibie/ui/activity_details/contents/completed_subscription_column.dart';
+import 'package:ibie/ui/activity_details/contents/is_not_subscribed_column.dart';
 import 'package:ibie/ui/widgets/buttons/custom_green_button.dart';
 import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
@@ -47,6 +47,16 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
       case Error():
         if (mounted) {
           showErrorMessage(context, initResult.errorMessage);
+        }
+    }
+
+    final favoritesResult = await viewModel.listFavorites();
+    switch (favoritesResult) {
+      case Ok():
+        setState(() {});
+      case Error():
+        if (mounted) {
+          showErrorMessage(context, favoritesResult.errorMessage);
         }
     }
   }
@@ -188,43 +198,83 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                           SizedBox(height: 10),
                           CustomPurpleButton(
                             label: 'Ver mais detalhes',
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/activityDetailsInstructor', arguments: ActivityDetailsArgs(widget.viewModel, widget.activityId));
-                            },
+                            onPressed: !viewModel.isLoading
+                              ? () {
+                                Navigator.pushNamed(context, '/activityDetailsInstructor', arguments: ActivityDetailsArgs(widget.viewModel, widget.activityId));
+                              }
+                              : null,
                             size: Size(354, 52),
                           ),
                           SizedBox(height: 15),
                           CustomGreenButton(
                             label: 'Editar atividade',
-                            onPressed: () {
-                              //Navigator.pushNamed(context, '/activityFormDetails');
-                            },
+                            onPressed: !viewModel.isLoading
+                              ? () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/activityFormDetails',
+                                  arguments: ActivityFormDetailsArgs(
+                                    isEditing: true,
+                                    activityId: widget.activityId,
+                                  ),
+                                );
+                              }
+                              : null,
                             size: Size(354, 52),
                           ),
                           SizedBox(height: 15),
                           CustomWhiteButton(
                             label: 'Remover atividade',
-                            onPressed: () {
-                              showPopUp(
-                                context: context, 
-                                title: 'Remover Atividade', 
-                                text: 'Você confirma a remoção da atividade Curso ${viewModel.title}?', 
-                                onPressed: () async {
-                                  final deleteResult = await viewModel.deleteActivity(widget.activityId);
-                                  switch (deleteResult) {
-                                    case Ok():
-                                      showOkMessage(context, 'Exclusão bem-sucedida');
-                                      if (mounted) {
-                                        Navigator.pushReplacementNamed(context, '/home');
-                                      }
-                                    case Error():
-                                      showErrorMessage(context, deleteResult.errorMessage);
+                            onPressed: !viewModel.isLoading
+                              ? () {
+                                showPopUp(
+                                  context: context, 
+                                  title: 'Remover Atividade', 
+                                  text: 'Você confirma a remoção da atividade Curso ${viewModel.title}?', 
+                                  onPressed: () async {
+                                    final deleteResult = await viewModel.deleteActivity(widget.activityId);
+                                    switch (deleteResult) {
+                                      case Ok():
+                                        showOkMessage(context, 'Exclusão bem-sucedida');
+                                        if (mounted) {
+                                          Navigator.pushReplacementNamed(context, '/home');
+                                        }
+                                      case Error():
+                                        showErrorMessage(context, deleteResult.errorMessage);
+                                    }
                                   }
-                                }
-                              );
-                            },
+                                );
+                              }
+                              : null,
                             size: Size(354, 52),
                           ),
+                          SizedBox(height: 15),
+                          CustomWhiteButton(
+                            label: 'Marcar como concluída',
+                            isGreen: true,
+                            onPressed: !viewModel.isLoading
+                              ? () {
+                                showPopUp(
+                                  context: context, 
+                                  title: 'Marcar como Concluída', 
+                                  text: 'Realmente deseja marcar a atividade ${viewModel.title} como concluída? Após essa ação, ela não receberá novas inscrições e deixará de aparecer na página inicial de cursos.', 
+                                  onPressed: () async {
+                                    final markResult = await viewModel.markAsCompleted(widget.activityId);
+                                    switch (markResult) {
+                                      case Ok():
+                                        showOkMessage(context, 'Marcação bem-sucedida');
+                                        if (mounted) {
+                                          Navigator.pushReplacementNamed(context, '/home');
+                                        }
+                                      case Error():
+                                        showErrorMessage(context, markResult.errorMessage);
+                                    }
+                                  }
+                                );
+                              }
+                              : null,
+                            size: Size(354, 52),
+                          ),  
                         ],
                           
                         if (viewModel.instructorId != viewModel.userId) ...[

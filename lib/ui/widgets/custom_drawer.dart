@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ibie/ui/widgets/buttons/custom_green_button.dart';
@@ -20,7 +21,7 @@ class CustomDrawer extends StatefulWidget {
   final String photo;
   final String type;
   final bool isLoggedIn;
-  final VoidCallback onLogOut;
+  final FutureOr<void> Function()? onLogOut;
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -147,9 +148,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             SizedBox(height: 330),
             CustomGreenButton(
               label: 'Sair',
-              onPressed: () {
-                widget.onLogOut();
-              },
+              onPressed: widget.onLogOut,
               size: Size(280, 50),
             ),
           ],

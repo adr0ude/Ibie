@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ibie/ui/widgets/feedback_box.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
@@ -95,27 +95,29 @@ class _CompletedSubscriptionColumnState extends State<CompletedSubscriptionColum
                   bottom: 10,
                   right: 10,
                   child: GestureDetector(
-                    onTap: () async {
-                      showPopUp(
-                        context: context,
-                        title: 'Enviar comentário',
-                        text: 'Você confirma o envio do comentário na atividade ${viewModel.title}?',
-                        onPressed: () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            final sendResult = await viewModel.sendFeedback();
-                            switch (sendResult) {
-                              case Ok():
-                                showOkMessage(context, 'Comentário enviado');
-                                if (mounted) {
-                                  Navigator.pushReplacementNamed(context, '/home');
-                                }
-                              case Error():
-                                showErrorMessage(context, sendResult.errorMessage);
+                    onTap: !viewModel.isLoading
+                      ? () async {
+                        showPopUp(
+                          context: context,
+                          title: 'Enviar comentário',
+                          text: 'Você confirma o envio do comentário na atividade ${viewModel.title}?',
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              final sendResult = await viewModel.sendFeedback();
+                              switch (sendResult) {
+                                case Ok():
+                                  showOkMessage(context, 'Comentário enviado');
+                                  if (mounted) {
+                                    Navigator.pushReplacementNamed(context, '/home');
+                                  }
+                                case Error():
+                                  showErrorMessage(context, sendResult.errorMessage);
+                              }
                             }
-                          }
-                        },
-                      );
-                    },
+                          },
+                        );
+                      }
+                      : null,
                     child: Container(
                       decoration: const BoxDecoration(
                         color: Color(0xFF7AA55D),

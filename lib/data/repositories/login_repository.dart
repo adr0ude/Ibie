@@ -8,6 +8,7 @@ import 'package:ibie/data/services/shared_preferences_service.dart';
 
 abstract class ILoginRepository extends ChangeNotifier {
   Future<Result<void>> loginEmail({required String email, required String password});
+  Future<Result<bool>> isUserLoggedIn();
 }
 
 class LoginRepository extends ILoginRepository {
@@ -47,6 +48,43 @@ class LoginRepository extends ILoginRepository {
               }
             case Error(error: final e):
               return Result.error(e);
+          }
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<Result<bool>> isUserLoggedIn() async {
+    try {
+      final authResult = await _authService.getInitialUser();
+      switch (authResult) {
+        case Ok(value: final firebaseUser):
+          if (firebaseUser != null) {
+            final fetchResult = await _databaseService.fetchUserData(userId: firebaseUser.uid);
+            switch (fetchResult) {
+              case Ok(value: final user):
+                final saveUserResult = await _preferencesService.saveUserData(user: user);
+                  switch (saveUserResult) {
+                    case Ok():
+                      final saveStateResult = await _preferencesService.saveStateCompleteProfileMessage(state: true);
+                      switch (saveStateResult) {
+                        case Ok():
+                          return const Result.ok(true);
+                        case Error(error: final e):
+                          return Result.error(e);
+                      }
+                    case Error(error: final e):
+                      return Result.error(e);
+                  }
+              case Error(error: final e):
+                return Result.error(e);
+            } 
+          } else {
+            return const Result.ok(false);
           }
         case Error(error: final e):
           return Result.error(e);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/feedback_box.dart';
-import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
+import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/utils/show_ok_message.dart';
@@ -43,24 +43,26 @@ class ActiveSubscriptionColumn extends StatelessWidget {
           padding: const EdgeInsets.all(5),
               child: CustomPurpleButton(
                 label: 'Cancelar inscrição',
-                onPressed: () {
-                  showPopUp(
-                    context: context,
-                    title: 'Cancelar Inscrição',
-                    text:'Você confirma o cancelamento da sua inscrição na atividade ${viewModel.title}?',
-                    onPressed: () async {
-                      final unsubscribeResult = await viewModel.unsubscribe();
-                      Navigator.pop(context);
-                      switch (unsubscribeResult) {
-                        case Ok():
-                          showOkMessage(context, 'Cancelamento bem-sucedido');
-                          Navigator.pushReplacementNamed(context, '/home');
-                        case Error():
-                          showErrorMessage(context, unsubscribeResult.errorMessage);
-                      }
-                    },
-                  );
-                },
+                onPressed: !viewModel.isLoading
+                  ? () {
+                    showPopUp(
+                      context: context,
+                      title: 'Cancelar Inscrição',
+                      text:'Você confirma o cancelamento da sua inscrição na atividade ${viewModel.title}?',
+                      onPressed: () async {
+                        final unsubscribeResult = await viewModel.unsubscribe();
+                        Navigator.pop(context);
+                        switch (unsubscribeResult) {
+                          case Ok():
+                            showOkMessage(context, 'Cancelamento bem-sucedido');
+                            Navigator.pushReplacementNamed(context, '/home');
+                          case Error():
+                            showErrorMessage(context, unsubscribeResult.errorMessage);
+                        }
+                      },
+                    );
+                  }
+                  : null,
                 size: const Size(354, 52),
               ),
         ),

@@ -21,23 +21,25 @@ class PassPrompt extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {
-                showPopUp(
-                  context: context,
-                  title: 'Redefinir senha', 
-                  text: 'Deseja receber um email para redefinição de senha?', 
-                  onPressed: () async {
-                    final result = await viewModel.sendEmail();
-                      switch (result) {
-                        case Ok():
-                          Navigator.pushReplacementNamed(context, '/login');
-                          showOkMessage(context, 'E-mail enviado');
-                        case Error():
-                          showErrorMessage(context, result.errorMessage);
-                      }
-                  }
-                );
-              },
+              onTap: !viewModel.isLoading
+                ? () {
+                  showPopUp(
+                    context: context,
+                    title: 'Redefinir senha', 
+                    text: 'Deseja receber um email para redefinição de senha?', 
+                    onPressed: () async {
+                      final result = await viewModel.sendEmail();
+                        switch (result) {
+                          case Ok():
+                            Navigator.pushReplacementNamed(context, '/login');
+                            showOkMessage(context, 'E-mail enviado');
+                          case Error():
+                            showErrorMessage(context, result.errorMessage);
+                        }
+                    }
+                  );
+                }
+                : null,
               child: Padding(
                 padding: EdgeInsetsGeometry.all(4),
                 child: Text(

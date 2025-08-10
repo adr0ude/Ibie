@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ibie/config/routes.dart';
 
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/custom_drawer.dart';
@@ -8,7 +9,7 @@ import 'package:ibie/utils/show_complete_profile.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/ui/widgets/cards/custom_home_card.dart';
 
-import 'package:ibie/ui/home/home_viewmodel.dart';
+import 'package:ibie/ui/home/view_model/home_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.viewModel});
@@ -83,19 +84,21 @@ class _HomePageState extends State<HomePage> {
         photo: viewModel.photo,
         type: viewModel.type,
         isLoggedIn: viewModel.isLoggedIn,
-        onLogOut: () async {
-          if(viewModel.isLoggedIn) {
-            final logOutResult = await viewModel.logOut();
-            switch (logOutResult) {
-              case Ok():
-                Navigator.pushReplacementNamed(context, '/welcome');
-              case Error():
-                showErrorMessage(context, logOutResult.errorMessage);
+        onLogOut: !viewModel.isLoading
+          ? () async {
+            if(viewModel.isLoggedIn) {
+              final logOutResult = await viewModel.logOut();
+              switch (logOutResult) {
+                case Ok():
+                  Navigator.pushReplacementNamed(context, '/welcome');
+                case Error():
+                  showErrorMessage(context, logOutResult.errorMessage);
+              }
+            } else {
+              Navigator.pushReplacementNamed(context, '/welcome');
             }
-          } else {
-            Navigator.pushReplacementNamed(context, '/welcome');
           }
-        },
+          : null,
       ),
 
       body: viewModel.isLoading
@@ -156,7 +159,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: viewModel.type == 'instructor'
           ? FloatingActionButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/activityFormDetails');
+                Navigator.pushNamed(context, '/activityFormDetails', arguments: ActivityFormDetailsArgs());
               },
               backgroundColor: const Color(0xFF9A31C9),
               child: const Icon(Icons.add, color: Colors.white,),

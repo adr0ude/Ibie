@@ -19,7 +19,7 @@ class Activity {
   final String accessibilityDescription;
   final String image;
   final String userId;
-  final String userName;
+  final String? userName;
   final String status;
   final List<String> comments;
 
@@ -36,7 +36,7 @@ class Activity {
     required this.city,
     required this.cep,
     required this.userId,
-    required this.userName,
+    this.userName,
     required this.status,
     required this.targetAudience,
     required this.number,
@@ -91,10 +91,8 @@ class Activity {
       remainingVacancies: remainingVacancies ?? this.remainingVacancies,
       vacancies: vacancies ?? this.vacancies,
       fee: fee ?? this.fee,
-      accessibilityResources:
-          accessibilityResources ?? this.accessibilityResources,
-      accessibilityDescription:
-          accessibilityDescription ?? this.accessibilityDescription,
+      accessibilityResources: accessibilityResources ?? this.accessibilityResources,
+      accessibilityDescription: accessibilityDescription ?? this.accessibilityDescription,
       image: image ?? this.image,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
@@ -125,7 +123,7 @@ class Activity {
       accessibilityDescription: map['accessibilityDescription'] ?? '',
       image: map['image'] ?? '',
       userId: map['userId'] ?? '',
-      userName: map['userName'] ?? '',
+      userName: map['userName'],
       status: map['status'] ?? '',
       comments: List<String>.from(map['comments'] ?? []),
     );

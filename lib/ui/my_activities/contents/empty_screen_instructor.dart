@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ibie/config/routes.dart';
 
 import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
@@ -71,7 +72,7 @@ class EmptyScreenInstructor extends StatelessWidget {
             label: 'Adicionar atividade',
             isGreen: true,
             onPressed: () {
-              Navigator.pushNamed(context, '/activityFormDetails');
+              Navigator.pushNamed(context, '/activityFormDetails', arguments: ActivityFormDetailsArgs());
             },
             size: Size(354, 52),
           ),
