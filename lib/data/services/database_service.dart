@@ -84,7 +84,7 @@ class DatabaseService {
 
       return const Result.ok(null);
     } catch (e) {
-      return Result.error(Exception('Erro ao criar atividade: $e'));
+      return Result.error(Exception('O cadastro da atividade falhou'));
     }
   }
 
@@ -96,11 +96,16 @@ class DatabaseService {
           .get();
 
       final activities = querySnapshot.docs
-          .map((doc) => Activity.fromMap(doc.data(), doc.id))
-          .toList();
+        .map((doc) => Activity.fromMap(doc.data(), doc.id))
+        .where((activity) {
+          final remaining = int.tryParse(activity.remainingVacancies.isEmpty ? '0' : activity.remainingVacancies) ?? 0;
+          return remaining > 0;
+        })
+        .toList();
+      
       return Result.ok(activities);
     } catch (e) {
-      return Result.error(Exception('Erro ao buscar atividades: $e'));
+      return Result.error(Exception('Erro ao carregar atividades'));
     }
   }
 
@@ -112,18 +117,39 @@ class DatabaseService {
           .update(activity.toMap());
       return const Result.ok(null);
     } catch (e) {
-      return Result.error(Exception('Erro ao atualizar atividade: $e'));
+      return Result.error(Exception('A edição da atividade falhou'));
     }
   }
 
   Future<Result<void>> deleteActivity({required String activityId}) async {
     try {
-      await _firestore.collection('courses')
-          .doc(activityId)
-          .delete();
+      // buscar todos os usuários
+      final usersSnapshot = await _firestore.collection('users').get();
+
+      for (final userDoc in usersSnapshot.docs) {
+        final userId = userDoc.id;
+
+        // referência para o documento na subcoleção 'courses' do usuário
+        final userCourseRef = _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('enrolled_courses')
+            .doc(activityId);
+
+        final userCourseDoc = await userCourseRef.get();
+
+        // se existir, deletar
+        if (userCourseDoc.exists) {
+          await userCourseRef.delete();
+        }
+      }
+
+      // deletar a atividade principal
+      await _firestore.collection('courses').doc(activityId).delete();
+
       return const Result.ok(null);
     } catch (e) {
-      return Result.error(Exception('Erro ao excluir atividade: $e'));
+      return Result.error(Exception('A exclusão da atividade falhou'));
     }
   }
 
@@ -168,6 +194,17 @@ class DatabaseService {
           .collection('users')
           .doc(instructorId)
           .get();
+
+      if (!instructorDoc.exists) {
+        return Result.error(Exception('Usuário não encontrado'));
+      }
+
+      final data = instructorDoc.data()!;
+      
+      // verifica se o usuário é um instrutor
+      if (data['type']?.toLowerCase() != 'instructor') {
+        return Result.error(Exception('O usuário não é um instrutor'));
+      }
 
       final myCourses = List<String>.from(instructorDoc.data()?['my_courses'] ?? []);
 
@@ -242,24 +279,56 @@ class DatabaseService {
 
   Future<Result<void>> subscribe({required User user, required Activity activity}) async {
     try {
-      // adicionar o aluno na lista de 'students' da atividade
-      await _firestore
-          .collection('courses')
-          .doc(activity.id)
-          .update({
-            'students': FieldValue.arrayUnion([user.id]),
-          });
+      final docRef = _firestore.collection('courses').doc(activity.id);
 
-      // adicionar a atividade na subcoleção 'courses' do usuário
-      await _firestore
-          .collection('users')
-          .doc(user.id)
-          .collection('enrolled_courses')
-          .doc(activity.id)
-          .set({
-            'userId': activity.userId, // id do professor
-            'status': 'active', // status de inscrição
-          });
+      // busca o documento para checar vagas
+      final docSnap = await docRef.get();
+
+      if (!docSnap.exists) {
+        return Result.error(Exception('Atividade não encontrada'));
+      }
+
+      final data = docSnap.data()!;
+      final remainingVacanciesStr = data['remainingVacancies'] ?? '';
+      final remainingVacancies = remainingVacanciesStr.isEmpty
+          ? 0
+          : int.tryParse(remainingVacanciesStr) ?? 0;
+
+      if (remainingVacancies <= 0) {
+        return Result.error(Exception('Não há vagas disponíveis'));
+      }
+
+      // transação para evitar condições de corrida
+      await _firestore.runTransaction((transaction) async {
+        final freshSnap = await transaction.get(docRef);
+        final freshData = freshSnap.data()!;
+        final currentVacanciesStr = freshData['remainingVacancies'] ?? '';
+        final currentVacancies = currentVacanciesStr.isEmpty
+            ? 0
+            : int.tryParse(currentVacanciesStr) ?? 0;
+
+        if (currentVacancies <= 0) {
+          throw Exception('Não há vagas disponíveis');
+        }
+
+        // atualiza o número de vagas e adiciona aluno na lista
+        transaction.update(docRef, {
+          'remainingVacancies': (currentVacancies - 1).toString(),
+          'students': FieldValue.arrayUnion([user.id]),
+        });
+
+        // adiciona a inscrição do usuário
+        final userCourseRef = _firestore
+            .collection('users')
+            .doc(user.id)
+            .collection('enrolled_courses')
+            .doc(activity.id);
+
+        transaction.set(userCourseRef, {
+          'userId': activity.userId,
+          'status': 'active',
+        });
+      });
 
       return Result.ok(null);
     } catch (e) {
@@ -269,21 +338,39 @@ class DatabaseService {
 
   Future<Result<void>> unsubscribe({required User user, required Activity activity}) async {
     try {
-      // remover o aluno na lista de 'students' da atividade
-      await _firestore
-          .collection('courses')
-          .doc(activity.id)
-          .update({
-            'students': FieldValue.arrayRemove([user.id]),
-          });
+      final docRef = _firestore.collection('courses').doc(activity.id);
 
-      // atualizar o status da atividade na subcoleção 'courses' do usuário
-      await _firestore
-          .collection('users')
-          .doc(user.id)
-          .collection('enrolled_courses')
-          .doc(activity.id)
-          .update({'status': 'canceled'});
+      await _firestore.runTransaction((transaction) async {
+        final docSnap = await transaction.get(docRef);
+
+        if (!docSnap.exists) {
+          throw Exception('Atividade não encontrada');
+        }
+
+        final data = docSnap.data()!;
+        final remainingVacanciesStr = data['remainingVacancies'] ?? '';
+        final remainingVacancies = remainingVacanciesStr.isEmpty
+            ? 0
+            : int.tryParse(remainingVacanciesStr) ?? 0;
+
+        // incrementa 1 vaga
+        final newRemaining = remainingVacancies + 1;
+
+        // atualiza vagas e remove aluno da lista
+        transaction.update(docRef, {
+          'remainingVacancies': newRemaining.toString(),
+          'students': FieldValue.arrayRemove([user.id]),
+        });
+
+        // atualiza status no usuário
+        final userCourseRef = _firestore
+            .collection('users')
+            .doc(user.id)
+            .collection('enrolled_courses')
+            .doc(activity.id);
+
+        transaction.update(userCourseRef, {'status': 'canceled'});
+      });
 
       return Result.ok(null);
     } catch (e) {
@@ -303,6 +390,38 @@ class DatabaseService {
       return Result.ok(null);
     } catch (e) {
       return Result.error(Exception('O envio do comentário falhou'));
+    }
+  }
+
+  Future<Result<List<String>>> getStudentsNames({required String activityId}) async {
+    try {
+      final activityDoc = await _firestore
+          .collection('courses')
+          .doc(activityId)
+          .get();
+
+      if (!activityDoc.exists) {
+        return Result.error(Exception('Atividade não encontrada'));
+      }
+
+      final ids = List<String>.from(activityDoc.data()?['students'] ?? []);
+
+      final futures = ids.map((id) async {
+        final userDoc = await _firestore.collection('users').doc(id).get();
+        if (!userDoc.exists) {
+          return 'Desconhecido';
+        }
+        final data = userDoc.data()!;
+        return data['name'] as String;
+      });
+
+      final names = await Future.wait(futures);
+
+      return Result.ok(names);
+    } catch (e) {
+      return Result.error(
+        Exception('Não foi possível carregar os nomes dos alunos'),
+      );
     }
   }
 }

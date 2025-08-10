@@ -61,7 +61,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => ActivityRepository(
             databaseService: context.read(),
-            preferencesService: context.read()
+            preferencesService: context.read(),
+            storageService: context.read(),
+            imageService: context.read(),
           ),
         ),
       ],

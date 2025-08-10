@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:ibie/ui/widgets/custom_white_button.dart';
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/custom_dropdown.dart';
 import 'package:ibie/ui/widgets/login_prompt.dart';

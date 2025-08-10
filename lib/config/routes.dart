@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ibie/ui/activities/activity_details/activity_details_instructor_page.dart';
 import 'package:ibie/ui/activities/instructor_details/instructor_details_page.dart';
 import 'package:ibie/ui/activities/instructor_details/instructor_details_view_model.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,12 @@ import 'package:ibie/data/repositories/sign_up_repository.dart';
 import 'package:ibie/data/repositories/user_repository.dart';
 import 'package:ibie/data/repositories/activity_repository.dart';
 
+class ActivityDetailsArgs {
+  final ActivityDetailsViewmodel viewModel;
+  final String activityId;
+  ActivityDetailsArgs(this.viewModel, this.activityId);
+}
+
 Map<String, Widget Function(BuildContext)> appRoutes = {
   '/welcome': (context) => WelcomePage(),
   '/login': (context) => LoginPage(
@@ -58,19 +65,15 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
     ),
   ),
   '/registerStudentPhoto': (context) {
-    final viewModel =
-        ModalRoute.of(context)!.settings.arguments as RegisterStudentViewmodel;
+    final viewModel = ModalRoute.of(context)!.settings.arguments as RegisterStudentViewmodel;
     return RegisterStudentPhotoPage(viewModel: viewModel);
   },
   '/registerInstructorPhoto': (context) {
-    final viewModel =
-        ModalRoute.of(context)!.settings.arguments
-            as RegisterInstructorViewmodel;
+    final viewModel = ModalRoute.of(context)!.settings.arguments as RegisterInstructorViewmodel;
     return RegisterInstructorPhotoPage(viewModel: viewModel);
   },
   '/preferences': (context) {
-    final viewModel =
-        ModalRoute.of(context)!.settings.arguments as RegisterStudentViewmodel;
+    final viewModel = ModalRoute.of(context)!.settings.arguments as RegisterStudentViewmodel;
     return PreferencesPage(viewModel: viewModel);
   },
   '/successStudent': (context) => SuccessStudentPage(),
@@ -88,8 +91,8 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
     final activityId = ModalRoute.of(context)!.settings.arguments as String;
     return ActivityDetailsPage(
       viewModel: ActivityDetailsViewmodel(
-        userRepository: context.read<UserRepository>(),
         activityRepository: context.read<ActivityRepository>(),
+        userRepository: context.read<UserRepository>(),
       ),
       activityId: activityId,
     );
@@ -105,8 +108,8 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   },
   '/myActivities': (context) => MyActivitiesPage(
     viewModel: MyActivitiesViewmodel(
-      userRepository: context.read<UserRepository>(),
       activityRepository: context.read<ActivityRepository>(),
+      userRepository: context.read<UserRepository>(),
     ),
   ),
   '/activityFormDetails': (context) => ActivityFormDetailsPage(
@@ -116,13 +119,18 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
     ),
   ),
   '/activityFormLocation': (context) {
-    final viewModel =
-        ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
+    final viewModel = ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
     return ActivityFormLocationPage(viewModel: viewModel);
   },
   '/activityFormResources': (context) {
-    final viewModel =
-        ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
+    final viewModel = ModalRoute.of(context)!.settings.arguments as ActivityFormViewModel;
     return ActivityFormResourcesPage(viewModel: viewModel);
+  },
+  '/activityDetailsInstructor': (context) {
+    final args = ModalRoute.of(context)!.settings.arguments as ActivityDetailsArgs;
+    return ActivityDetailsInstructorPage(
+      viewModel: args.viewModel,
+      activityId: args.activityId,
+    );
   },
 };

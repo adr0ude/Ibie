@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:ibie/ui/activities/my_activities/my_activities_viewmodel.dart';
+import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
 
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
-import 'package:ibie/ui/widgets/custom_summary_card.dart';
+import 'package:ibie/ui/widgets/cards/custom_student_summary_card.dart';
+import 'package:ibie/ui/widgets/cards/custom_instructor_summary_card.dart';
+import 'package:ibie/ui/activities/my_activities/contents/empty_screen_instructor.dart';
+import 'package:ibie/ui/activities/my_activities/contents/empty_screen_student.dart';
+import 'package:ibie/ui/activities/my_activities/my_activities_viewmodel.dart';
 
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
+
+import 'package:ibie/models/activity.dart';
+import 'package:ibie/models/enrolled_activity.dart';
 
 class MyActivitiesPage extends StatefulWidget {
   const MyActivitiesPage({super.key, required this.viewModel});
@@ -41,6 +46,37 @@ class _MyActivitiesPageState extends State<MyActivitiesPage> {
     }
   }
 
+  Widget _buildEnrolledActivityCards(
+    List<EnrolledActivity> enrolledActivities,
+  ) {
+    return Column(
+      children: enrolledActivities.map((a) {
+        return CustomStudentSummaryCard(
+          activity: a,
+          onCardTap: () {
+            Navigator.pushNamed(context, '/activity', arguments: a.activity.id);
+          },
+          onInstructorTap: () {
+            Navigator.pushNamed(context, '/instructor', arguments: a.activity.userId);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildMyActivityCards(List<Activity> myActivities) {
+    return Column(
+      children: myActivities.map((a) {
+        return CustomInstructorSummaryCard(
+          activity: a,
+          onCardTap: () {
+            Navigator.pushNamed(context, '/activity', arguments: a.id);
+          },
+        );
+      }).toList(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -54,77 +90,70 @@ class _MyActivitiesPageState extends State<MyActivitiesPage> {
           ),
 
           body: viewModel.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF9A31C9)),
-                )
-              : viewModel.activities.isEmpty
-              ? Center(
-                child: Column(
-                    children: [
-                      SizedBox(height: 70),
-                      Text(
-                        'Não há atividades',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Color(0xFF000000),
-                          fontFamily: 'Comfortaa',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'inscritas para mostrar!',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Color(0xFF000000),
-                          fontFamily: 'Comfortaa',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 130),
-                      SvgPicture.asset(
-                        'assets/empty_icon.svg',
-                        width: 285,
-                        height: 210.9,
-                      ),
-                      SizedBox(height: 130),
-                      Text(
-                        'Clique no botão abaixo para\n descobrir novas atividades.',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Color(0xFF000000),
-                          fontFamily: 'Comfortaa',
-                        ),
-                      ),
-                      SizedBox(height: 70),
-                      CustomPurpleButton(
-                        label: 'Explorar novas atividades', 
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        },
-                        size: Size(354, 52),
-                      ),
-                    ],
-                  ),
-              )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(22),
-                  child: Column(
-                    children: viewModel.activities.map((a) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: CustomSummaryCard(
-                          activity: a,
-                          onCardTap: () {
-                            Navigator.pushNamed(context, '/activity', arguments: a.activity.id);
-                          },
-                          onProfessorTap: () {
-                            print('professor clicado');
-                          },
-                        ),
-                      );
-                    }).toList(),
+    ? const Center(
+        child: CircularProgressIndicator(color: Color(0xFF9A31C9)),
+      )
+    : viewModel.enrolledActivities.isEmpty && viewModel.myActivities.isEmpty
+        ? viewModel.type == 'student'
+            ? EmptyScreenStudent()
+            : EmptyScreenInstructor()
+        : Padding(
+            padding: const EdgeInsets.all(22),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        if (viewModel.type.isNotEmpty && viewModel.type == 'student')
+                          _buildEnrolledActivityCards(viewModel.enrolledActivities),
+                        if (viewModel.type.isNotEmpty && viewModel.type == 'instructor') ...[
+                          if (viewModel.enrolledActivities.isNotEmpty)
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Atividades Inscritas",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF9A31C9),
+                                  fontFamily: 'Comfortaa',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          _buildEnrolledActivityCards(viewModel.enrolledActivities),
+                          SizedBox(height: 10),
+                          if (viewModel.myActivities.isNotEmpty)
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Gerenciar Atividades",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF9A31C9),
+                                  fontFamily: 'Comfortaa',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          _buildMyActivityCards(viewModel.myActivities),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
+                if (viewModel.type == 'instructor')
+                  CustomWhiteButton(
+                    label: 'Adicionar atividade',
+                    isGreen: true,
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/activityFormDetails');
+                    },
+                    size: Size(354, 52),
+                  ),
+              ],
+            ),
+          ),
         );
       },
     );

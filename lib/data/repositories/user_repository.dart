@@ -10,6 +10,7 @@ import 'package:ibie/data/services/image_service.dart';
 import 'package:ibie/data/services/storage_service.dart';
 
 abstract class IUserRepository extends ChangeNotifier {
+  Future<Result<String>> isLoggedIn();
   Future<Result<User>> getUserData();
   Future<Result<void>> updateUserData({required User user, String? newPhoto});
   Future<Result<void>> sendPasswordResetEmail({String? email});
@@ -40,6 +41,21 @@ class UserRepository extends IUserRepository {
   final StorageService _storageService;
 
   @override
+  Future<Result<String>> isLoggedIn() async {
+    try {
+      final uidResult = await _authService.getUserUid();
+      switch (uidResult) {
+        case Ok(value: final uid):
+          return Result.ok(uid);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+  
+  @override
   Future<Result<User>> getUserData() async {
     try {
       final userResult = await _preferencesService.getUserData();
@@ -61,7 +77,7 @@ class UserRepository extends IUserRepository {
         // se há uma nova foto
         if (user.photo.isNotEmpty) {
           // se já havia uma foto
-          final deleteResult = await _storageService.deleteImage(imageUrl: user.photo); // deleta a antiga
+          final deleteResult = await _storageService.deleteUserImage(imageUrl: user.photo); // deleta a antiga
           switch (deleteResult) {
             case Ok():
               break;
@@ -83,7 +99,7 @@ class UserRepository extends IUserRepository {
         // se há uma nova foto
         if (newPhoto.isEmpty && user.photo.isNotEmpty) {
           // ela é vazia e a antiga não
-          final deleteResult = await _storageService.deleteImage(imageUrl: user.photo); // deleta a antiga
+          final deleteResult = await _storageService.deleteUserImage(imageUrl: user.photo); // deleta a antiga
           switch (deleteResult) {
             case Ok():
               break;
@@ -117,7 +133,7 @@ class UserRepository extends IUserRepository {
   @override
   Future<Result<void>> deleteProfileImage({required User user}) async {
     try {
-      final deleteResult = await _storageService.deleteImage(imageUrl: user.photo); // deleta a antiga
+      final deleteResult = await _storageService.deleteUserImage(imageUrl: user.photo); // deleta a antiga
       switch (deleteResult) {
         case Ok():
           user = user.copyWith(photo: '');

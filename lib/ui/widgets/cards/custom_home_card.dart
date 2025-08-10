@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ibie/models/activity.dart';
+import 'package:ibie/utils/show_ask_to_login.dart';
 
 class CustomCardHome extends StatelessWidget {
   final Activity activity;
   final VoidCallback onPressed;
+  final bool isLoggedIn;
 
-  const CustomCardHome({super.key, required this.activity, required this.onPressed});
+  const CustomCardHome({super.key, required this.activity, required this.onPressed, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +83,14 @@ class CustomCardHome extends StatelessWidget {
                         SizedBox(width: 6),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/instructor', arguments: activity.userId);
+                            if(isLoggedIn) {
+                              Navigator.pushNamed(context, '/instructor', arguments: activity.userId);
+                            } else {
+                              showAskToLogin(context: context);
+                            }
                           },
                           child: Text(
-                            "Professor(a) ${activity.userName}",
+                            "Prof. ${activity.userName}",
                             style: TextStyle(
                               decoration: TextDecoration.underline,
                             ),

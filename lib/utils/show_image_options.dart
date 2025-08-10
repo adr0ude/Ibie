@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:ibie/ui/widgets/custom_white_button.dart';
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
-import 'package:ibie/ui/widgets/custom_green_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_green_button.dart';
 
 Future<void> showImageOptions({
-  required BuildContext context, 
-  required VoidCallback onCamera, 
-  required VoidCallback onGallery, 
-  required VoidCallback onDelete}) async {
+  required BuildContext context,
+  required VoidCallback onCamera,
+  required VoidCallback onGallery,
+  required VoidCallback onDelete,
+  bool showTitle = true,
+}) async {
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -23,16 +25,18 @@ Future<void> showImageOptions({
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 5),
-            const Text(
-              'Escolha a foto para seu perfil:',
-              style: TextStyle(
-                fontSize: 18,
-                fontFamily: 'Comfortaa',
-                fontWeight: FontWeight.w600,
+            if (showTitle) ...[
+              const SizedBox(height: 5),
+              const Text(
+                'Escolha a foto para seu perfil:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Comfortaa',
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: 15),
+              const SizedBox(height: 15),
+            ],
             SizedBox(
               width: double.infinity,
               child: CustomPurpleButton(

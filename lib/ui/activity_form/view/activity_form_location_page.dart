@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:ibie/ui/widgets/custom_white_button.dart';
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/custom_dropdown.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/list_cities.dart';
 import 'package:ibie/ui/widgets/progress_bar.dart';
+import 'package:ibie/utils/input_formatters.dart';
+import 'package:ibie/utils/show_pop_up.dart';
 
 import 'package:ibie/ui/activity_form/activity_form_viewmodel.dart';
 
@@ -16,7 +18,8 @@ class ActivityFormLocationPage extends StatefulWidget {
   final ActivityFormViewModel viewModel;
 
   @override
-  State<ActivityFormLocationPage> createState() => _ActivityFormLocationPagePageState();
+  State<ActivityFormLocationPage> createState() =>
+      _ActivityFormLocationPagePageState();
 }
 
 class _ActivityFormLocationPagePageState
@@ -31,6 +34,9 @@ class _ActivityFormLocationPagePageState
 
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _cepController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,8 +44,8 @@ class _ActivityFormLocationPagePageState
       appBar: CustomAppBar(
         title: 'Cadastro de Nova Atividade',
         onBack: () {
-          viewModel.goToPreviousPage(); // <-- Atualiza a barra de progresso
-          Navigator.pop(context); // <-- Volta para a tela anterior
+          viewModel.goToPreviousPage();
+          Navigator.pop(context);
         },
       ),
 
@@ -77,51 +83,43 @@ class _ActivityFormLocationPagePageState
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
-                    onChanged: (value) => viewModel.title = value,
+                    controller: _dateController,
+                    inputFormatters: [dateFormatter],
+                    keyboardType: TextInputType.number,
                     decoration: decorationForm("Data *"),
+                    onChanged: (value) => viewModel.date = value,
+                    validator: (value) => viewModel.validateDate(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe uma data válida.';
-                      }
-                      return null;
-                    },
                   ),
                 ),
                 SizedBox(height: 29),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _cpfController,
-                    onChanged: (value) => viewModel.description = value,
-                    textAlignVertical: TextAlignVertical.top,
+                    controller: _timeController,
+                    inputFormatters: [timeFormatter],
+                    keyboardType: TextInputType.number,
                     decoration: decorationForm("Horário *"),
+                    onChanged: (value) => viewModel.time = value,
+                    validator: (value) => viewModel.validateTime(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe um horário válido.';
-                      }
-                      return null;
-                    },
                   ),
                 ),
                 SizedBox(height: 29),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
-                    onChanged: (value) => viewModel.title = value,
+                    onChanged: (value) => viewModel.location = value,
                     maxLength: 100,
                     decoration: decorationForm("Local *"),
                     style: TextStyle(
@@ -156,8 +154,7 @@ class _ActivityFormLocationPagePageState
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _cpfController,
-                    onChanged: (value) => viewModel.description = value,
+                    onChanged: (value) => viewModel.street = value,
                     maxLength: 100,
                     textAlignVertical: TextAlignVertical.top,
                     decoration: decorationForm("Rua *"),
@@ -181,8 +178,7 @@ class _ActivityFormLocationPagePageState
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _cpfController,
-                    onChanged: (value) => viewModel.description = value,
+                    onChanged: (value) => viewModel.number = value,
                     textAlignVertical: TextAlignVertical.top,
                     decoration: decorationForm("Número"),
                     style: TextStyle(
@@ -197,8 +193,7 @@ class _ActivityFormLocationPagePageState
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _cpfController,
-                    onChanged: (value) => viewModel.description = value,
+                    onChanged: (value) => viewModel.neighborhood = value,
                     maxLength: 50,
                     textAlignVertical: TextAlignVertical.top,
                     decoration: decorationForm("Bairro *"),
@@ -263,21 +258,18 @@ class _ActivityFormLocationPagePageState
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
-                    onChanged: (value) => viewModel.targetAudience = value,
+                    controller: _cepController,
+                    inputFormatters: [cepFormatter],
+                    keyboardType: TextInputType.number,
                     decoration: decorationForm("CEP *"),
+                    onChanged: (value) => viewModel.cep = value,
+                    validator: (value) => viewModel.validateCep(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value != null && value.length > 9) {
-                        return 'Informe um CEP válido.';
-                      }
-                      return null;
-                    },
                   ),
                 ),
                 SizedBox(height: 6),
@@ -290,7 +282,15 @@ class _ActivityFormLocationPagePageState
                     CustomWhiteButton(
                       label: 'Cancelar',
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        showPopUp(
+                          context: context,
+                          title: 'Cancelar Cadastro',
+                          text:
+                              'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          },
+                        );
                       },
                       size: Size(175, 40),
                     ),
@@ -299,7 +299,11 @@ class _ActivityFormLocationPagePageState
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           viewModel.goToNextPage();
-                          Navigator.pushNamed(context, '/activityFormResources', arguments: widget.viewModel);
+                          Navigator.pushNamed(
+                            context,
+                            '/activityFormResources',
+                            arguments: widget.viewModel,
+                          );
                         }
                       },
                       size: Size(175, 40),

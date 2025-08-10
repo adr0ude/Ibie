@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/results.dart';
@@ -90,6 +90,16 @@ class _LoginPageState extends State<LoginPage> {
                     child: SizedBox(
                       width: 365,
                       child: TextFormField(
+                        maxLength: 256,
+                        buildCounter:
+                            (
+                              BuildContext context, {
+                              required int currentLength,
+                              required bool isFocused,
+                              required int? maxLength,
+                            }) {
+                              return SizedBox.shrink();
+                            },
                         onChanged: (value) => viewModel.email = value,
                         decoration: decorationForm("E-mail *"),
                         style: TextStyle(
@@ -100,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Informe seu E-mail!';
+                            return 'Informe seu e-mail.';
                           }
                           return null;
                         },
@@ -121,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: _hidePass,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Informe sua Senha!';
+                          return 'Informe sua senha.';
                         }
                         return null;
                       },

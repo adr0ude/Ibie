@@ -96,9 +96,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             ),
                           ),
                         ),
-
                         SizedBox(height: 14),
-
                         OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -112,7 +110,9 @@ class _WelcomePageState extends State<WelcomePage> {
                               borderRadius: BorderRadiusGeometry.circular(10),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          },
                           child: const Text(
                             'Entrar como visitante',
                             style: TextStyle(

@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/custom_drawer.dart';
 import 'package:ibie/utils/results.dart';
+import 'package:ibie/utils/show_ask_to_login.dart';
 import 'package:ibie/utils/show_complete_profile.dart';
 import 'package:ibie/utils/show_error_message.dart';
-import 'package:ibie/ui/widgets/custom_card_home.dart';
+import 'package:ibie/ui/widgets/cards/custom_home_card.dart';
 
 import 'package:ibie/ui/home/home_viewmodel.dart';
 
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     final messageResult = await viewModel.getCompleteProfileMessage();
     switch (messageResult) {
       case Ok():
-        if (!viewModel.hasShowCompleteProfileMessage) {
+        if (!viewModel.hasShowCompleteProfileMessage && viewModel.isLoggedIn) {
           final setResult = await viewModel.setCompleteProfileMessage();
           switch (setResult) {
             case Ok():
@@ -81,13 +82,18 @@ class _HomePageState extends State<HomePage> {
         name: viewModel.name,
         photo: viewModel.photo,
         type: viewModel.type,
+        isLoggedIn: viewModel.isLoggedIn,
         onLogOut: () async {
-          final logOutResult = await viewModel.logOut();
-          switch (logOutResult) {
-            case Ok():
-              Navigator.pushReplacementNamed(context, '/welcome');
-            case Error():
-              showErrorMessage(context, logOutResult.errorMessage);
+          if(viewModel.isLoggedIn) {
+            final logOutResult = await viewModel.logOut();
+            switch (logOutResult) {
+              case Ok():
+                Navigator.pushReplacementNamed(context, '/welcome');
+              case Error():
+                showErrorMessage(context, logOutResult.errorMessage);
+            }
+          } else {
+            Navigator.pushReplacementNamed(context, '/welcome');
           }
         },
       ),
@@ -126,12 +132,13 @@ class _HomePageState extends State<HomePage> {
                                   width: 365,
                                   child: CustomCardHome(
                                     activity: activity,
+                                    isLoggedIn: viewModel.isLoggedIn,
                                     onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/activity',
-                                        arguments: activity.id,
-                                      );
+                                      if(viewModel.isLoggedIn) {
+                                        Navigator.pushNamed(context, '/activity', arguments: activity.id);
+                                      } else {
+                                        showAskToLogin(context: context);
+                                      }
                                     },
                                   ),
                                 ),

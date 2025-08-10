@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
-import 'package:ibie/ui/widgets/custom_white_button.dart';
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/login_prompt.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 
 class SuccessInstructorPage extends StatelessWidget {
   const SuccessInstructorPage({super.key});

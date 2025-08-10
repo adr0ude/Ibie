@@ -58,7 +58,7 @@ class AuthService {
       return const Result.ok(null);
     } catch (e) {
       return Result.error(
-        Exception("Erro ao enviar email de redefinição de senha"),
+        Exception("Erro ao enviar email"),
       );
     }
   }

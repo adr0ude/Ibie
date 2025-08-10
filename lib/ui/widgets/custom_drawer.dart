@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ibie/ui/widgets/custom_green_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_green_button.dart';
 import 'package:ibie/ui/widgets/custom_profile_avatar.dart';
-import 'package:ibie/ui/widgets/custom_white_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
+import 'package:ibie/utils/show_ask_to_login.dart';
 
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({
@@ -10,12 +12,14 @@ class CustomDrawer extends StatefulWidget {
     required this.name,
     required this.photo,
     required this.type,
+    required this.isLoggedIn,
     required this.onLogOut,
   });
 
   final String name;
   final String photo;
   final String type;
+  final bool isLoggedIn;
   final VoidCallback onLogOut;
 
   @override
@@ -59,12 +63,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
           SizedBox(height: 100),
           Text(
-            widget.name,
+            !widget.isLoggedIn
+              ? 'Sem login'
+            : widget.name,
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontWeight: FontWeight.w600,
               fontSize: 18,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: 12),
           Text(
@@ -72,7 +79,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ? 'ALUNO'
                 : widget.type.toLowerCase() == 'instructor'
                 ? 'INSTRUTOR'
-                : widget.type.toUpperCase(),
+                : 'VISITANTE',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontWeight: FontWeight.w600,
@@ -81,29 +88,71 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
           ),
           SizedBox(height: 18),
-          CustomWhiteButton(
-            label: 'Perfil',
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
-            },
-            size: Size(280, 50),
-          ),
-          SizedBox(height: 9),
-          CustomWhiteButton(
-            label: 'Minhas Atividades',
-            onPressed: () {
-              Navigator.pushNamed(context, '/myActivities');
-            },
-            size: Size(280, 50),
-          ),
-          SizedBox(height: 350),
-          CustomGreenButton(
-            label: 'Sair',
-            onPressed: () {
-              widget.onLogOut();
-            },
-            size: Size(280, 50),
-          ),
+          if(!widget.isLoggedIn) ...[
+            CustomWhiteButton(
+              label: 'Perfil',
+              onPressed: () {
+                showAskToLogin(context: context);
+              },
+              size: Size(280, 50),
+              isDisabled: true,
+            ),
+            SizedBox(height: 9),
+            CustomWhiteButton(
+              label: 'Minhas Atividades',
+              onPressed: () {
+                showAskToLogin(context: context);
+              },
+              size: Size(280, 50),
+              isDisabled: true,
+            ),
+            SizedBox(height: 200),
+            Center(
+              child: Text(
+                'Entre na sua conta ou\ncadastre-se para acessar\ntodos os recursos do Ibiê!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: const Color(0xFF000000),
+                  fontFamily: 'Comfortaa',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            SizedBox(height: 50),
+            CustomPurpleButton(
+              label: 'Fazer login',
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              size: Size(280, 50),
+            ),
+          ],
+          if(widget.isLoggedIn) ...[
+            CustomWhiteButton(
+              label: 'Perfil',
+              onPressed: () {
+                Navigator.pushNamed(context, '/profile');
+              },
+              size: Size(280, 50),
+            ),
+            SizedBox(height: 9),
+            CustomWhiteButton(
+              label: 'Minhas Atividades',
+              onPressed: () {
+                Navigator.pushNamed(context, '/myActivities');
+              },
+              size: Size(280, 50),
+            ),
+            SizedBox(height: 330),
+            CustomGreenButton(
+              label: 'Sair',
+              onPressed: () {
+                widget.onLogOut();
+              },
+              size: Size(280, 50),
+            ),
+          ],
         ],
       ),
     );

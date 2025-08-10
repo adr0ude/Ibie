@@ -64,16 +64,13 @@ class ActivityFormViewModel extends ChangeNotifier {
   List<ActivityCategory> get availableCategories => defaultCategories;
   String get selectedCategory => _category;
   String get selectedAccessibility => _accessibilityResources;
+  String get image => _image;
 
   bool get isEditing => _id.isNotEmpty;
 
   set title(String value) => _title = value.trim();
   set description(String value) => _description = value.trim();
-  set category(String value) {
-    _category = value;
-    notifyListeners();
-  }
-
+  set category(String value) => _category = value.trim();
   set targetAudience(String value) => _targetAudience = value.trim();
   set date(String value) => _date = value.trim();
   set time(String value) => _time = value.trim();
@@ -91,30 +88,6 @@ class ActivityFormViewModel extends ChangeNotifier {
   set accessibilityDescription(String value) =>
       _accessibilityDescription = value.trim();
 
-  bool isValidDate(String input) {
-    final parsed = DateTime.tryParse(input);
-    return parsed != null;
-  }
-
-/*
-  bool get isFormValid =>
-      _title.isNotEmpty &&
-      _description.isNotEmpty &&
-      _category.isNotEmpty &&
-      _date.isNotEmpty &&
-      _time.isNotEmpty &&
-      _location.isNotEmpty &&
-      _street.isNotEmpty &&
-      _neighborhood.isNotEmpty &&
-      _city.isNotEmpty &&
-      _cep.isNotEmpty &&
-      _targetAudience.isNotEmpty &&
-      _image.isNotEmpty &&
-      _vacancies.isNotEmpty &&
-      _accessibilityDescription.isNotEmpty &&
-      _accessibilityResources.isNotEmpty;
-
-*/
   void loadActivity(Activity activity) {
     _id = activity.id;
     _title = activity.title;
@@ -137,13 +110,28 @@ class ActivityFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<void>> submitForm() async {
-    /*
-    if (!isFormValid) {
-      return Result.error(Exception("Preencha todos os campos obrigatórios"));
-    }
-    */
+  Future<Result<void>> pickImage(String source) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      final photoResult = await _activityRepository.pickActivityImage(
+        source: source,
+      );
 
+      switch (photoResult) {
+        case Ok(value: final picture):
+          _image = picture!;
+          return const Result.ok(null);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> submitForm() async {
     _isLoading = true;
     notifyListeners();
 
@@ -175,6 +163,7 @@ class ActivityFormViewModel extends ChangeNotifier {
             neighborhood: _neighborhood,
             city: _city,
             cep: _cep,
+            remainingVacancies: _vacancies,
             vacancies: _vacancies,
             fee: _fee,
             accessibilityResources: _accessibilityResources,
@@ -197,5 +186,64 @@ class ActivityFormViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  String? validateDate(String date) {
+    if (date.trim().isEmpty) return 'Informe uma data.';
+
+    final parts = date.split('/');
+    if (parts.length != 3) return 'Informe uma data válida.';
+
+    try {
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+
+      final parsedDate = DateTime(year, month, day);
+
+      if (parsedDate.day != day ||
+          parsedDate.month != month ||
+          parsedDate.year != year) {
+        return 'Informe uma data válida.';
+      }
+
+      if (parsedDate.isBefore(DateTime.now())) {
+        return 'Informe uma data futura.';
+      }
+
+      return null;
+    } catch (_) {
+      return 'Insira uma data válida';
+    }
+  }
+
+  String? validateTime(String time) {
+    if (time.trim().isEmpty) return 'Informe um horário.';
+
+    final parts = time.split(':');
+    if (parts.length != 2) return 'Informe um horário válido.';
+
+    try {
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+
+      if (hour < 0 || hour > 23) return 'Hora inválida.';
+      if (minute < 0 || minute > 59) return 'Minutos inválidos.';
+
+      return null;
+    } catch (_) {
+      return 'Informe um horário válido.';
+    }
+  }
+
+  String? validateCep(String cep) {
+    if (cep.trim().isEmpty) return 'Informe o CEP.';
+
+    final cepRegex = RegExp(r'^\d{5}-\d{3}$');
+    if (!cepRegex.hasMatch(cep)) {
+      return 'Informe um CEP válido.';
+    }
+
+    return null;
   }
 }

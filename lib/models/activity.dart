@@ -12,6 +12,7 @@ class Activity {
   final String neighborhood;
   final String city;
   final String cep;
+  final String remainingVacancies;
   final String vacancies;
   final String fee;
   final String accessibilityResources;
@@ -39,6 +40,7 @@ class Activity {
     required this.status,
     required this.targetAudience,
     required this.number,
+    required this.remainingVacancies,
     required this.vacancies,
     required this.fee,
     required this.accessibilityResources,
@@ -61,6 +63,7 @@ class Activity {
     String? city,
     String? cep,
     String? targetAudience,
+    String? remainingVacancies,
     String? vacancies,
     String? fee,
     String? accessibilityResources,
@@ -85,6 +88,7 @@ class Activity {
       city: city ?? this.city,
       cep: cep ?? this.cep,
       targetAudience: targetAudience ?? this.targetAudience,
+      remainingVacancies: remainingVacancies ?? this.remainingVacancies,
       vacancies: vacancies ?? this.vacancies,
       fee: fee ?? this.fee,
       accessibilityResources:
@@ -114,6 +118,7 @@ class Activity {
       city: map['city'] ?? '',
       cep: map['cep'] ?? '',
       targetAudience: map['targetAudience'] ?? '',
+      remainingVacancies: map['remainingVacancies'] ?? '',
       vacancies: map['vacancies'] ?? '',
       fee: map['fee'] ?? '',
       accessibilityResources: map['accessibilityDescription'] ?? '',
@@ -140,6 +145,7 @@ class Activity {
       'city': city,
       'cep': cep,
       'targetAudience': targetAudience,
+      'remainingVacancies': remainingVacancies,
       'vacancies': vacancies,
       'fee': fee,
       'accessibilityResources': accessibilityResources,

@@ -16,6 +16,7 @@ class HomeViewmodel extends ChangeNotifier {
   final IUserRepository _userRepository;
   final IActivityRepository _activityRepository;
 
+  bool _isLoggedIn = false;
   bool _isLoading = false;
   bool _hasShowCompleteProfileMessage = false;
   User? _user;
@@ -26,6 +27,7 @@ class HomeViewmodel extends ChangeNotifier {
   List<Activity> get activities => _activities;
   Map<String, List<Activity>> get categories => _categories;
 
+  bool get isLoggedIn => _isLoggedIn;
   bool get isLoading => _isLoading;
   bool get hasShowCompleteProfileMessage => _hasShowCompleteProfileMessage;
   User? get user => _user;
@@ -37,22 +39,34 @@ class HomeViewmodel extends ChangeNotifier {
   Future<Result<void>> init() async {
     try {
       _isLoading = true;
-      final userResult = await _userRepository.getUserData();
-      switch (userResult) {
-        case Ok(value: final user):
-          _user = user;
-          final activitiesResult = await _activityRepository.getActivities();
-          switch (activitiesResult) {
-            case Ok(value: final activities):
-              _activities = activities;
-              _categorizeActivities();
-              return Result.ok(null);
+      final activitiesResult = await _activityRepository.getActivities();
+      switch (activitiesResult) {
+        case Ok(value: final activities):
+          _activities = activities;
+          _categorizeActivities();
+          final uidResult = await _userRepository.isLoggedIn();
+          switch (uidResult) {
+            case Ok():
+              final userResult = await _userRepository.getUserData();
+              switch (userResult) {
+                case Ok(value: final user):
+                  _user = user;
+                  _isLoggedIn = true;
+                  return Result.ok(null);
+                case Error(error: final e):
+                  return Result.error(e);
+              }
             case Error(error: final e):
-              return Result.error(e);
+              if (e.toString().contains("Nenhum usuário está autenticado")) {
+                _isLoggedIn = false;
+                return Result.ok(null);
+              } else {
+                return Result.error(e);
+              }
           }
         case Error(error: final e):
           return Result.error(e);
-      }
+        }
     } finally {
       _isLoading = false;
       notifyListeners();

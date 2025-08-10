@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ibie/models/enrolled_activity.dart';
+import 'package:ibie/models/activity.dart';
 
-class CustomSummaryCard extends StatelessWidget {
-  final EnrolledActivity activity;
+class CustomInstructorSummaryCard extends StatelessWidget {
+  final Activity activity;
   final VoidCallback onCardTap;
-  final VoidCallback onProfessorTap;
 
-  const CustomSummaryCard({
+  const CustomInstructorSummaryCard({
     super.key,
     required this.activity,
     required this.onCardTap,
-    required this.onProfessorTap,
   });
 
   @override
@@ -23,9 +21,6 @@ class CustomSummaryCard extends StatelessWidget {
         break;
       case 'completed':
         statusColor = Colors.grey;
-        break;
-      case 'canceled':
-        statusColor = Colors.red;
         break;
       default:
         statusColor = Colors.grey;
@@ -68,7 +63,7 @@ class CustomSummaryCard extends StatelessWidget {
                       ),
                     ),
                     child: Image.network(
-                      activity.activity.image,
+                      activity.image,
                       width: 122,
                       height: 109,
                       fit: BoxFit.cover,
@@ -98,7 +93,7 @@ class CustomSummaryCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              activity.activity.title,
+                              activity.title,
                               style: const TextStyle(
                                 fontFamily: 'Comfortaa',
                                 fontWeight: FontWeight.bold,
@@ -108,30 +103,25 @@ class CustomSummaryCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/professor_icon.svg',
-                                  width: 18,
-                                  height: 18,
-                                ),
-                                const SizedBox(width: 5),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: onProfessorTap,
-                                    child: Text(
-                                      "Professor(a) ${activity.activity.userName}",
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xFF000000),
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              () {
+                                final totalVacancies = activity.vacancies.isEmpty
+                                    ? 0
+                                    : int.tryParse(activity.vacancies) ?? 0;
+                                final remaining = activity.remainingVacancies.isEmpty
+                                    ? 0
+                                    : int.tryParse(activity.remainingVacancies) ?? 0;
+                                final enrolled = totalVacancies - remaining;
+                                return '$enrolled inscritos';
+                              }(),
+                              style: const TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Color(0xFF71A151),
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -143,8 +133,6 @@ class CustomSummaryCard extends StatelessWidget {
                             ? 'CONCLUÍDA'
                             : activity.status.toLowerCase() == 'active'
                             ? 'ATIVA'
-                            : activity.status.toLowerCase() == 'canceled'
-                            ? 'CANCELADA'
                             : activity.status.toUpperCase(),
                             style: TextStyle(
                               fontFamily: 'Comfortaa',

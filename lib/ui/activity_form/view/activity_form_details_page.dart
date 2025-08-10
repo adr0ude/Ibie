@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:ibie/ui/widgets/progress_bar.dart';
-import 'package:ibie/ui/widgets/custom_white_button.dart';
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/custom_dropdown.dart';
 import 'package:ibie/utils/form_decoration.dart';
+import 'package:ibie/utils/show_pop_up.dart';
 
 import 'package:ibie/ui/activity_form/activity_form_viewmodel.dart';
 
@@ -70,7 +71,6 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
                     onChanged: (value) => viewModel.title = value,
                     maxLength: 100,
                     decoration: decorationForm("Título da Atividade *"),
@@ -94,7 +94,6 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _cpfController,
                     onChanged: (value) => viewModel.description = value,
                     maxLength: 500,
                     minLines: 1,
@@ -133,7 +132,7 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              viewModel.city = value!;
+                              viewModel.category = value!;
                               state.didChange(value);
                             });
                           },
@@ -164,7 +163,6 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
                     onChanged: (value) => viewModel.targetAudience = value,
                     maxLength: 100,
                     decoration: decorationForm("Público-Alvo"),
@@ -186,42 +184,74 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _phoneController,
-                    onChanged: (value) => viewModel.vacancies = value,
+                    keyboardType: TextInputType.number,
                     decoration: decorationForm("Número de Vagas"),
+                    onChanged: (value) => viewModel.vacancies = value,
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    /*validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe seu Número de Telefone!';
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return null;
+                      }
+                      final number = int.tryParse(value.trim());
+                      if (number == null) {
+                        return 'Informe um número válido.';
+                      }
+                      if (number <= 0) {
+                        return 'O número de vagas deve ser maior que zero.';
                       }
                       return null;
-                    },*/
+                    },
                   ),
                 ),
                 SizedBox(height: 29),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _emailController,
-                    decoration: decorationForm("Valor da Inscrição"),
-                    onChanged: (value) => viewModel.fee = value,
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: decorationForm(
+                      "Valor da Inscrição",
+                    ).copyWith(prefixText: 'R\$ '),
+                    onChanged: (value) {
+                      final sanitized = value.trim().replaceAll(',', '.');
+                      final number = double.tryParse(sanitized);
+
+                      if (number != null && number == 0) {
+                        viewModel.fee = "GRATUITO";
+                      } else {
+                        viewModel.fee = value;
+                      }
+                    },
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    /*validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe seu E-mail!';
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return null;
                       }
-                      return null;
-                    },*/
+
+                      final sanitized = value.trim().replaceAll(',', '.');
+                      final number = double.tryParse(sanitized);
+
+                      if (number == null) {
+                        return 'Informe um valor válido.';
+                      }
+
+                      if (number < 0) {
+                        return 'O valor não pode ser negativo.';
+                      }
+
+                      return null; // Tudo certo
+                    },
                   ),
                 ),
                 SizedBox(height: 6),
@@ -234,7 +264,15 @@ class _ActivityFormDetailsPagePageState extends State<ActivityFormDetailsPage> {
                     CustomWhiteButton(
                       label: 'Cancelar',
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        showPopUp(
+                          context: context,
+                          title: 'Cancelar Cadastro',
+                          text:
+                              'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          },
+                        );
                       },
                       size: Size(175, 40),
                     ),

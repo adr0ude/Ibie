@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ibie/ui/activities/instructor_details/instructor_details_view_model.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
-import 'package:ibie/ui/widgets/custom_instructor_course_card.dart';
+import 'package:ibie/ui/widgets/cards/custom_instructor_course_card.dart';
 import 'package:ibie/ui/widgets/custom_profile_avatar.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
@@ -202,7 +202,6 @@ class _InstructorDetailsPageState extends State<InstructorDetailsPage> {
                         ],
                       ),
                     ),
-
                     SizedBox(height: 25),
                     Align(
                       alignment: Alignment.centerLeft,

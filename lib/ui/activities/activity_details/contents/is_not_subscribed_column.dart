@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ibie/ui/widgets/custom_favorite_button.dart';
-import 'package:ibie/ui/widgets/custom_purple_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_favorite_button.dart';
+import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/feedback_box.dart';
 import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
 import 'package:ibie/utils/results.dart';
@@ -29,7 +29,7 @@ class IsNotSubscribedColumn extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                viewModel.vacancies,
+                viewModel.remainingVacancies,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 28,
@@ -49,27 +49,29 @@ class IsNotSubscribedColumn extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Principais Feedbacks:",
-            style: TextStyle(
-              color: Colors.purple,
-              fontFamily: 'Comfortaa',
-              fontSize: 15,
+        if (viewModel.comments.isNotEmpty) ...[
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Principais Feedbacks:",
+              style: TextStyle(
+                color: Colors.purple,
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Column(
-          children: viewModel.comments.map((comment) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: FeedbackBox(text: comment),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 24),
+          const SizedBox(height: 8),
+          Column(
+            children: viewModel.comments.map((comment) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: FeedbackBox(text: comment),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 15),
+        ],
         Padding(
           padding: const EdgeInsets.all(5),
           child: Row(

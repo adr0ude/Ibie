@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ibie/ui/activities/activity_details/activity_details_viewmodel.dart';
-import 'package:ibie/ui/activities/activity_details/contents/active_subscription_column.dart';
-import 'package:ibie/ui/activities/activity_details/contents/completed_subscription_column.dart';
-import 'package:ibie/ui/activities/activity_details/contents/is_not_subscribed_column.dart';
-import 'package:ibie/ui/widgets/buttons/custom_green_button.dart';
-import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
-import 'package:ibie/ui/widgets/buttons/custom_white_button.dart';
+import 'package:ibie/ui/activities/activity_details/contents/details_instructor_column.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
-import 'package:ibie/config/routes.dart';
-import 'package:ibie/utils/show_ok_message.dart';
-import 'package:ibie/utils/show_pop_up.dart';
 
-class ActivityDetailsPage extends StatefulWidget {
-  const ActivityDetailsPage({
+class ActivityDetailsInstructorPage extends StatefulWidget {
+  const ActivityDetailsInstructorPage({
     super.key,
     required this.viewModel,
     required this.activityId,
@@ -25,10 +17,10 @@ class ActivityDetailsPage extends StatefulWidget {
   final String activityId;
 
   @override
-  State<ActivityDetailsPage> createState() => _ActivityDetailsPageState();
+  State<ActivityDetailsInstructorPage> createState() => _ActivityDetailsInstructorPageState();
 }
 
-class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
+class _ActivityDetailsInstructorPageState extends State<ActivityDetailsInstructorPage> {
   late final ActivityDetailsViewmodel viewModel;
 
   @override
@@ -36,17 +28,17 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
     super.initState();
     viewModel = widget.viewModel;
 
-    _init();
+    _getNames();
   }
 
-  Future<void> _init() async {
-    final initResult = await viewModel.init(widget.activityId);
-    switch (initResult) {
+  Future<void> _getNames() async {
+    final result = await viewModel.getStudentsNames(widget.activityId);
+    switch (result) {
       case Ok():
         setState(() {});
       case Error():
         if (mounted) {
-          showErrorMessage(context, initResult.errorMessage);
+          showErrorMessage(context, result.errorMessage);
         }
     }
   }
@@ -55,7 +47,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
-      appBar: CustomAppBar(title: 'Detalhes da atividade'),
+      appBar: CustomAppBar(title: 'Detalhes da atividade', onBack: () => Navigator.pushReplacementNamed(context, '/home')),
       body: viewModel.isLoading
           ? const Center(
               child: CircularProgressIndicator(color: Color(0xFF9A31C9)),
@@ -176,81 +168,11 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                           spacing: 10,
                           runSpacing: 10,
                           children: [
-                            infoTag(Icons.calendar_today, "Sexta-feira"),
-                            infoTag(Icons.location_on, "Escola Azul"),
-                            infoTag(Icons.child_care, "6 a 12 anos"),
-                            infoTag(Icons.palette, "Artístico"),
-                            infoTag(Icons.attach_money, "R\$50,00"),
+                            infoTag(Icons.person, "13 alunos inscritos"),
                           ],
                         ),
-                        SizedBox(height: 24),
-                        if(viewModel.instructorId == viewModel.userId) ... [
-                          SizedBox(height: 10),
-                          CustomPurpleButton(
-                            label: 'Ver mais detalhes',
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/activityDetailsInstructor', arguments: ActivityDetailsArgs(widget.viewModel, widget.activityId));
-                            },
-                            size: Size(354, 52),
-                          ),
-                          SizedBox(height: 15),
-                          CustomGreenButton(
-                            label: 'Editar atividade',
-                            onPressed: () {
-                              //Navigator.pushNamed(context, '/activityFormDetails');
-                            },
-                            size: Size(354, 52),
-                          ),
-                          SizedBox(height: 15),
-                          CustomWhiteButton(
-                            label: 'Remover atividade',
-                            onPressed: () {
-                              showPopUp(
-                                context: context, 
-                                title: 'Remover Atividade', 
-                                text: 'Você confirma a remoção da atividade Curso ${viewModel.title}?', 
-                                onPressed: () async {
-                                  final deleteResult = await viewModel.deleteActivity(widget.activityId);
-                                  switch (deleteResult) {
-                                    case Ok():
-                                      showOkMessage(context, 'Exclusão bem-sucedida');
-                                      if (mounted) {
-                                        Navigator.pushReplacementNamed(context, '/home');
-                                      }
-                                    case Error():
-                                      showErrorMessage(context, deleteResult.errorMessage);
-                                  }
-                                }
-                              );
-                            },
-                            size: Size(354, 52),
-                          ),
-                        ],
-                          
-                        if (viewModel.instructorId != viewModel.userId) ...[
-                          if (!viewModel.isSubscribed)
-                            IsNotSubscribedColumn(viewModel: viewModel),
-  
-                          if (viewModel.isSubscribed)
-                            Builder(
-                              builder: (_) {
-                                final summary = viewModel.activities.firstWhere(
-                                  (a) => a.activity.id == widget.activityId,
-                                );
-
-                                switch (summary.status.toLowerCase()) {
-                                  case 'active':
-                                    return ActiveSubscriptionColumn(viewModel: viewModel);
-                                  case 'completed':
-                                    return CompletedSubscriptionColumn(viewModel: viewModel);
-                                  case 'canceled':
-                                    return IsNotSubscribedColumn(viewModel: viewModel);
-                                  default:
-                                    return const Text('Status desconhecido');
-                                }
-                              },
-                            ),
-                        ],
+                        SizedBox(height: 20),
+                        DetailsInstructorColumn(viewModel: viewModel),                 
                       ],
                     ),
                   ),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/buttons/custom_green_button.dart';
 
-Future<void> showSignUpOptions({required BuildContext context}) async {
+Future<void> showAskToLogin({required BuildContext context}) async {
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
@@ -18,7 +17,7 @@ Future<void> showSignUpOptions({required BuildContext context}) async {
           children: [
             const SizedBox(height: 5),
             const Text(
-              'Cadastro de Conta',
+              'Acesso restrito',
               style: TextStyle(
                 fontSize: 18,
                 fontFamily: 'Comfortaa',
@@ -28,23 +27,11 @@ Future<void> showSignUpOptions({required BuildContext context}) async {
             const SizedBox(height: 15),
             SizedBox(
               width: double.infinity,
-              child: CustomPurpleButton(
-                label: 'Cadastrar como cliente',
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/registerStudent');
-                },
-                size: Size(354, 52),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
               child: CustomGreenButton(
-                label: 'Cadastrar como instrutor',
+                label: 'Entrar com minha conta',
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/registerInstructor');
+                  Navigator.pushNamed(context, '/login');
                 },
                 size: Size(354, 52),
               ),

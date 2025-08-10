@@ -26,26 +26,29 @@ class _CompletedSubscriptionColumnState extends State<CompletedSubscriptionColum
 
     return Column(
       children: [
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Principais Feedbacks:",
-            style: TextStyle(
-              color: Colors.purple,
-              fontFamily: 'Comfortaa',
-              fontSize: 15,
+        if (viewModel.comments.isNotEmpty) ...[
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Principais Feedbacks:",
+              style: TextStyle(
+                color: Colors.purple,
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Column(
-          children: viewModel.comments.map((comment) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: FeedbackBox(text: comment),
-            );
-          }).toList(),
-        ),
+          const SizedBox(height: 8),
+          Column(
+            children: viewModel.comments.map((comment) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: FeedbackBox(text: comment),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 20),
+        ],
         const SizedBox(height: 20),
         const Align(
           alignment: Alignment.centerLeft,
