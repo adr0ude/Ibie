@@ -471,6 +471,44 @@ class DatabaseService {
     }
   }
 
+  Future<Result<List<Activity>>> getFavoritesActivities({required String userId}) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+
+      if (!doc.exists) {
+        return Result.error(Exception("Usuário não encontrado"));
+      }
+
+      final data = doc.data()!;
+      final favoriteIds = List<String>.from(data['favorites'] ?? []);
+
+      if (favoriteIds.isEmpty) {
+        return const Result.ok([]);
+      }
+
+      final futures = favoriteIds.map((id) async {
+        final activityDoc = await _firestore.collection('courses').doc(id).get();
+
+        if (activityDoc.exists) {
+          final activityData = activityDoc.data()!;
+          final ownerId = activityData['userId'] ?? '';
+          final userName = await _getUserNameById(ownerId);
+
+          return Activity.fromMap(activityData, activityDoc.id)
+              .copyWith(userName: userName);
+        }
+        return null;
+      }).toList();
+
+      final activities = await Future.wait(futures);
+      final nonNullActivities = activities.whereType<Activity>().toList();
+
+      return Result.ok(nonNullActivities);
+    } catch (e) {
+      return Result.error(Exception("Erro ao carregar atividades favoritas"));
+    } 
+  }
+
   Future<Result<void>> addFavorite({required String userId, required String activityId}) async {
     try {
       await _firestore.collection('users').doc(userId).update({
@@ -503,21 +541,21 @@ class DatabaseService {
       final courseRef = _firestore.collection('courses').doc(activityId);
       batch.update(courseRef, {'status': 'completed'});
 
-      // procura todos os usuários com esse curso em enrolled_courses
+      // percorre todos os usuários
       final usersSnapshot = await _firestore.collection('users').get();
 
       for (var userDoc in usersSnapshot.docs) {
-        final enrolledSnapshot = await userDoc.reference
+        final enrolledDocRef = userDoc.reference
             .collection('enrolled_courses')
-            .where('courseId', isEqualTo: activityId)
-            .get();
+            .doc(activityId);
 
-        for (var enrolledDoc in enrolledSnapshot.docs) {
-          batch.update(enrolledDoc.reference, {'status': 'completed'});
+        final enrolledDocSnapshot = await enrolledDocRef.get();
+        if (enrolledDocSnapshot.exists) {
+          batch.update(enrolledDocRef, {'status': 'completed'});
         }
       }
 
-      // aplica todas as alterações
+    // aplica as alterações
       await batch.commit();
 
       return const Result.ok(null);

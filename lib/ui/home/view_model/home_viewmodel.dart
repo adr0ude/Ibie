@@ -20,6 +20,26 @@ class HomeViewmodel extends ChangeNotifier {
   bool _isLoading = false;
   bool _hasShowCompleteProfileMessage = false;
   User? _user;
+  bool _showFavorites = false;
+  bool get showFavorites => _showFavorites;
+  set showFavorites(bool value) {
+    if (_showFavorites != value) {
+      _showFavorites = value;
+      notifyListeners();
+    }
+  }
+
+  List<Activity> _favorites = [];
+  List<Activity> get favorites => _favorites;
+  Map<String, List<Activity>> _favoritesCategories = {};
+  Map<String, List<Activity>> get favoritesCategories => _favoritesCategories;
+
+  void _categorizeFavorites() {
+    _favoritesCategories = {};
+    for (final activity in _favorites) {
+      _favoritesCategories.putIfAbsent(activity.category, () => []).add(activity);
+    }
+  }
 
   List<Activity> _activities = [];
   Map<String, List<Activity>> _categories = {};
@@ -77,6 +97,31 @@ class HomeViewmodel extends ChangeNotifier {
     _categories = {};
     for (final activity in _activities) {
       _categories.putIfAbsent(activity.category, () => []).add(activity);
+    }
+  }
+
+  Future<Result<void>> listFavorites() async {
+    try {
+      _isLoading = true;
+      final userResult = await _userRepository.getUserData();
+      switch (userResult) {
+        case Ok(value: final user):
+          _user = user;
+          final favoritesResult = await _activityRepository.getFavoritesActivities(userId: user.id);
+          switch (favoritesResult) {
+            case Ok(value: final favorites):
+              _favorites = favorites;
+              _categorizeFavorites();  // categoriza as favoritas
+              return Result.ok(null);
+            case Error(error: final e):
+              return Result.error(e);
+          }
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

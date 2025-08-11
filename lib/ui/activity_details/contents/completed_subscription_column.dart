@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ibie/ui/widgets/feedback_box.dart';
 import 'package:ibie/ui/activity_details/activity_details_viewmodel.dart';
-import 'package:ibie/utils/form_decoration.dart';
+import 'package:ibie/utils/big_decoration_form.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
 import 'package:ibie/utils/show_ok_message.dart';
@@ -69,30 +69,35 @@ class _CompletedSubscriptionColumnState extends State<CompletedSubscriptionColum
               children: [
                 Form(
                   key: _formKey,
-                  child: TextFormField(
-                    onChanged: (value) => viewModel.comment = value,
-                    maxLines: 5,
-                    decoration: decorationForm(
-                      "Avalie o curso por meio de um comentário...",
-                      size: const Size(380, 100),
-                      fontSize: 12,
+                  child: SizedBox(
+                    height: 120,
+                    child: TextFormField(
+                      onChanged: (value) => viewModel.comment = value,
+                      maxLines: 3,
+                      minLines: 3,
+                      textAlignVertical: TextAlignVertical.top,
+                      decoration: bigDecorationForm(
+                        "Avalie o curso por meio de um comentário...",
+                        size: const Size(380, 120),
+                        fontSize: 16,
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.black.withAlpha(178),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Escreva um comentário!';
+                        }
+                        return null;
+                      },
                     ),
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black.withAlpha(178),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Escreva um comentário!';
-                      }
-                      return null;
-                    },
                   ),
                 ),
                 Positioned(
-                  bottom: 10,
+                  bottom: 35,
                   right: 10,
                   child: GestureDetector(
                     onTap: !viewModel.isLoading

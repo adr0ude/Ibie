@@ -116,7 +116,11 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                         SizedBox(height: 5),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/instructor', arguments: viewModel.instructorId);
+                            Navigator.pushNamed(
+                              context,
+                              '/instructor',
+                              arguments: viewModel.instructorId,
+                            );
                           },
                           child: Text(
                             "Professor(a) ${viewModel.userName}",
@@ -138,7 +142,10 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             border: Border(
-                              right: BorderSide(color: Color(0xFFF3CEED), width: 2),
+                              right: BorderSide(
+                                color: Color(0xFFF3CEED),
+                                width: 2,
+                              ),
                               bottom: BorderSide(
                                 color: Color(0xFFF3CEED),
                                 width: 2,
@@ -183,69 +190,148 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                         ),
                         SizedBox(height: 16),
                         Wrap(
+                          alignment: WrapAlignment.center,
                           spacing: 10,
                           runSpacing: 10,
                           children: [
-                            infoTag(Icons.calendar_today, "Sexta-feira"),
-                            infoTag(Icons.location_on, "Escola Azul"),
-                            infoTag(Icons.child_care, "6 a 12 anos"),
-                            infoTag(Icons.palette, "Artístico"),
-                            infoTag(Icons.attach_money, "R\$50,00"),
+                            infoTag(
+                              Icons.calendar_today,
+                              viewModel.activity!.date,
+                              Color(0xFF71A151),
+                            ),
+                            infoTag(
+                              Icons.location_on,
+                              viewModel.activity!.location,
+                              Color(0xFF71A151),
+                            ),
+                            infoTag(
+                              Icons.location_on,
+                              "${viewModel.activity!.street}"
+                              "${(viewModel.activity!.number!.isNotEmpty) ? ', ${viewModel.activity!.number}' : ''}, "
+                              "${viewModel.activity!.neighborhood}, "
+                              "${viewModel.activity!.city}, "
+                              "${viewModel.activity!.cep}",
+                              Color(0xFF71A151),
+                            ),
+                            infoTag(
+                              Icons.child_care,
+                              (viewModel.activity!.targetAudience
+                                      .trim()
+                                      .isNotEmpty)
+                                  ? viewModel.activity!.targetAudience
+                                  : 'Livre',
+                              const Color(0xFF9A31C9),
+                            ),
+                            infoTag(
+                              Icons.palette,
+                              viewModel.activity!.category,
+                              Color(0xFF9A31C9),
+                            ),
+                            if (viewModel.activity!.fee == "GRATUITO")
+                              infoTag(
+                                Icons.attach_money,
+                                "Gratuito",
+                                Color(0xFF9A31C9),
+                              )
+                            else
+                              infoTag(
+                                Icons.attach_money,
+                                formatCurrency(viewModel.activity!.fee),
+                                Color(0xFF9A31C9),
+                              ),
+                            if (viewModel
+                                    .activity!
+                                    .accessibilityResources
+                                    .isNotEmpty &&
+                                viewModel.activity!.accessibilityResources !=
+                                    "Outros")
+                              infoTag(
+                                Icons.accessibility,
+                                viewModel.activity!.accessibilityResources,
+                                const Color(0xFF9A31C9),
+                              )
+                            else if (viewModel
+                                .activity!
+                                .accessibilityResources
+                                .isNotEmpty)
+                              infoTag(
+                                Icons.accessibility,
+                                viewModel.activity!.accessibilityDescription,
+                                const Color(0xFF9A31C9),
+                              ),
                           ],
                         ),
                         SizedBox(height: 24),
-                        if(viewModel.instructorId == viewModel.userId) ... [
+                        if (viewModel.instructorId == viewModel.userId) ...[
                           SizedBox(height: 10),
                           CustomPurpleButton(
                             label: 'Ver mais detalhes',
                             onPressed: !viewModel.isLoading
-                              ? () {
-                                Navigator.pushNamed(context, '/activityDetailsInstructor', arguments: ActivityDetailsArgs(widget.viewModel, widget.activityId));
-                              }
-                              : null,
+                                ? () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/activityDetailsInstructor',
+                                      arguments: ActivityDetailsArgs(
+                                        widget.viewModel,
+                                        widget.activityId,
+                                      ),
+                                    );
+                                  }
+                                : null,
                             size: Size(354, 52),
                           ),
                           SizedBox(height: 15),
                           CustomGreenButton(
                             label: 'Editar atividade',
                             onPressed: !viewModel.isLoading
-                              ? () {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/activityFormDetails',
-                                  arguments: ActivityFormDetailsArgs(
-                                    isEditing: true,
-                                    activityId: widget.activityId,
-                                  ),
-                                );
-                              }
-                              : null,
+                                ? () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/activityFormDetails',
+                                      arguments: ActivityFormDetailsArgs(
+                                        isEditing: true,
+                                        activityId: widget.activityId,
+                                      ),
+                                    );
+                                  }
+                                : null,
                             size: Size(354, 52),
                           ),
                           SizedBox(height: 15),
                           CustomWhiteButton(
                             label: 'Remover atividade',
                             onPressed: !viewModel.isLoading
-                              ? () {
-                                showPopUp(
-                                  context: context, 
-                                  title: 'Remover Atividade', 
-                                  text: 'Você confirma a remoção da atividade Curso ${viewModel.title}?', 
-                                  onPressed: () async {
-                                    final deleteResult = await viewModel.deleteActivity(widget.activityId);
-                                    switch (deleteResult) {
-                                      case Ok():
-                                        showOkMessage(context, 'Exclusão bem-sucedida');
-                                        if (mounted) {
-                                          Navigator.pushReplacementNamed(context, '/home');
+                                ? () {
+                                    showPopUp(
+                                      context: context,
+                                      title: 'Remover Atividade',
+                                      text:
+                                          'Você confirma a remoção da atividade Curso ${viewModel.title}?',
+                                      onPressed: () async {
+                                        final deleteResult = await viewModel
+                                            .deleteActivity(widget.activityId);
+                                        switch (deleteResult) {
+                                          case Ok():
+                                            showOkMessage(
+                                              context,
+                                              'Exclusão bem-sucedida',
+                                            );
+                                            if (mounted) {
+                                              Navigator.pushReplacementNamed(
+                                                context,
+                                                '/home',
+                                              );
+                                            }
+                                          case Error():
+                                            showErrorMessage(
+                                              context,
+                                              deleteResult.errorMessage,
+                                            );
                                         }
-                                      case Error():
-                                        showErrorMessage(context, deleteResult.errorMessage);
-                                    }
+                                      },
+                                    );
                                   }
-                                );
-                              }
-                              : null,
+                                : null,
                             size: Size(354, 52),
                           ),
                           SizedBox(height: 15),
@@ -253,34 +339,45 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                             label: 'Marcar como concluída',
                             isGreen: true,
                             onPressed: !viewModel.isLoading
-                              ? () {
-                                showPopUp(
-                                  context: context, 
-                                  title: 'Marcar como Concluída', 
-                                  text: 'Realmente deseja marcar a atividade ${viewModel.title} como concluída? Após essa ação, ela não receberá novas inscrições e deixará de aparecer na página inicial de cursos.', 
-                                  onPressed: () async {
-                                    final markResult = await viewModel.markAsCompleted(widget.activityId);
-                                    switch (markResult) {
-                                      case Ok():
-                                        showOkMessage(context, 'Marcação bem-sucedida');
-                                        if (mounted) {
-                                          Navigator.pushReplacementNamed(context, '/home');
+                                ? () {
+                                    showPopUp(
+                                      context: context,
+                                      title: 'Marcar como Concluída',
+                                      text:
+                                          'Realmente deseja marcar a atividade ${viewModel.title} como concluída? Após essa ação, ela não receberá novas inscrições e deixará de aparecer na página inicial de cursos.',
+                                      onPressed: () async {
+                                        final markResult = await viewModel
+                                            .markAsCompleted(widget.activityId);
+                                        switch (markResult) {
+                                          case Ok():
+                                            showOkMessage(
+                                              context,
+                                              'Marcação bem-sucedida',
+                                            );
+                                            if (mounted) {
+                                              Navigator.pushReplacementNamed(
+                                                context,
+                                                '/home',
+                                              );
+                                            }
+                                          case Error():
+                                            showErrorMessage(
+                                              context,
+                                              markResult.errorMessage,
+                                            );
                                         }
-                                      case Error():
-                                        showErrorMessage(context, markResult.errorMessage);
-                                    }
+                                      },
+                                    );
                                   }
-                                );
-                              }
-                              : null,
+                                : null,
                             size: Size(354, 52),
-                          ),  
+                          ),
                         ],
-                          
+
                         if (viewModel.instructorId != viewModel.userId) ...[
                           if (!viewModel.isSubscribed)
                             IsNotSubscribedColumn(viewModel: viewModel),
-  
+
                           if (viewModel.isSubscribed)
                             Builder(
                               builder: (_) {
@@ -290,11 +387,17 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
 
                                 switch (summary.status.toLowerCase()) {
                                   case 'active':
-                                    return ActiveSubscriptionColumn(viewModel: viewModel);
+                                    return ActiveSubscriptionColumn(
+                                      viewModel: viewModel,
+                                    );
                                   case 'completed':
-                                    return CompletedSubscriptionColumn(viewModel: viewModel);
+                                    return CompletedSubscriptionColumn(
+                                      viewModel: viewModel,
+                                    );
                                   case 'canceled':
-                                    return IsNotSubscribedColumn(viewModel: viewModel);
+                                    return IsNotSubscribedColumn(
+                                      viewModel: viewModel,
+                                    );
                                   default:
                                     return const Text('Status desconhecido');
                                 }
@@ -310,11 +413,46 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
     );
   }
 
-  Widget infoTag(IconData icon, String text) {
-    return Chip(
-      avatar: Icon(icon, size: 18, color: const Color(0xFF9A31C9)),
-      label: Text(text),
-      backgroundColor: Colors.grey[200],
+  Widget infoTag(IconData icon, String text, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            spreadRadius: 1,
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            padding: const EdgeInsets.all(8),
+            child: Icon(icon, size: 20, color: Colors.white),
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              softWrap: true,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  String formatCurrency(String value) {
+    final parsed = double.tryParse(value) ?? 0;
+    return 'R\$ ${parsed.toStringAsFixed(2).replaceAll('.', ',')}';
   }
 }

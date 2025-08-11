@@ -26,6 +26,7 @@ abstract class IActivityRepository extends ChangeNotifier {
   Future<Result<void>> updateActivityData({required Activity activity, String? newPhoto});
   Future<Result<List<String>>> getStudentsNames({required String activityId});
   Future<Result<List<String>>> getFavorites({required String userId});
+  Future<Result<List<Activity>>> getFavoritesActivities({required String userId});
   Future<Result<void>> favoriteActivity({required String activityId});
   Future<Result<void>> unfavoriteActivity({required String activityId});
   Future<Result<void>> markAsCompleted({required String activityId});
@@ -181,13 +182,13 @@ class ActivityRepository extends IActivityRepository {
           final subscribeResult = await _databaseService.subscribe(user: user, activity: activity);
           switch (subscribeResult) {
             case Ok():
-              final favoriteResult = await _databaseService.removeFavorite(userId: user.id, activityId: activity.id);
-              switch (favoriteResult) {
-                case Ok():
+              //final favoriteResult = await _databaseService.removeFavorite(userId: user.id, activityId: activity.id);
+              //switch (favoriteResult) {
+                //case Ok():
                   return Result.ok(null);
-                case Error(error: final e):
-                  return Result.error(e);
-              }
+                //case Error(error: final e):
+                  //return Result.error(e);
+              //}
             case Error(error: final e):
               return Result.error(e);
           }
@@ -373,6 +374,21 @@ class ActivityRepository extends IActivityRepository {
   Future<Result<List<String>>> getFavorites({required String userId}) async {
     try {
       final favoritesResult = await _databaseService.getFavorites(userId: userId);
+      switch (favoritesResult) {
+        case Ok(value: final list):
+          return Result.ok(list);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<Result<List<Activity>>> getFavoritesActivities({required String userId}) async {
+    try {
+      final favoritesResult = await _databaseService.getFavoritesActivities(userId: userId);
       switch (favoritesResult) {
         case Ok(value: final list):
           return Result.ok(list);

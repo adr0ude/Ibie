@@ -7,8 +7,10 @@ import 'package:ibie/ui/widgets/buttons/custom_purple_button.dart';
 import 'package:ibie/ui/widgets/custom_app_bar.dart';
 import 'package:ibie/ui/widgets/pass_prompt.dart';
 import 'package:ibie/ui/profile/profile_viewmodel.dart';
+import 'package:ibie/utils/big_decoration_form.dart';
 
 import 'package:ibie/utils/form_decoration.dart';
+import 'package:ibie/utils/input_formatters.dart';
 import 'package:ibie/utils/list_cities.dart';
 import 'package:ibie/utils/results.dart';
 import 'package:ibie/utils/show_error_message.dart';
@@ -141,7 +143,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Informe seu Nome Completo!';
+                                  return 'Informe um nome válido';
                                 }
                                 return null;
                               },
@@ -152,18 +154,23 @@ class _ProfilePagePageState extends State<ProfilePage> {
                             SizedBox(height: 15),
                             SizedBox(
                               width: 365,
+                              height: 120,
                               child: TextFormField(
                                 controller: _biographyController,
                                 onChanged: (value) => viewModel.biography = value,
-                                decoration: decorationForm(
+                                maxLines: 3,
+                                minLines: 3,
+                                textAlignVertical: TextAlignVertical.top,
+                                decoration: bigDecorationForm(
                                   "Escreva uma mini biografia...",
-                                  size: Size(365, 100),
+                                  size: Size(365, 120),
+                                  fontSize: 16,
                                 ),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: 'Comfortaa',
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w300,
-                                  color: Colors.black.withAlpha(178),
+                                  color: Color.fromARGB(178, 0, 0, 0),
                                 ),
                               ),
                             ),
@@ -174,6 +181,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                             child: TextFormField(
                               controller: _dateController,
                               onChanged: (value) => viewModel.dateBirth = value,
+                              inputFormatters: [dateFormatter],
                               decoration: decorationForm("Data de Nascimento"),
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -181,12 +189,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                 fontWeight: FontWeight.w300,
                                 color: Colors.black.withAlpha(178),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Informe sua Data de Nascimento!';
-                                }
-                                return null;
-                              },
+                              validator: (value) => viewModel.validateDate(value ?? ''),
                             ),
                           ),
                           SizedBox(height: 16),
@@ -209,7 +212,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                       });
                                     },
                                     validator: (value) => value == null
-                                        ? 'Informe sua Cidade!'
+                                        ? 'Selecione uma opção'
                                         : null,
                                   ),
                                   if (state.hasError)
@@ -236,6 +239,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                             width: 365,
                             child: TextFormField(
                               controller: _phoneController,
+                              inputFormatters: [phoneFormatter],
                               onChanged: (value) => viewModel.phone = value,
                               decoration: decorationForm("Telefone"),
                               style: TextStyle(
@@ -244,12 +248,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                 fontWeight: FontWeight.w300,
                                 color: Colors.black.withAlpha(178),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Informe seu Número de Telefone!';
-                                }
-                                return null;
-                              },
+                              validator: (value) => viewModel.validatePhone(value ?? ''),
                             ),
                           ),
 

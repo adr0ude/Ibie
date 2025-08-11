@@ -124,9 +124,7 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
   Future<Result<void>> subscribe() async {
     try {
       _isLoading = true;
-      final activityResult = await _activityRepository.subscribe(
-        activity: _activity!,
-      );
+      final activityResult = await _activityRepository.subscribe( activity: _activity!);
       switch (activityResult) {
         case Ok():
           return Result.ok(null);

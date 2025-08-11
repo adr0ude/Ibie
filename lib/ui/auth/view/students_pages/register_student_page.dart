@@ -7,6 +7,7 @@ import 'package:ibie/ui/widgets/custom_dropdown.dart';
 import 'package:ibie/ui/widgets/login_prompt.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/list_cities.dart';
+import 'package:ibie/utils/input_formatters.dart';
 
 import 'package:ibie/ui/auth/view_model/register_student_viewmodel.dart';
 
@@ -19,6 +20,10 @@ class RegisterStudentPage extends StatefulWidget {
   State<RegisterStudentPage> createState() => _RegisterStudentPageState();
 }
 
+final TextEditingController _dateController = TextEditingController();
+final TextEditingController _phoneController = TextEditingController();
+final TextEditingController _cpfController = TextEditingController();
+
 class _RegisterStudentPageState extends State<RegisterStudentPage> {
   late final RegisterStudentViewmodel viewModel;
 
@@ -27,7 +32,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
     super.initState();
     viewModel = widget.viewModel;
   }
-  
+
   final _formKey = GlobalKey<FormState>();
   bool _hidePass = true;
 
@@ -55,11 +60,10 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     color: Color.fromARGB(255, 0, 0, 0),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 40),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _nomeController,
                     onChanged: (value) => viewModel.name = value,
                     decoration: decorationForm("Nome Completo *"),
                     style: TextStyle(
@@ -70,36 +74,37 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe seu Nome Completo!';
+                        return 'Informe o nome completo';
+                      } else if (value.length > 100) {
+                        return 'O nome excede o limite de caracteres';
                       }
                       return null;
                     },
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    onChanged: (value) => viewModel.cpf = value,
+                    controller: _cpfController,
+                    inputFormatters: [cpfFormatter],
                     decoration: decorationForm("CPF *"),
+                    onChanged: (value) => viewModel.cpf = value,
+                    validator: (value) => viewModel.validateCpf(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe seu CPF!';
-                      }
-                      return null;
-                    },
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
+                    controller: _dateController,
+                    inputFormatters: [dateFormatter],
                     onChanged: (value) => viewModel.dateBirth = value,
                     decoration: decorationForm("Data de Nascimento *"),
                     style: TextStyle(
@@ -108,23 +113,18 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe sua Data de Nascimento!';
-                      }
-                      return null;
-                    },
                   ),
                 ),
-                SizedBox(height: 16),
-
+                SizedBox(height: 20),
                 FormField<String>(
                   builder: (FormFieldState<String> state) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomDropdown<String>(
-                          value: listCities.contains(viewModel.city) ? viewModel.city : null,
+                          value: listCities.contains(viewModel.city)
+                              ? viewModel.city
+                              : null,
                           label: "Cidade *",
                           items: listCities,
                           onChanged: (value) {
@@ -133,7 +133,8 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                               state.didChange(value);
                             });
                           },
-                          validator: (value) => value == null ? 'Informe sua Cidade!' : null,
+                          validator: (value) =>
+                              value == null ? 'Selecione uma opção' : null,
                         ),
                         if (state.hasError)
                           Padding(
@@ -154,35 +155,26 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     );
                   },
                 ),
-
-                SizedBox(height: 16),
-
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _phoneController,
-                    onChanged: (value) => viewModel.phone = value,
+                    controller: _phoneController,
+                    inputFormatters: [phoneFormatter],
                     decoration: decorationForm("Número de Telefone *"),
+                    onChanged: (value) => viewModel.phone = value,
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe seu Número de Telefone!';
-                      }
-                      return null;
-                    },
                   ),
                 ),
-                SizedBox(height: 16),
-
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _emailController,
                     onChanged: (value) => viewModel.email = value,
                     decoration: decorationForm("E-mail *"),
                     style: TextStyle(
@@ -193,14 +185,15 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe seu E-mail!';
+                        return 'Informe o e-mail';
+                      } else if (value.length > 256) {
+                        return 'O e-mail excede o limite de caracteres';
                       }
                       return null;
                     },
                   ),
                 ),
-                SizedBox(height: 16),
-
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -216,14 +209,13 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     obscureText: _hidePass,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe sua Senha!';
+                        return 'Informe a senha';
                       }
                       return null;
                     },
                   ),
                 ),
                 SizedBox(height: 6),
-
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
@@ -280,7 +272,11 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                       label: 'Próximo',
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.pushNamed(context, '/registerStudentPhoto', arguments: widget.viewModel);
+                          Navigator.pushNamed(
+                            context,
+                            '/registerStudentPhoto',
+                            arguments: widget.viewModel,
+                          );
                         }
                       },
                       size: Size(175, 40),
@@ -290,44 +286,44 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
 
                 SizedBox(height: 28),
                 Stack(
-                alignment: Alignment.centerLeft,
-                children: [
-                  Positioned.fill(
-                    child: Center(
-                      child: Container(height: 5, color: Color(0xFFD9D9D9)),
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Positioned.fill(
+                      child: Center(
+                        child: Container(height: 5, color: Color(0xFFD9D9D9)),
+                      ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFF71A151),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFF71A151),
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFFD9D9D9),
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFFD9D9D9),
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFFD9D9D9),
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFFD9D9D9),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
+                  ],
+                ),
 
                 SizedBox(height: 18),
                 LoginPrompt(),

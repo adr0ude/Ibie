@@ -29,9 +29,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
   String? get city => _city;
   String get photo => _photo;
 
-  bool get isFormValid =>
-      _email.isNotEmpty &&
-      _password.isNotEmpty;
+  bool get isFormValid => _email.isNotEmpty && _password.isNotEmpty;
 
   set name(String value) {
     _name = value.trim();
@@ -108,7 +106,9 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      final photoResult = await _userRepository.pickProfileImage(source: source);
+      final photoResult = await _userRepository.pickProfileImage(
+        source: source,
+      );
 
       switch (photoResult) {
         case Ok(value: final picture):
@@ -121,5 +121,101 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  String? validateCpf(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Informe o CPF.';
+    }
+
+    final cpf = value.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cpf.length != 11 || RegExp(r'^(\d)\1{10}$').hasMatch(cpf)) {
+      return 'Informe um CPF válido.';
+    }
+
+    int calcCheckDigit(String str, int length) {
+      int sum = 0;
+      for (int i = 0; i < length; i++) {
+        sum += int.parse(str[i]) * ((length + 1) - i);
+      }
+      int mod = sum % 11;
+      return (mod < 2) ? 0 : 11 - mod;
+    }
+
+    final d1 = calcCheckDigit(cpf, 9);
+    final d2 = calcCheckDigit(cpf.substring(0, 9) + d1.toString(), 10);
+
+    if (cpf != cpf.substring(0, 9) + d1.toString() + d2.toString()) {
+      return 'Informe um CPF válido.';
+    }
+
+    return null;
+  }
+
+  String? validateDate(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Informe a data de nascimento.';
+    }
+
+    final parts = value.split('/');
+
+    if (parts.length != 3) {
+      return 'Informe uma data válida no formato dd/mm/aaaa.';
+    }
+
+    final day = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final year = int.tryParse(parts[2]);
+
+    if (day == null || month == null || year == null) {
+      return 'Data inválida.';
+    }
+
+    try {
+      final date = DateTime(year, month, day);
+      final now = DateTime.now();
+
+      if (date.day != day || date.month != month || date.year != year) {
+        return 'Data inválida.';
+      }
+
+      if (date.isAfter(now)) {
+        return 'Informe uma data de nascimento válida.';
+      }
+
+      final age =
+          now.year -
+          date.year -
+          ((now.month < date.month ||
+                  (now.month == date.month && now.day < date.day))
+              ? 1
+              : 0);
+
+      if (age < 0 || age > 130) {
+        return 'Informe uma data de nascimento válida.';
+      }
+    } catch (_) {
+      return 'Data inválida.';
+    }
+
+    return null;
+  }
+
+  String? validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Informe o telefone.';
+    }
+
+    final phone = value.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (phone.length < 10 || phone.length > 11) {
+      return 'Informe um número de telefone válido.';
+    }
+
+    if (phone.length == 11 && phone[2] != '9') {
+      return 'Informe um número de telefone válido.';
+    }
+
+    return null;
   }
 }

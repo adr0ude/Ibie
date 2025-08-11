@@ -7,6 +7,7 @@ import 'package:ibie/ui/widgets/custom_dropdown.dart';
 import 'package:ibie/ui/widgets/login_prompt.dart';
 import 'package:ibie/utils/form_decoration.dart';
 import 'package:ibie/utils/list_cities.dart';
+import 'package:ibie/utils/input_formatters.dart';
 
 import 'package:ibie/ui/auth/view_model/register_instructor_viewmodel.dart';
 
@@ -16,7 +17,8 @@ class RegisterInstructorPage extends StatefulWidget {
   final RegisterInstructorViewmodel viewModel;
 
   @override
-  State<RegisterInstructorPage> createState() => _RegisterInstructorPagePageState();
+  State<RegisterInstructorPage> createState() =>
+      _RegisterInstructorPagePageState();
 }
 
 class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
@@ -30,6 +32,10 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
 
   final _formKey = GlobalKey<FormState>();
   bool _hidePass = true;
+
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _cpfController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,7 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                     color: Color.fromARGB(255, 0, 0, 0),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 40),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -69,36 +75,37 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe seu Nome Completo!';
+                        return 'Informe o nome completo';
+                      } else if (value.length > 100) {
+                        return 'O nome excede o limite de caracteres';
                       }
                       return null;
                     },
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    onChanged: (value) => viewModel.cpf = value,
+                    controller: _cpfController,
+                    inputFormatters: [cpfFormatter],
                     decoration: decorationForm("CPF *"),
+                    onChanged: (value) => viewModel.cpf = value,
+                    validator: (value) => viewModel.validateCpf(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe seu CPF!';
-                      }
-                      return null;
-                    },
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
+                    controller: _dateController,
+                    inputFormatters: [dateFormatter],
                     onChanged: (value) => viewModel.dateBirth = value,
                     decoration: decorationForm("Data de Nascimento *"),
                     style: TextStyle(
@@ -107,15 +114,9 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe sua Data de Nascimento!';
-                      }
-                      return null;
-                    },
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
 
                 FormField<String>(
                   builder: (FormFieldState<String> state) {
@@ -123,7 +124,9 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomDropdown<String>(
-                          value: listCities.contains(viewModel.city) ? viewModel.city : null,
+                          value: listCities.contains(viewModel.city)
+                              ? viewModel.city
+                              : null,
                           label: "Cidade *",
                           items: listCities,
                           onChanged: (value) {
@@ -132,7 +135,8 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                               state.didChange(value);
                             });
                           },
-                          validator: (value) => value == null ? 'Informe sua Cidade!' : null,
+                          validator: (value) =>
+                              value == null ? 'Selecione uma opção' : null,
                         ),
                         if (state.hasError)
                           Padding(
@@ -153,30 +157,23 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                     );
                   },
                 ),
-
-                SizedBox(height: 16),
-
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    onChanged: (value) => viewModel.phone = value,
+                    controller: _phoneController,
+                    inputFormatters: [phoneFormatter],
                     decoration: decorationForm("Número de Telefone *"),
+                    onChanged: (value) => viewModel.phone = value,
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Informe seu Número de Telefone!';
-                      }
-                      return null;
-                    },
                   ),
                 ),
-                SizedBox(height: 16),
-
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -190,14 +187,15 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe seu E-mail!';
+                        return 'Informe o e-mail';
+                      } else if (value.length > 256) {
+                        return 'O e-mail excede o limite de caracteres';
                       }
                       return null;
                     },
                   ),
                 ),
-                SizedBox(height: 16),
-
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -212,7 +210,7 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                     obscureText: _hidePass,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe sua Senha!';
+                        return 'Informe a senha';
                       }
                       return null;
                     },
@@ -276,7 +274,11 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                       label: 'Próximo',
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.pushNamed(context, '/registerInstructorPhoto', arguments: widget.viewModel);
+                          Navigator.pushNamed(
+                            context,
+                            '/registerInstructorPhoto',
+                            arguments: widget.viewModel,
+                          );
                         }
                       },
                       size: Size(175, 40),

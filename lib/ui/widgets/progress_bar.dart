@@ -15,6 +15,16 @@ class ProgressBar extends StatelessWidget {
     return Container(
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 22),
+      decoration: BoxDecoration(
+        color: Color(0xFFFFFFFF),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black,
+            offset: const Offset(0, 2),
+            blurRadius: 4,
+          ),
+        ],
+      ),
       child: Row(
         children: List.generate(totalSteps * 2 - 1, (index) {
           if (index.isEven) {
@@ -32,7 +42,6 @@ class ProgressBar extends StatelessWidget {
               ),
             );
           } else {
-            // Barrinha entre bolinhas
             final barIndex = (index - 1) ~/ 2;
             final isActive = barIndex < currentStep;
             return Expanded(

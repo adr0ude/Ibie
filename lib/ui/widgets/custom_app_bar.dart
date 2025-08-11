@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ibie/ui/home/view_model/home_viewmodel.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBack;
-  final VoidCallback? onSearch;
+  final VoidCallback? onStar;
   final VoidCallback? onSkip;
   final bool showSkip;
   final bool hideBack;
-  final bool showSearch;
+  final bool showStar;
+  final HomeViewmodel? viewModel;
 
   const CustomAppBar({
     super.key,
     required this.title,
     this.onBack,
-    this.onSearch,
+    this.onStar,
     this.onSkip,
     this.showSkip = false,
     this.hideBack = false,
-    this.showSearch = false,
+    this.showStar = false,
+    this.viewModel,
   });
 
   @override
@@ -61,14 +64,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-        if (showSearch == true)
+        if (showStar == true)
           IconButton(
             icon: SvgPicture.asset(
-              'assets/search_icon.svg',
-              width: 22,
-              height: 22,
+              (viewModel?.showFavorites ?? false)
+                ? 'assets/favorite-star-icon.svg'
+                : 'assets/unfavorite-star-icon.svg',
+              width: 24.99,
+              height: 24,
             ),
-            onPressed: onSearch,
+            onPressed: onStar,
           ),
       ],
     );

@@ -15,21 +15,28 @@ import 'package:ibie/utils/show_pop_up.dart';
 import 'package:ibie/ui/activity_registration/activity_form_viewmodel.dart';
 
 class ActivityFormDetailsPage extends StatefulWidget {
-  const ActivityFormDetailsPage({super.key, required this.viewModel, this.isEditing = false, this.activityId = ''});
+  const ActivityFormDetailsPage({
+    super.key,
+    required this.viewModel,
+    this.isEditing = false,
+    this.activityId = '',
+  });
 
   final ActivityFormViewmodel viewModel;
   final bool isEditing;
   final String activityId;
 
   @override
-  State<ActivityFormDetailsPage> createState() => _ActivityFormDetailsPageState();
+  State<ActivityFormDetailsPage> createState() =>
+      _ActivityFormDetailsPageState();
 }
 
 class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
   late final ActivityFormViewmodel viewModel;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _targetAudienceController = TextEditingController();
+  final TextEditingController _targetAudienceController =
+      TextEditingController();
   final TextEditingController _vacanciesController = TextEditingController();
   final TextEditingController _feeController = TextEditingController();
 
@@ -38,7 +45,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
     super.initState();
     viewModel = widget.viewModel;
 
-    if(widget.isEditing) {
+    if (widget.isEditing) {
       _initEditing(widget.activityId);
     }
   }
@@ -65,7 +72,11 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
-      appBar: CustomAppBar(title: widget.isEditing ? 'Editar Atividade' : 'Cadastro de Nova Atividade'),
+      appBar: CustomAppBar(
+        title: widget.isEditing
+            ? 'Editar Atividade'
+            : 'Cadastro de Nova Atividade',
+      ),
 
       body: SingleChildScrollView(
         child: Padding(
@@ -97,7 +108,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -109,8 +120,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                         viewModel.title = value;
                       }
                     },
-                    maxLength: 100,
-                    decoration: decorationForm("Título da Atividade *"), 
+                    decoration: decorationForm("Título da Atividade *"),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
@@ -127,7 +137,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -139,10 +149,8 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                         viewModel.description = value;
                       }
                     },
-                    maxLength: 500,
                     minLines: 1,
                     maxLines: 6,
-                    textAlignVertical: TextAlignVertical.top,
                     decoration: decorationForm("Descrição *"),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
@@ -160,20 +168,21 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 FormField<String>(
                   builder: (FormFieldState<String> state) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomDropdown<String>(
-                          value: defaultCategories.any((c) => c.name == viewModel.selectedCategory)
-                            ? viewModel.selectedCategory
-                            : null,
+                          value:
+                              defaultCategories.any(
+                                (c) => c.name == viewModel.selectedCategory,
+                              )
+                              ? viewModel.selectedCategory
+                              : null,
                           label: "Categoria *",
-                          items: defaultCategories
-                              .map((c) => c.name)
-                              .toList(),
+                          items: defaultCategories.map((c) => c.name).toList(),
                           onChanged: (value) {
                             setState(() {
                               if (widget.isEditing) {
@@ -185,7 +194,8 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                               state.didChange(value);
                             });
                           },
-                          validator: (value) => value == null ? 'Selecione uma categoria' : null,
+                          validator: (value) =>
+                              value == null ? 'Selecione uma categoria' : null,
                         ),
                         if (state.hasError)
                           Padding(
@@ -206,7 +216,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     );
                   },
                 ),
-                SizedBox(height: 29),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -218,7 +228,6 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                         viewModel.targetAudience = value;
                       }
                     },
-                    maxLength: 100,
                     decoration: decorationForm("Público-Alvo"),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
@@ -234,13 +243,13 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
                     controller: _vacanciesController,
                     keyboardType: TextInputType.number,
-                    decoration: decorationForm("Número de Vagas"),
+                    decoration: decorationForm("Número de Vagas *"),
                     onChanged: (value) {
                       if (widget.isEditing) {
                         viewModel.vacanciesEditing = value;
@@ -256,7 +265,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return null;
+                        return 'Informe o número de vagas';
                       }
                       final number = int.tryParse(value.trim());
                       if (number == null) {
@@ -269,13 +278,17 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 29),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
                     controller: _feeController,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                    decoration: decorationForm("Valor da Inscrição").copyWith(prefixText: 'R\$ '),
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: decorationForm(
+                      "Valor da Inscrição",
+                    ).copyWith(prefixText: 'R\$ '),
                     onChanged: (value) {
                       final sanitized = value.trim().replaceAll(',', '.');
                       final number = double.tryParse(sanitized);
@@ -316,8 +329,6 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 6),
-
                 Align(alignment: Alignment.centerLeft),
                 SizedBox(height: 40),
                 Row(
@@ -329,7 +340,8 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                         showPopUp(
                           context: context,
                           title: 'Cancelar Cadastro',
-                          text: 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                          text:
+                              'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/home');
                           },
@@ -342,7 +354,14 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           viewModel.goToNextPage();
-                          Navigator.pushNamed(context, '/activityFormLocation', arguments: ActivityFormLocationArgs(viewModel: viewModel, isEditing: widget.isEditing));
+                          Navigator.pushNamed(
+                            context,
+                            '/activityFormLocation',
+                            arguments: ActivityFormLocationArgs(
+                              viewModel: viewModel,
+                              isEditing: widget.isEditing,
+                            ),
+                          );
                         }
                       },
                       size: Size(175, 40),

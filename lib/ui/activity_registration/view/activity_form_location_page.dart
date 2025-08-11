@@ -14,13 +14,18 @@ import 'package:ibie/utils/show_pop_up.dart';
 import 'package:ibie/ui/activity_registration/activity_form_viewmodel.dart';
 
 class ActivityFormLocationPage extends StatefulWidget {
-  const ActivityFormLocationPage({super.key, required this.viewModel, this.isEditing = false});
+  const ActivityFormLocationPage({
+    super.key,
+    required this.viewModel,
+    this.isEditing = false,
+  });
 
   final ActivityFormViewmodel viewModel;
   final bool isEditing;
 
   @override
-  State<ActivityFormLocationPage> createState() => _ActivityFormLocationPageState();
+  State<ActivityFormLocationPage> createState() =>
+      _ActivityFormLocationPageState();
 }
 
 class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
@@ -38,7 +43,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
     super.initState();
     viewModel = widget.viewModel;
 
-    if(widget.isEditing) {
+    if (widget.isEditing) {
       _initEditing();
     }
   }
@@ -60,7 +65,9 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
       appBar: CustomAppBar(
-        title: widget.isEditing ? 'Editar Atividade' : 'Cadastro de Nova Atividade',
+        title: widget.isEditing
+            ? 'Editar Atividade'
+            : 'Cadastro de Nova Atividade',
         onBack: () {
           viewModel.goToPreviousPage();
           Navigator.pop(context);
@@ -97,7 +104,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -121,7 +128,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 29),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -145,7 +152,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 29),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -157,7 +164,6 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                         viewModel.location = value;
                       }
                     },
-                    maxLength: 100,
                     decoration: decorationForm("Local *"),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
@@ -187,7 +193,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -199,8 +205,6 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                         viewModel.street = value;
                       }
                     },
-                    maxLength: 100,
-                    textAlignVertical: TextAlignVertical.top,
                     decoration: decorationForm("Rua *"),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
@@ -218,7 +222,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -230,7 +234,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                         viewModel.number = value;
                       }
                     },
-                    textAlignVertical: TextAlignVertical.top,
+                    keyboardType: TextInputType.number,
                     decoration: decorationForm("Número"),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
@@ -238,9 +242,22 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                       fontWeight: FontWeight.w300,
                       color: Colors.black.withAlpha(178),
                     ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return null;
+                      }
+                      final number = int.tryParse(value.trim());
+                      if (number == null) {
+                        return 'Informe um número válido.';
+                      }
+                      if (number < 0) {
+                        return 'O número deve ser positivo.';
+                      }
+                      return null;
+                    },
                   ),
                 ),
-                SizedBox(height: 29),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -252,8 +269,6 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                         viewModel.neighborhood = value;
                       }
                     },
-                    maxLength: 50,
-                    textAlignVertical: TextAlignVertical.top,
                     decoration: decorationForm("Bairro *"),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
@@ -271,7 +286,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
 
                 FormField<String>(
                   builder: (FormFieldState<String> state) {
@@ -295,7 +310,8 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                               state.didChange(value);
                             });
                           },
-                          validator: (value) => value == null ? 'Informe a cidade' : null,
+                          validator: (value) =>
+                              value == null ? 'Informe a cidade' : null,
                         ),
                         if (state.hasError)
                           Padding(
@@ -316,7 +332,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     );
                   },
                 ),
-                SizedBox(height: 29),
+                SizedBox(height: 20),
                 SizedBox(
                   width: 365,
                   child: TextFormField(
@@ -340,8 +356,6 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 6),
-
                 Align(alignment: Alignment.centerLeft),
                 SizedBox(height: 40),
                 Row(
@@ -353,7 +367,8 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                         showPopUp(
                           context: context,
                           title: 'Cancelar Cadastro',
-                          text: 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                          text:
+                              'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/home');
                           },
@@ -366,7 +381,14 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           viewModel.goToNextPage();
-                          Navigator.pushNamed(context, '/activityFormResources', arguments: ActivityFormResourcesArgs(viewModel: viewModel, isEditing: widget.isEditing));
+                          Navigator.pushNamed(
+                            context,
+                            '/activityFormResources',
+                            arguments: ActivityFormResourcesArgs(
+                              viewModel: viewModel,
+                              isEditing: widget.isEditing,
+                            ),
+                          );
                         }
                       },
                       size: Size(175, 40),

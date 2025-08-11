@@ -192,4 +192,71 @@ class ProfileViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  String? validateDate(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Informe a data de nascimento.';
+    }
+
+    final parts = value.split('/');
+
+    if (parts.length != 3) {
+      return 'Informe uma data válida no formato dd/mm/aaaa.';
+    }
+
+    final day = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final year = int.tryParse(parts[2]);
+
+    if (day == null || month == null || year == null) {
+      return 'Data inválida.';
+    }
+
+    try {
+      final date = DateTime(year, month, day);
+      final now = DateTime.now();
+
+      if (date.day != day || date.month != month || date.year != year) {
+        return 'Data inválida.';
+      }
+
+      if (date.isAfter(now)) {
+        return 'Informe uma data de nascimento válida.';
+      }
+
+      final age =
+          now.year -
+          date.year -
+          ((now.month < date.month ||
+                  (now.month == date.month && now.day < date.day))
+              ? 1
+              : 0);
+
+      if (age < 0 || age > 130) {
+        return 'Informe uma data de nascimento válida.';
+      }
+    } catch (_) {
+      return 'Data inválida.';
+    }
+
+    return null;
+  }
+
+  String? validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Informe o telefone.';
+    }
+
+    final phone = value.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (phone.length < 10 || phone.length > 11) {
+      return 'Informe um número de telefone válido.';
+    }
+
+    if (phone.length == 11 && phone[2] != '9') {
+      return 'Informe um número de telefone válido.';
+    }
+
+    return null;
+  }
 }
