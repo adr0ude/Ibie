@@ -1,16 +1,55 @@
-# ibie
+# Ibiê
 
-A new Flutter project.
+Repositório completo da aplicação Ibiê, desenvolvida em Flutter e Dart, voltada para dispositivos móveis Android.
 
-## Getting Started
+## Objetivo
 
-This project is a starting point for a Flutter application.
+O Ibiê tem como finalidade facilitar a divulgação e o acesso a atividades extracurriculares e recreativas na região da Serra da Ibiapaba. Foi desenvolvido como projeto acadêmico para a disciplina de Engenharia de Software.
 
-A few resources to get you started if this is your first Flutter project:
+## A aplicação
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+A plataforma conecta:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Instrutores que desejam ampliar a divulgação de seus cursos e gerenciar inscrições.
+- Moradores e visitantes que buscam atividades para participar, inscrever-se e avaliar.
+
+## Funcionalidades gerais
+
+- Cadastro e autenticação de usuários.
+- Recuperação de senha.
+- Edição de perfil.
+- Homepage com atividades ativas ofertadas na região da Serra da Ibiapaba.
+- Favoritar atividades e filtrar a homepage pelos favoritos.
+- Visualização de detalhes do curso e do instrutor.
+- Inscrição e gerenciamento de inscrições em cursos.
+- Envio de comentários e avaliações sobre cursos.
+
+## Funcionalidades adicionais para instrutores
+
+- Cadastro de novas atividades.
+- Edição e exclusão dos próprios cursos.
+- Visualização das inscrições dos alunos nos seus cursos.
+- Obs.: instrutores também podem se inscrever em cursos de outros instrutores, com os mesmos recursos disponíveis para estudantes.
+
+## Ferramentas
+
+- Front-end: Flutter (framework).
+- Linguagem: Dart (linguagem usada pelo Flutter).
+- Backend / BaaS: Firebase — usado para autenticação (Authentication) e banco de dados (Cloud Firestore).
+- Armazenamento de arquivos: Supabase Storage.
+- Hospedagem do apk: Google Drive.
+- Design e protótipos: Figma.
+
+## Estrutura
+
+/lib
+/config
+/data
+/models
+/ui
+/utils
+
+## Requisitos para instalação
+
+- Dispositivo Android.
+- Instalador para arquivo .apk.

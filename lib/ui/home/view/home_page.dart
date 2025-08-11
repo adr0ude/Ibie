@@ -69,16 +69,6 @@ class _HomePageState extends State<HomePage> {
         }
         break;
     }
-    final favoritesResult = await viewModel.listFavorites();
-    switch (favoritesResult) {
-      case Ok():
-        setState(() {});
-      case Error():
-        if (mounted) {
-          showErrorMessage(context, favoritesResult.errorMessage);
-          break;
-        }
-    }
   }
 
   @override
@@ -202,7 +192,9 @@ class _HomePageState extends State<HomePage> {
                                             activity,
                                           ) {
                                             return Padding(
-                                              padding: const EdgeInsets.only(right: 12),
+                                              padding: const EdgeInsets.only(
+                                                right: 12,
+                                              ),
                                               child: SizedBox(
                                                 width: 365,
                                                 child: CustomCardHome(
@@ -211,9 +203,15 @@ class _HomePageState extends State<HomePage> {
                                                       viewModel.isLoggedIn,
                                                   onPressed: () {
                                                     if (viewModel.isLoggedIn) {
-                                                      Navigator.pushNamed(context, '/activity', arguments: activity.id);
+                                                      Navigator.pushNamed(
+                                                        context,
+                                                        '/activity',
+                                                        arguments: activity.id,
+                                                      );
                                                     } else {
-                                                      showAskToLogin(context: context);
+                                                      showAskToLogin(
+                                                        context: context,
+                                                      );
                                                     }
                                                   },
                                                 ),
@@ -225,7 +223,8 @@ class _HomePageState extends State<HomePage> {
                                       const SizedBox(height: 24),
                                     ],
                                   );
-                                }).toList(),
+                                })
+                                .toList(),
                       ),
               ),
             ),
