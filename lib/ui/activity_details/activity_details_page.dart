@@ -207,7 +207,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                             infoTag(
                               Icons.location_on,
                               "${viewModel.activity!.street}"
-                              "${(viewModel.activity!.number!.isNotEmpty) ? ', ${viewModel.activity!.number}' : ''}, "
+                              "${(viewModel.activity!.number.isNotEmpty) ? ', ${viewModel.activity!.number}' : ''}, "
                               "${viewModel.activity!.neighborhood}, "
                               "${viewModel.activity!.city}, "
                               "${viewModel.activity!.cep}",
