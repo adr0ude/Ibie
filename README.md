@@ -23,6 +23,7 @@ A plataforma conecta:
 - Visualização de detalhes do curso e do instrutor.
 - Inscrição e gerenciamento de inscrições em cursos.
 - Envio de comentários e avaliações sobre cursos.
+- Modo Visitante.
 
 ## Funcionalidades adicionais para instrutores
 
@@ -58,4 +59,4 @@ A plataforma conecta:
 
 ## Download
 
-A versão mais recente está disponível [neste link](https://drive.google.com/file/d/126SR0EnUYR7CzuvG3eBrmfHaeTil7saS/view?usp=drive_link).
+A versão mais recente está disponível [neste link](https://drive.google.com/file/d/1nygzLUlUpIzZk8LdmRLS82-UjgvJsamv/view?usp=drive_link).

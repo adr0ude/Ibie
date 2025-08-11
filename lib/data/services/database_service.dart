@@ -14,10 +14,7 @@ class DatabaseService {
 
   Future<Result<User>> fetchUserData({required String userId}) async {
     try {
-      final doc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .get();
+      final doc = await _firestore.collection('users').doc(userId).get();
 
       if (doc.exists) {
         final user = User.fromMap(doc.data()!, doc.id);
@@ -34,10 +31,7 @@ class DatabaseService {
 
   Future<Result<void>> setUserData({required User user}) async {
     try {
-      await _firestore
-          .collection('users')
-          .doc(user.id)
-          .set(user.toMap());
+      await _firestore.collection('users').doc(user.id).set(user.toMap());
 
       return const Result.ok(null);
     } catch (e) {
@@ -45,14 +39,14 @@ class DatabaseService {
     }
   }
 
-  Future<Result<void>> registerCategories({required String userId, required List<String> categories}) async {
+  Future<Result<void>> registerCategories({
+    required String userId,
+    required List<String> categories,
+  }) async {
     try {
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .update({
-            'categories': categories,
-          });
+      await _firestore.collection('users').doc(userId).update({
+        'categories': categories,
+      });
 
       return const Result.ok(null);
     } catch (e) {
@@ -84,16 +78,13 @@ class DatabaseService {
           .add(activity.toMap());
 
       // atualiza o usuário para adicionar o curso na lista
-      await _firestore
-          .collection('users')
-          .doc(activity.userId)
-          .update({
-            'my_courses': FieldValue.arrayUnion([docRef.id])
-          });
+      await _firestore.collection('users').doc(activity.userId).update({
+        'my_courses': FieldValue.arrayUnion([docRef.id]),
+      });
 
       return const Result.ok(null);
     } catch (e) {
-     return Result.error(Exception('O cadastro da atividade falhou'));
+      return Result.error(Exception('O cadastro da atividade falhou'));
     }
   }
 
@@ -133,7 +124,9 @@ class DatabaseService {
 
         // remover da lista "my_courses" (caso seja o instrutor daquele curso)
         final data = userDoc.data();
-        if (data.containsKey('my_courses') && data['my_courses'] is List && (data['my_courses'] as List).contains(activityId)) {
+        if (data.containsKey('my_courses') &&
+            data['my_courses'] is List &&
+            (data['my_courses'] as List).contains(activityId)) {
           await _firestore.collection('users').doc(userId).update({
             'my_courses': FieldValue.arrayRemove([activityId]),
           });
@@ -172,11 +165,18 @@ class DatabaseService {
         final userId = data['userId'] ?? '';
         final userName = await _getUserNameById(userId);
 
-        final activity = Activity.fromMap(data, doc.id).copyWith(userName: userName);
+        final activity = Activity.fromMap(
+          data,
+          doc.id,
+        ).copyWith(userName: userName);
 
-        final remaining = int.tryParse(activity.remainingVacancies.isEmpty
-            ? '0'
-            : activity.remainingVacancies) ?? 0;
+        final remaining =
+            int.tryParse(
+              activity.remainingVacancies.isEmpty
+                  ? '0'
+                  : activity.remainingVacancies,
+            ) ??
+            0;
 
         if (remaining > 0) {
           activities.add(activity);
@@ -188,7 +188,9 @@ class DatabaseService {
     }
   }
 
-  Future<Result<List<EnrolledActivity>>> getEnrolledActivities({required String userId}) async {
+  Future<Result<List<EnrolledActivity>>> getEnrolledActivities({
+    required String userId,
+  }) async {
     try {
       final querySnapshot = await _firestore
           .collection('users')
@@ -212,18 +214,27 @@ class DatabaseService {
           final instructorId = data['userId'] ?? '';
           final instructorName = await _getUserNameById(instructorId);
 
-          final activity = Activity.fromMap(data, activityDoc.id).copyWith(userName: instructorName);
+          final activity = Activity.fromMap(
+            data,
+            activityDoc.id,
+          ).copyWith(userName: instructorName);
 
-          enrolledActivities.add(EnrolledActivity(activity: activity, status: status));
+          enrolledActivities.add(
+            EnrolledActivity(activity: activity, status: status),
+          );
         }
       }
       return Result.ok(enrolledActivities);
     } catch (e) {
-      return Result.error(Exception('Não foi possível carregar suas atividades inscritas'));
+      return Result.error(
+        Exception('Não foi possível carregar suas atividades inscritas'),
+      );
     }
   }
 
-  Future<Result<List<Activity>>> getInstructorActivities({required String instructorId}) async {
+  Future<Result<List<Activity>>> getInstructorActivities({
+    required String instructorId,
+  }) async {
     try {
       final instructorDoc = await _firestore
           .collection('users')
@@ -252,8 +263,10 @@ class DatabaseService {
           final courseData = activityDoc.data()!;
           if (courseData['status'] == 'active') {
             final instructorName = await _getUserNameById(instructorId);
-            final activity = Activity.fromMap(courseData, activityDoc.id)
-                .copyWith(userName: instructorName);
+            final activity = Activity.fromMap(
+              courseData,
+              activityDoc.id,
+            ).copyWith(userName: instructorName);
             activities.add(activity);
           }
         }
@@ -261,7 +274,9 @@ class DatabaseService {
 
       return Result.ok(activities);
     } catch (e) {
-      return Result.error(Exception('Não foi possível carregar as atividades do instrutor'));
+      return Result.error(
+        Exception('Não foi possível carregar as atividades do instrutor'),
+      );
     }
   }
 
@@ -274,23 +289,27 @@ class DatabaseService {
         final userId = data['userId'] ?? '';
         final userName = await _getUserNameById(userId);
 
-        final activity = Activity.fromMap(data, doc.id).copyWith(userName: userName);
+        final activity = Activity.fromMap(
+          data,
+          doc.id,
+        ).copyWith(userName: userName);
         return Result.ok(activity);
       } else {
-        return Result.error(Exception("Os dados do curso não foram encontrados"));
+        return Result.error(
+          Exception("Os dados do curso não foram encontrados"),
+        );
       }
     } catch (e) {
-      return Result.error(Exception('Não foi possível carregar os dados da atividade'));
+      return Result.error(
+        Exception('Não foi possível carregar os dados da atividade'),
+      );
     }
   }
 
   Future<Result<User>> getInstructorData({required String instructorId}) async {
     try {
-      final doc = await _firestore
-          .collection('users')
-          .doc(instructorId)
-          .get();
-          
+      final doc = await _firestore.collection('users').doc(instructorId).get();
+
       if (doc.exists) {
         final instructor = User.fromMap(doc.data()!, doc.id);
         return Result.ok(instructor);
@@ -306,7 +325,10 @@ class DatabaseService {
     }
   }
 
-  Future<Result<void>> subscribe({required User user, required Activity activity}) async {
+  Future<Result<void>> subscribe({
+    required User user,
+    required Activity activity,
+  }) async {
     try {
       final docRef = _firestore.collection('courses').doc(activity.id);
 
@@ -365,7 +387,10 @@ class DatabaseService {
     }
   }
 
-  Future<Result<void>> unsubscribe({required User user, required Activity activity}) async {
+  Future<Result<void>> unsubscribe({
+    required User user,
+    required Activity activity,
+  }) async {
     try {
       final docRef = _firestore.collection('courses').doc(activity.id);
 
@@ -407,14 +432,14 @@ class DatabaseService {
     }
   }
 
-  Future<Result<void>> sendFeedback({required String activityId, required String comment}) async {
+  Future<Result<void>> sendFeedback({
+    required String activityId,
+    required String comment,
+  }) async {
     try {
-      await _firestore
-          .collection('courses')
-          .doc(activityId)
-          .update({
-            'comments': FieldValue.arrayUnion([comment]),
-          });
+      await _firestore.collection('courses').doc(activityId).update({
+        'comments': FieldValue.arrayUnion([comment]),
+      });
 
       return Result.ok(null);
     } catch (e) {
@@ -422,7 +447,9 @@ class DatabaseService {
     }
   }
 
-  Future<Result<List<String>>> getStudentsNames({required String activityId}) async {
+  Future<Result<List<String>>> getStudentsNames({
+    required String activityId,
+  }) async {
     try {
       final activityDoc = await _firestore
           .collection('courses')
@@ -448,9 +475,7 @@ class DatabaseService {
 
       return Result.ok(names);
     } catch (e) {
-      return Result.error(
-        Exception('Erro ao carregar os nomes dos alunos'),
-      );
+      return Result.error(Exception('Erro ao carregar os nomes dos alunos'));
     }
   }
 
@@ -471,7 +496,9 @@ class DatabaseService {
     }
   }
 
-  Future<Result<List<Activity>>> getFavoritesActivities({required String userId}) async {
+  Future<Result<List<Activity>>> getFavoritesActivities({
+    required String userId,
+  }) async {
     try {
       final doc = await _firestore.collection('users').doc(userId).get();
 
@@ -487,15 +514,20 @@ class DatabaseService {
       }
 
       final futures = favoriteIds.map((id) async {
-        final activityDoc = await _firestore.collection('courses').doc(id).get();
+        final activityDoc = await _firestore
+            .collection('courses')
+            .doc(id)
+            .get();
 
         if (activityDoc.exists) {
           final activityData = activityDoc.data()!;
           final ownerId = activityData['userId'] ?? '';
           final userName = await _getUserNameById(ownerId);
 
-          return Activity.fromMap(activityData, activityDoc.id)
-              .copyWith(userName: userName);
+          return Activity.fromMap(
+            activityData,
+            activityDoc.id,
+          ).copyWith(userName: userName);
         }
         return null;
       }).toList();
@@ -506,13 +538,16 @@ class DatabaseService {
       return Result.ok(nonNullActivities);
     } catch (e) {
       return Result.error(Exception("Erro ao carregar atividades favoritas"));
-    } 
+    }
   }
 
-  Future<Result<void>> addFavorite({required String userId, required String activityId}) async {
+  Future<Result<void>> addFavorite({
+    required String userId,
+    required String activityId,
+  }) async {
     try {
       await _firestore.collection('users').doc(userId).update({
-        'favorites': FieldValue.arrayUnion([activityId])
+        'favorites': FieldValue.arrayUnion([activityId]),
       });
 
       return const Result.ok(null);
@@ -521,10 +556,13 @@ class DatabaseService {
     }
   }
 
-  Future<Result<void>> removeFavorite({required String userId, required String activityId}) async {
+  Future<Result<void>> removeFavorite({
+    required String userId,
+    required String activityId,
+  }) async {
     try {
       await _firestore.collection('users').doc(userId).update({
-        'favorites': FieldValue.arrayRemove([activityId])
+        'favorites': FieldValue.arrayRemove([activityId]),
       });
 
       return const Result.ok(null);
@@ -555,12 +593,58 @@ class DatabaseService {
         }
       }
 
-    // aplica as alterações
+      // aplica as alterações
       await batch.commit();
 
       return const Result.ok(null);
     } catch (e) {
       return Result.error(Exception("Erro ao marcar curso como concluído"));
+    }
+  }
+
+  Future<Result<List<Activity>>> getMyActivities({
+    required String instructorId,
+  }) async {
+    try {
+      final instructorDoc = await _firestore
+          .collection('users')
+          .doc(instructorId)
+          .get();
+
+      if (!instructorDoc.exists) {
+        return Result.error(Exception('Usuário não encontrado'));
+      }
+
+      final data = instructorDoc.data()!;
+      if (data['type']?.toLowerCase() != 'instructor') {
+        return Result.error(Exception('O usuário não é um instrutor'));
+      }
+
+      final myCourses = List<String>.from(data['my_courses'] ?? []);
+      final activities = <Activity>[];
+
+      for (final activityId in myCourses) {
+        final activityDoc = await _firestore
+            .collection('courses')
+            .doc(activityId)
+            .get();
+
+        if (activityDoc.exists) {
+          final courseData = activityDoc.data()!;
+          final instructorName = await _getUserNameById(instructorId);
+          final activity = Activity.fromMap(
+            courseData,
+            activityDoc.id,
+          ).copyWith(userName: instructorName);
+          activities.add(activity);
+        }
+      }
+
+      return Result.ok(activities);
+    } catch (e) {
+      return Result.error(
+        Exception('Não foi possível carregar as atividades do instrutor'),
+      );
     }
   }
 }

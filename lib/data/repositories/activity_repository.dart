@@ -15,21 +15,34 @@ abstract class IActivityRepository extends ChangeNotifier {
   Future<Result<void>> updateActivity({required Activity activity});
   Future<Result<void>> deleteActivity({required String activityId});
   Future<Result<List<EnrolledActivity>>> getEnrolledActivities();
-  Future<Result<List<Activity>>> getInstructorActivities({required String instructorId});
+  Future<Result<List<Activity>>> getInstructorActivities({
+    required String instructorId,
+  });
   Future<Result<Activity>> getActivityData({required String activityId});
   Future<Result<void>> subscribe({required Activity activity});
   Future<Result<void>> unsubscribe({required Activity activity});
-  Future<Result<void>> sendFeedback({required Activity activity, required String comment});
+  Future<Result<void>> sendFeedback({
+    required Activity activity,
+    required String comment,
+  });
   Future<Result<User>> getInstructorData({required String instructorId});
   Future<Result<void>> deleteActivityImage({required Activity activity});
   Future<Result<String?>> pickActivityImage({required String source});
-  Future<Result<void>> updateActivityData({required Activity activity, String? newPhoto});
+  Future<Result<void>> updateActivityData({
+    required Activity activity,
+    String? newPhoto,
+  });
   Future<Result<List<String>>> getStudentsNames({required String activityId});
   Future<Result<List<String>>> getFavorites({required String userId});
-  Future<Result<List<Activity>>> getFavoritesActivities({required String userId});
+  Future<Result<List<Activity>>> getFavoritesActivities({
+    required String userId,
+  });
   Future<Result<void>> favoriteActivity({required String activityId});
   Future<Result<void>> unfavoriteActivity({required String activityId});
   Future<Result<void>> markAsCompleted({required String activityId});
+  Future<Result<List<Activity>>> getMyActivities({
+    required String instructorId,
+  });
 }
 
 class ActivityRepository extends IActivityRepository {
@@ -55,11 +68,11 @@ class ActivityRepository extends IActivityRepository {
 
       switch (userResult) {
         case Ok(value: final user):
-          final updatedActivity = activity.copyWith(
-            userId: user.id,
-          );
+          final updatedActivity = activity.copyWith(userId: user.id);
 
-          final result = await _databaseService.createActivity(activity: updatedActivity);
+          final result = await _databaseService.createActivity(
+            activity: updatedActivity,
+          );
           return result;
 
         case Error(error: final e):
@@ -95,7 +108,9 @@ class ActivityRepository extends IActivityRepository {
   @override
   Future<Result<void>> deleteActivity({required String activityId}) async {
     try {
-      final deleteResult = await _databaseService.deleteActivity(activityId: activityId);
+      final deleteResult = await _databaseService.deleteActivity(
+        activityId: activityId,
+      );
       switch (deleteResult) {
         case Ok():
           return Result.ok(null);
@@ -113,7 +128,9 @@ class ActivityRepository extends IActivityRepository {
       final userResult = await _preferencesService.getUserData();
       switch (userResult) {
         case Ok(value: final user):
-          final listResult = await _databaseService.getEnrolledActivities(userId: user.id);
+          final listResult = await _databaseService.getEnrolledActivities(
+            userId: user.id,
+          );
           switch (listResult) {
             case Ok(value: final list):
               return Result.ok(list);
@@ -129,9 +146,13 @@ class ActivityRepository extends IActivityRepository {
   }
 
   @override
-  Future<Result<List<Activity>>> getInstructorActivities({required String instructorId}) async {
+  Future<Result<List<Activity>>> getInstructorActivities({
+    required String instructorId,
+  }) async {
     try {
-      final listResult = await _databaseService.getInstructorActivities(instructorId: instructorId);
+      final listResult = await _databaseService.getInstructorActivities(
+        instructorId: instructorId,
+      );
       switch (listResult) {
         case Ok(value: final list):
           return Result.ok(list);
@@ -146,7 +167,9 @@ class ActivityRepository extends IActivityRepository {
   @override
   Future<Result<Activity>> getActivityData({required String activityId}) async {
     try {
-      final activityResult = await _databaseService.getActivityData(activityId: activityId);
+      final activityResult = await _databaseService.getActivityData(
+        activityId: activityId,
+      );
       switch (activityResult) {
         case Ok(value: final activity):
           return Result.ok(activity);
@@ -161,7 +184,9 @@ class ActivityRepository extends IActivityRepository {
   @override
   Future<Result<User>> getInstructorData({required String instructorId}) async {
     try {
-      final instructorResult = await _databaseService.getInstructorData(instructorId: instructorId);
+      final instructorResult = await _databaseService.getInstructorData(
+        instructorId: instructorId,
+      );
       switch (instructorResult) {
         case Ok(value: final instructor):
           return Result.ok(instructor);
@@ -179,16 +204,19 @@ class ActivityRepository extends IActivityRepository {
       final userResult = await _preferencesService.getUserData();
       switch (userResult) {
         case Ok(value: final user):
-          final subscribeResult = await _databaseService.subscribe(user: user, activity: activity);
+          final subscribeResult = await _databaseService.subscribe(
+            user: user,
+            activity: activity,
+          );
           switch (subscribeResult) {
             case Ok():
               //final favoriteResult = await _databaseService.removeFavorite(userId: user.id, activityId: activity.id);
               //switch (favoriteResult) {
-                //case Ok():
-                  return Result.ok(null);
-                //case Error(error: final e):
-                  //return Result.error(e);
-              //}
+              //case Ok():
+              return Result.ok(null);
+            //case Error(error: final e):
+            //return Result.error(e);
+            //}
             case Error(error: final e):
               return Result.error(e);
           }
@@ -206,7 +234,10 @@ class ActivityRepository extends IActivityRepository {
       final userResult = await _preferencesService.getUserData();
       switch (userResult) {
         case Ok(value: final user):
-          final subscribeResult = await _databaseService.unsubscribe(user: user, activity: activity);
+          final subscribeResult = await _databaseService.unsubscribe(
+            user: user,
+            activity: activity,
+          );
           switch (subscribeResult) {
             case Ok():
               return Result.ok(null);
@@ -222,9 +253,15 @@ class ActivityRepository extends IActivityRepository {
   }
 
   @override
-  Future<Result<void>> sendFeedback({required Activity activity, required String comment}) async {
+  Future<Result<void>> sendFeedback({
+    required Activity activity,
+    required String comment,
+  }) async {
     try {
-      final sendResult = await _databaseService.sendFeedback(activityId: activity.id, comment: comment);
+      final sendResult = await _databaseService.sendFeedback(
+        activityId: activity.id,
+        comment: comment,
+      );
       switch (sendResult) {
         case Ok():
           return Result.ok(null);
@@ -237,7 +274,10 @@ class ActivityRepository extends IActivityRepository {
   }
 
   @override
-  Future<Result<void>> updateActivityData({required Activity activity, String? newPhoto}) async {
+  Future<Result<void>> updateActivityData({
+    required Activity activity,
+    String? newPhoto,
+  }) async {
     try {
       if (newPhoto != null) {
         // se há uma nova foto
@@ -356,9 +396,13 @@ class ActivityRepository extends IActivityRepository {
   }
 
   @override
-  Future<Result<List<String>>> getStudentsNames({required String activityId}) async {
+  Future<Result<List<String>>> getStudentsNames({
+    required String activityId,
+  }) async {
     try {
-      final listResult = await _databaseService.getStudentsNames(activityId: activityId);
+      final listResult = await _databaseService.getStudentsNames(
+        activityId: activityId,
+      );
       switch (listResult) {
         case Ok(value: final list):
           return Result.ok(list);
@@ -373,7 +417,9 @@ class ActivityRepository extends IActivityRepository {
   @override
   Future<Result<List<String>>> getFavorites({required String userId}) async {
     try {
-      final favoritesResult = await _databaseService.getFavorites(userId: userId);
+      final favoritesResult = await _databaseService.getFavorites(
+        userId: userId,
+      );
       switch (favoritesResult) {
         case Ok(value: final list):
           return Result.ok(list);
@@ -386,9 +432,13 @@ class ActivityRepository extends IActivityRepository {
   }
 
   @override
-  Future<Result<List<Activity>>> getFavoritesActivities({required String userId}) async {
+  Future<Result<List<Activity>>> getFavoritesActivities({
+    required String userId,
+  }) async {
     try {
-      final favoritesResult = await _databaseService.getFavoritesActivities(userId: userId);
+      final favoritesResult = await _databaseService.getFavoritesActivities(
+        userId: userId,
+      );
       switch (favoritesResult) {
         case Ok(value: final list):
           return Result.ok(list);
@@ -406,7 +456,10 @@ class ActivityRepository extends IActivityRepository {
       final userResult = await _preferencesService.getUserData();
       switch (userResult) {
         case Ok(value: final user):
-          final favoriteResult = await _databaseService.addFavorite(userId: user.id, activityId: activityId);
+          final favoriteResult = await _databaseService.addFavorite(
+            userId: user.id,
+            activityId: activityId,
+          );
           switch (favoriteResult) {
             case Ok():
               return Result.ok(null);
@@ -427,7 +480,10 @@ class ActivityRepository extends IActivityRepository {
       final userResult = await _preferencesService.getUserData();
       switch (userResult) {
         case Ok(value: final user):
-          final favoriteResult = await _databaseService.removeFavorite(userId: user.id, activityId: activityId);
+          final favoriteResult = await _databaseService.removeFavorite(
+            userId: user.id,
+            activityId: activityId,
+          );
           switch (favoriteResult) {
             case Ok():
               return Result.ok(null);
@@ -445,10 +501,31 @@ class ActivityRepository extends IActivityRepository {
   @override
   Future<Result<void>> markAsCompleted({required String activityId}) async {
     try {
-      final markResult = await _databaseService.markAsCompleted(activityId: activityId);
+      final markResult = await _databaseService.markAsCompleted(
+        activityId: activityId,
+      );
       switch (markResult) {
         case Ok():
-          return Result.ok(null); 
+          return Result.ok(null);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<Result<List<Activity>>> getMyActivities({
+    required String instructorId,
+  }) async {
+    try {
+      final listResult = await _databaseService.getMyActivities(
+        instructorId: instructorId,
+      );
+      switch (listResult) {
+        case Ok(value: final list):
+          return Result.ok(list);
         case Error(error: final e):
           return Result.error(e);
       }

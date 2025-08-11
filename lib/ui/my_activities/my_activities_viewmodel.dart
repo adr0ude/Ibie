@@ -39,11 +39,14 @@ class MyActivitiesViewmodel extends ChangeNotifier {
       switch (userResult) {
         case Ok(value: final user):
           _user = user;
-          final enrolledResult = await _activityRepository.getEnrolledActivities();
+          final enrolledResult = await _activityRepository
+              .getEnrolledActivities();
           switch (enrolledResult) {
             case Ok(value: final enrolledActivities):
               _enrolledActivities = enrolledActivities;
-              final myResult = await _activityRepository.getInstructorActivities(instructorId: user.id);
+              final myResult = await _activityRepository.getMyActivities(
+                instructorId: user.id,
+              );
               switch (myResult) {
                 case Ok(value: final myActivities):
                   _myActivities = myActivities;

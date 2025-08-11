@@ -49,7 +49,7 @@ class CustomInstructorSummaryCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            height: 110,
+            height: 100,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -102,7 +102,7 @@ class CustomInstructorSummaryCard extends StatelessWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               () {
                                 final totalVacancies =

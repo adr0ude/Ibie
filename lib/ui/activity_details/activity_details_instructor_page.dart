@@ -17,10 +17,12 @@ class ActivityDetailsInstructorPage extends StatefulWidget {
   final String activityId;
 
   @override
-  State<ActivityDetailsInstructorPage> createState() => _ActivityDetailsInstructorPageState();
+  State<ActivityDetailsInstructorPage> createState() =>
+      _ActivityDetailsInstructorPageState();
 }
 
-class _ActivityDetailsInstructorPageState extends State<ActivityDetailsInstructorPage> {
+class _ActivityDetailsInstructorPageState
+    extends State<ActivityDetailsInstructorPage> {
   late final ActivityDetailsViewmodel viewModel;
 
   @override
@@ -47,7 +49,10 @@ class _ActivityDetailsInstructorPageState extends State<ActivityDetailsInstructo
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
-      appBar: CustomAppBar(title: 'Detalhes da atividade', onBack: () => Navigator.pushReplacementNamed(context, '/home')),
+      appBar: CustomAppBar(
+        title: 'Detalhes da atividade',
+        onBack: () => Navigator.pushReplacementNamed(context, '/home'),
+      ),
       body: viewModel.isLoading
           ? const Center(
               child: CircularProgressIndicator(color: Color(0xFF9A31C9)),
@@ -98,7 +103,11 @@ class _ActivityDetailsInstructorPageState extends State<ActivityDetailsInstructo
                         SizedBox(height: 5),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/instructor', arguments: viewModel.instructorId);
+                            Navigator.pushNamed(
+                              context,
+                              '/instructor',
+                              arguments: viewModel.instructorId,
+                            );
                           },
                           child: Text(
                             "Professor(a) ${viewModel.userName}",
@@ -112,67 +121,19 @@ class _ActivityDetailsInstructorPageState extends State<ActivityDetailsInstructo
                           ),
                         ),
                         SizedBox(height: 20),
-                        Container(
-                          width: 400,
-                          margin: EdgeInsets.all(5),
-                          padding: EdgeInsets.all(13),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border(
-                              right: BorderSide(color: Color(0xFFF3CEED), width: 2),
-                              bottom: BorderSide(
-                                color: Color(0xFFF3CEED),
-                                width: 2,
-                              ),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black45,
-                                blurRadius: 6,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Sobre a atividade',
-                                style: TextStyle(
-                                  color: const Color(0xFF9A31C9),
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                viewModel.description,
-                                textAlign: TextAlign.justify,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  wordSpacing: -0.5,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16),
                         Wrap(
                           spacing: 10,
                           runSpacing: 10,
                           children: [
-                            infoTag(Icons.person, "13 alunos inscritos"),
+                            infoTag(
+                              Icons.person,
+                              "${viewModel.studentsList.length.toString()} alunos inscritos",
+                              Color(0xFF9A31C9),
+                            ),
                           ],
                         ),
                         SizedBox(height: 20),
-                        DetailsInstructorColumn(viewModel: viewModel),                 
+                        DetailsInstructorColumn(viewModel: viewModel),
                       ],
                     ),
                   ),
@@ -182,11 +143,41 @@ class _ActivityDetailsInstructorPageState extends State<ActivityDetailsInstructo
     );
   }
 
-  Widget infoTag(IconData icon, String text) {
-    return Chip(
-      avatar: Icon(icon, size: 18, color: const Color(0xFF9A31C9)),
-      label: Text(text),
-      backgroundColor: Colors.grey[200],
+  Widget infoTag(IconData icon, String text, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            spreadRadius: 1,
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            padding: const EdgeInsets.all(8),
+            child: Icon(icon, size: 20, color: Colors.white),
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              softWrap: true,
+              overflow: TextOverflow.visible,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
