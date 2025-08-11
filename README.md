@@ -42,12 +42,14 @@ A plataforma conecta:
 
 ## Estrutura
 
-/lib # Código principal do Flutter
-├── config # Configurações globais (temas, rotas, constantes)
-├── data # Acesso a dados (APIs, Firebase, repositórios)
-├── models # Modelos de dados (User, Product, etc.)
-├── ui # Telas, widgets e componentes visuais
-├── utils # Funções auxiliares e helpers
+```
+├── lib # Código principal do Flutter
+│   ├── config
+│   ├── data
+│   ├── models
+│   ├──ui
+│   └── utils
+```
 
 ## Requisitos para instalação
 
