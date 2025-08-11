@@ -337,15 +337,27 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                     CustomWhiteButton(
                       label: 'Cancelar',
                       onPressed: () {
-                        showPopUp(
-                          context: context,
-                          title: 'Cancelar Cadastro',
-                          text:
-                              'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/home');
-                          },
-                        );
+                        if (widget.isEditing) {
+                          showPopUp(
+                            context: context,
+                            title: 'Cancelar Edição',
+                            text:
+                                'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, '/home');
+                            },
+                          );
+                        } else {
+                          showPopUp(
+                            context: context,
+                            title: 'Cancelar Cadastro',
+                            text:
+                                'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, '/home');
+                            },
+                          );
+                        }
                       },
                       size: Size(175, 40),
                     ),

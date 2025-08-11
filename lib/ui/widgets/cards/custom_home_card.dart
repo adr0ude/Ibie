@@ -8,7 +8,12 @@ class CustomCardHome extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoggedIn;
 
-  const CustomCardHome({super.key, required this.activity, required this.onPressed, required this.isLoggedIn});
+  const CustomCardHome({
+    super.key,
+    required this.activity,
+    required this.onPressed,
+    required this.isLoggedIn,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +88,12 @@ class CustomCardHome extends StatelessWidget {
                         SizedBox(width: 6),
                         GestureDetector(
                           onTap: () {
-                            if(isLoggedIn) {
-                              Navigator.pushNamed(context, '/instructor', arguments: activity.userId);
+                            if (isLoggedIn) {
+                              Navigator.pushNamed(
+                                context,
+                                '/instructor',
+                                arguments: activity.userId,
+                              );
                             } else {
                               showAskToLogin(context: context);
                             }
@@ -127,9 +136,9 @@ class CustomCardHome extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        (activity.fee == '0' || activity.fee.isEmpty)
-                            ? 'GRATUITO'
-                            : 'R\$ ${activity.fee}',
+                        (activity.fee.isEmpty || activity.fee == "GRATUITO")
+                            ? "GRATUITO"
+                            : formatCurrency(activity.fee),
                         style: TextStyle(
                           fontFamily: 'Comfortaa',
                           fontSize: 11,
@@ -146,5 +155,10 @@ class CustomCardHome extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String formatCurrency(String value) {
+    final parsed = double.tryParse(value) ?? 0;
+    return 'R\$ ${parsed.toStringAsFixed(2).replaceAll('.', ',')}';
   }
 }

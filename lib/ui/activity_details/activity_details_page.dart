@@ -200,6 +200,11 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                               Color(0xFF71A151),
                             ),
                             infoTag(
+                              Icons.access_time,
+                              viewModel.activity!.time,
+                              Color(0xFF71A151),
+                            ),
+                            infoTag(
                               Icons.location_on,
                               viewModel.activity!.location,
                               Color(0xFF71A151),
@@ -227,7 +232,8 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                               viewModel.activity!.category,
                               Color(0xFF9A31C9),
                             ),
-                            if (viewModel.activity!.fee == "GRATUITO")
+                            if (viewModel.activity!.fee.isEmpty ||
+                                viewModel.activity!.fee == "GRATUITO")
                               infoTag(
                                 Icons.attach_money,
                                 "Gratuito",

@@ -110,7 +110,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Informe seu e-mail.';
+                            return 'Informe seu e-mail';
+                          } else if (value.length > 256) {
+                            return "O e-mail excede o limite de caracteres";
                           }
                           return null;
                         },
@@ -131,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: _hidePass,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Informe sua senha.';
+                          return 'Informe sua senha';
                         }
                         return null;
                       },
@@ -195,28 +197,32 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: !viewModel.isLoading
-                      ? () {
-                        if (viewModel.email.isEmpty) {
-                          showErrorMessage(context, 'Informe um e-mail');
-                        } else {
-                          showPopUp(
-                            context: context,
-                            title: 'Redefinir senha',
-                            text: 'Deseja receber um email para redefinição de senha?',
-                            onPressed: () async {
-                              final result = await viewModel.sendEmail();
-                              switch (result) {
-                                case Ok():
-                                  Navigator.pop(context);
-                                  showOkMessage(context, 'E-mail enviado');
-                                case Error():
-                                  showErrorMessage(context, result.errorMessage);
-                              }
-                            },
-                          );
-                        }
-                      }
-                      : null,
+                        ? () {
+                            if (viewModel.email.isEmpty) {
+                              showErrorMessage(context, 'Informe um e-mail');
+                            } else {
+                              showPopUp(
+                                context: context,
+                                title: 'Redefinir senha',
+                                text:
+                                    'Deseja receber um email para redefinição de senha?',
+                                onPressed: () async {
+                                  final result = await viewModel.sendEmail();
+                                  switch (result) {
+                                    case Ok():
+                                      Navigator.pop(context);
+                                      showOkMessage(context, 'E-mail enviado');
+                                    case Error():
+                                      showErrorMessage(
+                                        context,
+                                        result.errorMessage,
+                                      );
+                                  }
+                                },
+                              );
+                            }
+                          }
+                        : null,
                     child: Padding(
                       padding: EdgeInsets.all(4),
                       child: Text(
@@ -238,18 +244,18 @@ class _LoginPageState extends State<LoginPage> {
             CustomPurpleButton(
               label: 'Entrar',
               onPressed: !viewModel.isLoading
-                ? () async {
-                  if (_formKey.currentState!.validate()) {
-                    final result = await viewModel.loginEmail();
-                    switch (result) {
-                      case Ok():
-                        Navigator.pushReplacementNamed(context, '/home');
-                      case Error():
-                        showErrorMessage(context, result.errorMessage);
+                  ? () async {
+                      if (_formKey.currentState!.validate()) {
+                        final result = await viewModel.loginEmail();
+                        switch (result) {
+                          case Ok():
+                            Navigator.pushReplacementNamed(context, '/home');
+                          case Error():
+                            showErrorMessage(context, result.errorMessage);
+                        }
+                      }
                     }
-                  }
-                }
-                : null,
+                  : null,
               size: Size(354, 52),
             ),
             SizedBox(height: 100),

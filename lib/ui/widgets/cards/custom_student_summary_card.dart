@@ -54,7 +54,7 @@ class CustomStudentSummaryCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            height: 100,
+            height: 110,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -140,12 +140,12 @@ class CustomStudentSummaryCard extends StatelessWidget {
                           right: 2,
                           child: Text(
                             activity.status.toLowerCase() == 'completed'
-                            ? 'CONCLUÍDA'
-                            : activity.status.toLowerCase() == 'active'
-                            ? 'ATIVA'
-                            : activity.status.toLowerCase() == 'canceled'
-                            ? 'CANCELADA'
-                            : activity.status.toUpperCase(),
+                                ? 'CONCLUÍDA'
+                                : activity.status.toLowerCase() == 'active'
+                                ? 'ATIVA'
+                                : activity.status.toLowerCase() == 'canceled'
+                                ? 'CANCELADA'
+                                : activity.status.toUpperCase(),
                             style: TextStyle(
                               fontFamily: 'Comfortaa',
                               fontSize: 13,

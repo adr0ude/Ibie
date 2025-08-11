@@ -91,8 +91,10 @@ class Activity {
       remainingVacancies: remainingVacancies ?? this.remainingVacancies,
       vacancies: vacancies ?? this.vacancies,
       fee: fee ?? this.fee,
-      accessibilityResources: accessibilityResources ?? this.accessibilityResources,
-      accessibilityDescription: accessibilityDescription ?? this.accessibilityDescription,
+      accessibilityResources:
+          accessibilityResources ?? this.accessibilityResources,
+      accessibilityDescription:
+          accessibilityDescription ?? this.accessibilityDescription,
       image: image ?? this.image,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
@@ -119,7 +121,7 @@ class Activity {
       remainingVacancies: map['remainingVacancies'] ?? '',
       vacancies: map['vacancies'] ?? '',
       fee: map['fee'] ?? '',
-      accessibilityResources: map['accessibilityDescription'] ?? '',
+      accessibilityResources: map['accessibilityResources'] ?? '',
       accessibilityDescription: map['accessibilityDescription'] ?? '',
       image: map['image'] ?? '',
       userId: map['userId'] ?? '',

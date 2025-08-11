@@ -58,7 +58,11 @@ class _MyActivitiesPageState extends State<MyActivitiesPage> {
             Navigator.pushNamed(context, '/activity', arguments: a.activity.id);
           },
           onInstructorTap: () {
-            Navigator.pushNamed(context, '/instructor', arguments: a.activity.userId);
+            Navigator.pushNamed(
+              context,
+              '/instructor',
+              arguments: a.activity.userId,
+            );
           },
         );
       }).toList(),
@@ -91,70 +95,81 @@ class _MyActivitiesPageState extends State<MyActivitiesPage> {
           ),
 
           body: viewModel.isLoading
-    ? const Center(
-        child: CircularProgressIndicator(color: Color(0xFF9A31C9)),
-      )
-    : viewModel.enrolledActivities.isEmpty && viewModel.myActivities.isEmpty
-        ? viewModel.type == 'student'
-            ? EmptyScreenStudent()
-            : EmptyScreenInstructor()
-        : Padding(
-            padding: const EdgeInsets.all(22),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        if (viewModel.type.isNotEmpty && viewModel.type == 'student')
-                          _buildEnrolledActivityCards(viewModel.enrolledActivities),
-                        if (viewModel.type.isNotEmpty && viewModel.type == 'instructor') ...[
-                          if (viewModel.enrolledActivities.isNotEmpty)
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Atividades Inscritas",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF9A31C9),
-                                  fontFamily: 'Comfortaa',
-                                  fontWeight: FontWeight.w700,
+              ? const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF9A31C9)),
+                )
+              : viewModel.enrolledActivities.isEmpty &&
+                    viewModel.myActivities.isEmpty
+              ? viewModel.type == 'student'
+                    ? EmptyScreenStudent()
+                    : EmptyScreenInstructor()
+              : Padding(
+                  padding: const EdgeInsets.all(22),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              if (viewModel.type.isNotEmpty &&
+                                  viewModel.type == 'student')
+                                _buildEnrolledActivityCards(
+                                  viewModel.enrolledActivities,
                                 ),
-                              ),
-                            ),
-                          _buildEnrolledActivityCards(viewModel.enrolledActivities),
-                          SizedBox(height: 10),
-                          if (viewModel.myActivities.isNotEmpty)
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Gerenciar Atividades",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF9A31C9),
-                                  fontFamily: 'Comfortaa',
-                                  fontWeight: FontWeight.w700,
+                              if (viewModel.type.isNotEmpty &&
+                                  viewModel.type == 'instructor') ...[
+                                if (viewModel.enrolledActivities.isNotEmpty)
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Atividades Inscritas",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF9A31C9),
+                                        fontFamily: 'Comfortaa',
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                _buildEnrolledActivityCards(
+                                  viewModel.enrolledActivities,
                                 ),
-                              ),
-                            ),
-                          _buildMyActivityCards(viewModel.myActivities),
-                        ],
-                      ],
-                    ),
+                                SizedBox(height: 10),
+                                if (viewModel.myActivities.isNotEmpty)
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Gerenciar Atividades",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF9A31C9),
+                                        fontFamily: 'Comfortaa',
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                _buildMyActivityCards(viewModel.myActivities),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (viewModel.type == 'instructor')
+                        CustomWhiteButton(
+                          label: 'Adicionar atividade',
+                          isGreen: true,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/activityFormDetails',
+                              arguments: ActivityFormDetailsArgs(),
+                            );
+                          },
+                          size: Size(354, 52),
+                        ),
+                    ],
                   ),
                 ),
-                if (viewModel.type == 'instructor')
-                  CustomWhiteButton(
-                    label: 'Adicionar atividade',
-                    isGreen: true,
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/activityFormDetails', arguments: ActivityFormDetailsArgs());
-                    },
-                    size: Size(354, 52),
-                  ),
-              ],
-            ),
-          ),
         );
       },
     );

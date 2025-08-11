@@ -49,7 +49,7 @@ class CustomInstructorSummaryCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            height: 100,
+            height: 110,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -105,12 +105,17 @@ class CustomInstructorSummaryCard extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               () {
-                                final totalVacancies = activity.vacancies.isEmpty
+                                final totalVacancies =
+                                    activity.vacancies.isEmpty
                                     ? 0
                                     : int.tryParse(activity.vacancies) ?? 0;
-                                final remaining = activity.remainingVacancies.isEmpty
+                                final remaining =
+                                    activity.remainingVacancies.isEmpty
                                     ? 0
-                                    : int.tryParse(activity.remainingVacancies) ?? 0;
+                                    : int.tryParse(
+                                            activity.remainingVacancies,
+                                          ) ??
+                                          0;
                                 final enrolled = totalVacancies - remaining;
                                 return '$enrolled inscritos';
                               }(),
@@ -130,10 +135,10 @@ class CustomInstructorSummaryCard extends StatelessWidget {
                           right: 2,
                           child: Text(
                             activity.status.toLowerCase() == 'completed'
-                            ? 'CONCLUÍDA'
-                            : activity.status.toLowerCase() == 'active'
-                            ? 'ATIVA'
-                            : activity.status.toUpperCase(),
+                                ? 'CONCLUÍDA'
+                                : activity.status.toLowerCase() == 'active'
+                                ? 'ATIVA'
+                                : activity.status.toUpperCase(),
                             style: TextStyle(
                               fontFamily: 'Comfortaa',
                               fontSize: 13,

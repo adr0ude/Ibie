@@ -107,6 +107,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     inputFormatters: [dateFormatter],
                     onChanged: (value) => viewModel.dateBirth = value,
                     decoration: decorationForm("Data de Nascimento *"),
+                    validator: (value) => viewModel.validateDate(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
@@ -163,6 +164,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     inputFormatters: [phoneFormatter],
                     decoration: decorationForm("Número de Telefone *"),
                     onChanged: (value) => viewModel.phone = value,
+                    validator: (value) => viewModel.validatePhone(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,

@@ -108,6 +108,7 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                     inputFormatters: [dateFormatter],
                     onChanged: (value) => viewModel.dateBirth = value,
                     decoration: decorationForm("Data de Nascimento *"),
+                    validator: (value) => viewModel.validateDate(value ?? ''),
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 20,
@@ -164,6 +165,7 @@ class _RegisterInstructorPagePageState extends State<RegisterInstructorPage> {
                     controller: _phoneController,
                     inputFormatters: [phoneFormatter],
                     decoration: decorationForm("Número de Telefone *"),
+                    validator: (value) => viewModel.validatePhone(value ?? ''),
                     onChanged: (value) => viewModel.phone = value,
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
