@@ -16,17 +16,23 @@ import 'package:ibie/utils/show_pop_up.dart';
 import 'package:ibie/ui/activity_registration/activity_form_viewmodel.dart';
 
 class ActivityFormResourcesPage extends StatefulWidget {
-  const ActivityFormResourcesPage({super.key, required this.viewModel, this.isEditing = false});
+  const ActivityFormResourcesPage({
+    super.key,
+    required this.viewModel,
+    this.isEditing = false,
+  });
 
   final ActivityFormViewmodel viewModel;
   final bool isEditing;
 
   @override
-  State<ActivityFormResourcesPage> createState() => _ActivityFormResourcesPageState();
+  State<ActivityFormResourcesPage> createState() =>
+      _ActivityFormResourcesPageState();
 }
 
 class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
-  final TextEditingController _accessibilityDescriptionController = TextEditingController();
+  final TextEditingController _accessibilityDescriptionController =
+      TextEditingController();
   late final ActivityFormViewmodel viewModel;
 
   @override
@@ -34,13 +40,14 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
     super.initState();
     viewModel = widget.viewModel;
 
-    if(widget.isEditing) {
+    if (widget.isEditing) {
       _initEditing();
     }
   }
 
   Future<void> _initEditing() async {
-    _accessibilityDescriptionController.text = viewModel.accessibilityDescription;
+    _accessibilityDescriptionController.text =
+        viewModel.accessibilityDescription;
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -50,7 +57,9 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
       appBar: CustomAppBar(
-        title: widget.isEditing ? 'Editar Atividade' : 'Cadastro de Nova Atividade',
+        title: widget.isEditing
+            ? 'Editar Atividade'
+            : 'Cadastro de Nova Atividade',
         onBack: () {
           viewModel.goToPreviousPage();
           Navigator.pop(context);
@@ -96,7 +105,10 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomDropdown<String>(
-                          value: listAcessibility.contains(viewModel.selectedAccessibility)
+                          value:
+                              listAcessibility.contains(
+                                viewModel.selectedAccessibility,
+                              )
                               ? viewModel.selectedAccessibility
                               : null,
                           label: "Recursos de Acessibilidade",
@@ -104,12 +116,12 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
                           onChanged: (value) {
                             setState(() {
                               if (widget.isEditing) {
-                                viewModel.accessibilityResourcesEditing = value!;
+                                viewModel.accessibilityResourcesEditing =
+                                    value!;
                                 viewModel.accessibilityResources = value;
                               } else {
                                 viewModel.accessibilityResources = value!;
                               }
-                              state.didChange(value);
                               state.didChange(value);
                             });
                           },
@@ -120,12 +132,13 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
                             width: 365,
                             child: TextFormField(
                               controller: _accessibilityDescriptionController,
-                              maxLength: 200,
+                              maxLength: 500,
                               minLines: 1,
                               maxLines: 6,
                               textAlignVertical: TextAlignVertical.top,
                               decoration: decorationForm("Descrição *"),
-                              onChanged: (value) => viewModel.accessibilityDescription = value,
+                              onChanged: (value) =>
+                                  viewModel.accessibilityDescription = value,
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
                                 fontSize: 20,
@@ -169,7 +182,8 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
                     return CustomActivityImage(
                       image: viewModel.image,
                       onCamera: () async => await viewModel.pickImage('camera'),
-                      onGallery: () async => await viewModel.pickImage('gallery'),
+                      onGallery: () async =>
+                          await viewModel.pickImage('gallery'),
                       onDelete: () => viewModel.image = '',
                     );
                   },
@@ -185,11 +199,12 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
                     CustomWhiteButton(
                       label: 'Cancelar',
                       onPressed: () {
-                        if(widget.isEditing) {
+                        if (widget.isEditing) {
                           showPopUp(
                             context: context,
                             title: 'Cancelar Edição',
-                            text: 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                            text:
+                                'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                             onPressed: () {
                               Navigator.pushReplacementNamed(context, '/home');
                             },
@@ -198,7 +213,8 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
                           showPopUp(
                             context: context,
                             title: 'Cancelar Cadastro',
-                            text: 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                            text:
+                                'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                             onPressed: () {
                               Navigator.pushReplacementNamed(context, '/home');
                             },
@@ -210,28 +226,48 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
                     CustomPurpleButton(
                       label: 'Salvar',
                       onPressed: !viewModel.isLoading
-                        ? () async {
-                          if(widget.isEditing) {
-                            final updateResult = await viewModel.updateActivity();
-                            switch (updateResult) {
-                              case Ok():
-                                showOkMessage(context, 'Edição bem-sucedida');
-                                Navigator.pushReplacementNamed(context, '/home');
-                              case Error():
-                                showErrorMessage(context, updateResult.errorMessage);
+                          ? () async {
+                              if (widget.isEditing) {
+                                final updateResult = await viewModel
+                                    .updateActivity();
+                                switch (updateResult) {
+                                  case Ok():
+                                    showOkMessage(
+                                      context,
+                                      'Edição bem-sucedida',
+                                    );
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/home',
+                                    );
+                                  case Error():
+                                    showErrorMessage(
+                                      context,
+                                      updateResult.errorMessage,
+                                    );
+                                }
+                              } else {
+                                final createResult = await viewModel
+                                    .createActivity();
+                                switch (createResult) {
+                                  case Ok():
+                                    showOkMessage(
+                                      context,
+                                      'Cadastro bem-sucedido',
+                                    );
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/home',
+                                    );
+                                  case Error():
+                                    showErrorMessage(
+                                      context,
+                                      createResult.errorMessage,
+                                    );
+                                }
+                              }
                             }
-                          } else {
-                            final createResult = await viewModel.createActivity();
-                            switch (createResult) {
-                              case Ok():
-                                showOkMessage(context, 'Cadastro bem-sucedido');
-                                Navigator.pushReplacementNamed(context, '/home');
-                              case Error():
-                                showErrorMessage(context, createResult.errorMessage);
-                            }
-                          }
-                        }
-                        : null,
+                          : null,
                       size: Size(175, 40),
                     ),
                   ],

@@ -101,7 +101,8 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                 onDelete: () => showPopUp(
                                   context: context,
                                   title: 'Remover foto de perfil',
-                                  text: 'Deseja realmente remover sua foto de perfil?',
+                                  text:
+                                      'Deseja realmente remover sua foto de perfil?',
                                   onPressed: () async {
                                     final result = await viewModel
                                         .deletePhoto();
@@ -109,7 +110,10 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                       case Ok():
                                         _init();
                                       case Error():
-                                        showErrorMessage(context, result.errorMessage);
+                                        showErrorMessage(
+                                          context,
+                                          result.errorMessage,
+                                        );
                                     }
                                     Navigator.of(context).pop();
                                   },
@@ -157,7 +161,8 @@ class _ProfilePagePageState extends State<ProfilePage> {
                               height: 120,
                               child: TextFormField(
                                 controller: _biographyController,
-                                onChanged: (value) => viewModel.biography = value,
+                                onChanged: (value) =>
+                                    viewModel.biography = value,
                                 maxLines: 3,
                                 minLines: 3,
                                 textAlignVertical: TextAlignVertical.top,
@@ -172,6 +177,12 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                   fontWeight: FontWeight.w300,
                                   color: Color.fromARGB(178, 0, 0, 0),
                                 ),
+                                validator: (value) {
+                                  if (value != null && value.length > 250) {
+                                    return 'A mini biografia excede o limite de caracteres';
+                                  }
+                                  return null;
+                                },
                               ),
                             ),
                           ],
@@ -189,7 +200,8 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                 fontWeight: FontWeight.w300,
                                 color: Colors.black.withAlpha(178),
                               ),
-                              validator: (value) => viewModel.validateDate(value ?? ''),
+                              validator: (value) =>
+                                  viewModel.validateDate(value ?? ''),
                             ),
                           ),
                           SizedBox(height: 16),
@@ -248,7 +260,8 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                 fontWeight: FontWeight.w300,
                                 color: Colors.black.withAlpha(178),
                               ),
-                              validator: (value) => viewModel.validatePhone(value ?? ''),
+                              validator: (value) =>
+                                  viewModel.validatePhone(value ?? ''),
                             ),
                           ),
 
@@ -307,26 +320,37 @@ class _ProfilePagePageState extends State<ProfilePage> {
                               CustomPurpleButton(
                                 label: 'Salvar',
                                 onPressed: !viewModel.isLoading
-                                  ? () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      showPopUp(
-                                        context: context,
-                                        title: 'Salvar alterações',
-                                        text: 'Deseja salvar as alterações?',
-                                        onPressed: () async {
-                                          final result = await viewModel.updateUserData();
-                                          showOkMessage(context, 'Alteração bem-sucedida');
-                                          switch (result) {
-                                            case Ok():
-                                              Navigator.pushReplacementNamed(context, '/home');
-                                            case Error():
-                                              showErrorMessage(context, result.errorMessage);
-                                          }
-                                        },
-                                      );
-                                    }
-                                  }
-                                  : null,
+                                    ? () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          showPopUp(
+                                            context: context,
+                                            title: 'Salvar alterações',
+                                            text:
+                                                'Deseja salvar as alterações?',
+                                            onPressed: () async {
+                                              final result = await viewModel
+                                                  .updateUserData();
+                                              showOkMessage(
+                                                context,
+                                                'Alteração bem-sucedida',
+                                              );
+                                              switch (result) {
+                                                case Ok():
+                                                  Navigator.pushReplacementNamed(
+                                                    context,
+                                                    '/home',
+                                                  );
+                                                case Error():
+                                                  showErrorMessage(
+                                                    context,
+                                                    result.errorMessage,
+                                                  );
+                                              }
+                                            },
+                                          );
+                                        }
+                                      }
+                                    : null,
                                 size: Size(175, 40),
                               ),
                             ],
