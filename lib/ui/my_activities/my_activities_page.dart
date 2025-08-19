@@ -91,7 +91,7 @@ class _MyActivitiesPageState extends State<MyActivitiesPage> {
           backgroundColor: Color(0xFFF4F5F9),
           appBar: CustomAppBar(
             title: 'Minhas Atividades',
-            onBack: () => Navigator.pushReplacementNamed(context, '/home'),
+            onBack: () => Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false),
           ),
 
           body: viewModel.isLoading

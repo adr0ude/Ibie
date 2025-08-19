@@ -25,7 +25,7 @@ class LoginPrompt extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
               },
               child: Padding(
                 padding: EdgeInsetsGeometry.all(4),

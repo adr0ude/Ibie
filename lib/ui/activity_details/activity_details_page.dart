@@ -63,6 +63,7 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldContext = context;
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
       appBar: CustomAppBar(title: 'Detalhes da atividade'),
@@ -270,116 +271,142 @@ class _ActivityDetailsPageState extends State<ActivityDetailsPage> {
                         SizedBox(height: 24),
                         if (viewModel.instructorId == viewModel.userId) ...[
                           SizedBox(height: 10),
-                          CustomPurpleButton(
-                            label: 'Ver mais detalhes',
-                            onPressed: !viewModel.isLoading
-                                ? () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/activityDetailsInstructor',
-                                      arguments: ActivityDetailsArgs(
-                                        widget.viewModel,
-                                        widget.activityId,
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            size: Size(354, 52),
+                          ListenableBuilder(
+                            listenable: viewModel,
+                            builder: (context, child) {
+                              return CustomPurpleButton(
+                                label: 'Ver mais detalhes',
+                                onPressed: !viewModel.isLoading
+                                    ? () {
+                                        Navigator.pushNamed(
+                                          scaffoldContext,
+                                          '/activityDetailsInstructor',
+                                          arguments: ActivityDetailsArgs(
+                                            widget.viewModel,
+                                            widget.activityId,
+                                          ),
+                                        );
+                                      }
+                                    : null,
+                                size: Size(354, 52),
+                              );
+                            },
                           ),
                           SizedBox(height: 15),
-                          CustomGreenButton(
-                            label: 'Editar atividade',
-                            onPressed: !viewModel.isLoading
-                                ? () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/activityFormDetails',
-                                      arguments: ActivityFormDetailsArgs(
-                                        isEditing: true,
-                                        activityId: widget.activityId,
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            size: Size(354, 52),
+                          ListenableBuilder(
+                            listenable: viewModel,
+                            builder: (context, child) {
+                              return CustomGreenButton(
+                                label: 'Editar atividade',
+                                onPressed: !viewModel.isLoading
+                                    ? () {
+                                        Navigator.pushNamed(
+                                          scaffoldContext,
+                                          '/activityFormDetails',
+                                          arguments: ActivityFormDetailsArgs(
+                                            isEditing: true,
+                                            activityId: widget.activityId,
+                                          ),
+                                        );
+                                      }
+                                    : null,
+                                size: Size(354, 52),
+                              );
+                            },
                           ),
                           SizedBox(height: 15),
-                          CustomWhiteButton(
-                            label: 'Remover atividade',
-                            onPressed: !viewModel.isLoading
-                                ? () {
-                                    showPopUp(
-                                      context: context,
-                                      title: 'Remover Atividade',
-                                      text:
-                                          'Você confirma a remoção da atividade Curso ${viewModel.title}?',
-                                      onPressed: () async {
-                                        final deleteResult = await viewModel
-                                            .deleteActivity(widget.activityId);
-                                        switch (deleteResult) {
-                                          case Ok():
-                                            showOkMessage(
-                                              context,
-                                              'Exclusão bem-sucedida',
-                                            );
-                                            if (mounted) {
-                                              Navigator.pushReplacementNamed(
-                                                context,
-                                                '/home',
-                                              );
+                          ListenableBuilder(
+                            listenable: viewModel,
+                            builder: (context, child) {
+                              return CustomWhiteButton(
+                                label: 'Remover atividade',
+                                onPressed: !viewModel.isLoading
+                                    ? () {
+                                        showPopUp(
+                                          context: scaffoldContext,
+                                          title: 'Remover Atividade',
+                                          text:
+                                              'Você confirma a remoção da atividade Curso ${viewModel.title}?',
+                                          onPressed: () async {
+                                            final deleteResult = await viewModel
+                                                .deleteActivity(
+                                                  widget.activityId,
+                                                );
+                                            switch (deleteResult) {
+                                              case Ok():
+                                                showOkMessage(
+                                                  scaffoldContext,
+                                                  'Exclusão bem-sucedida',
+                                                );
+                                                if (mounted) {
+                                                  Navigator.pushNamedAndRemoveUntil(
+                                                    scaffoldContext,
+                                                    '/home',
+                                                    (route) => false,
+                                                  );
+                                                }
+                                              case Error():
+                                                showErrorMessage(
+                                                  scaffoldContext,
+                                                  deleteResult.errorMessage,
+                                                );
                                             }
-                                          case Error():
-                                            showErrorMessage(
-                                              context,
-                                              deleteResult.errorMessage,
-                                            );
-                                        }
-                                      },
-                                    );
-                                  }
-                                : null,
-                            size: Size(354, 52),
+                                          },
+                                        );
+                                      }
+                                    : null,
+                                size: Size(354, 52),
+                              );
+                            },
                           ),
                           SizedBox(height: 15),
-                          CustomWhiteButton(
-                            label: 'Marcar como concluída',
-                            isGreen: true,
-                            onPressed: !viewModel.isLoading
-                                ? () {
-                                    showPopUp(
-                                      context: context,
-                                      title: 'Marcar como Concluída',
-                                      text:
-                                          'Realmente deseja marcar a atividade ${viewModel.title} como concluída? Após essa ação, ela não receberá novas inscrições e deixará de aparecer na página inicial de cursos.',
-                                      onPressed: () async {
-                                        final markResult = await viewModel
-                                            .markAsCompleted(widget.activityId);
-                                        switch (markResult) {
-                                          case Ok():
-                                            showOkMessage(
-                                              context,
-                                              'Marcação bem-sucedida',
-                                            );
-                                            if (mounted) {
-                                              Navigator.pushReplacementNamed(
-                                                context,
-                                                '/home',
-                                              );
-                                            }
-                                          case Error():
-                                            showErrorMessage(
-                                              context,
-                                              markResult.errorMessage,
-                                            );
+                          if (viewModel.status != "completed") ...[
+                            ListenableBuilder(
+                              listenable: viewModel,
+                              builder: (context, child) {
+                                return CustomWhiteButton(
+                                  label: 'Marcar como concluída',
+                                  isGreen: true,
+                                  onPressed: !viewModel.isLoading
+                                      ? () {
+                                          showPopUp(
+                                            context: scaffoldContext,
+                                            title: 'Marcar como Concluída',
+                                            text: 'Realmente deseja marcar a atividade ${viewModel.title} como concluída? Após essa ação, ela não receberá novas inscrições e deixará de aparecer na página inicial de cursos.',
+                                            onPressed: () async {
+                                              final markResult = await viewModel
+                                                  .markAsCompleted(
+                                                    widget.activityId,
+                                                  );
+                                              switch (markResult) {
+                                                case Ok():
+                                                  showOkMessage(
+                                                    scaffoldContext,
+                                                    'Marcação bem-sucedida',
+                                                  );
+                                                  if (mounted) {
+                                                    Navigator.pushNamedAndRemoveUntil(
+                                                      scaffoldContext,
+                                                      '/home',
+                                                      (route) => false,
+                                                    );
+                                                  }
+                                                case Error():
+                                                  showErrorMessage(
+                                                    scaffoldContext,
+                                                    markResult.errorMessage,
+                                                  );
+                                              }
+                                            },
+                                          );
                                         }
-                                      },
-                                    );
-                                  }
-                                : null,
-                            size: Size(354, 52),
-                          ),
+                                      : null,
+                                  size: Size(354, 52),
+                                );
+                              },
+                            ),
+                          ],
                         ],
-
                         if (viewModel.instructorId != viewModel.userId) ...[
                           if (!viewModel.isSubscribed)
                             IsNotSubscribedColumn(viewModel: viewModel),

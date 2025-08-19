@@ -51,7 +51,7 @@ class _ActivityDetailsInstructorPageState
       backgroundColor: Color(0xFFF4F5F9),
       appBar: CustomAppBar(
         title: 'Detalhes da atividade',
-        onBack: () => Navigator.pushReplacementNamed(context, '/home'),
+        onBack: () => Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false)
       ),
       body: viewModel.isLoading
           ? const Center(

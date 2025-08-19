@@ -31,7 +31,7 @@ Future<void> showAskToLogin({required BuildContext context}) async {
                 label: 'Entrar com minha conta',
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/login');
+                  Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
                 },
                 size: Size(354, 52),
               ),

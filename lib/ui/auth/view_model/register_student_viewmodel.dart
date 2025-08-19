@@ -24,6 +24,7 @@ class RegisterStudentViewmodel extends ChangeNotifier {
   String _phone = '';
   String _email = '';
   String _password = '';
+  String get cpf => _cpf;
   List<String> _selectedCategories = [];
 
   bool get isLoading => _isLoading;
@@ -197,7 +198,7 @@ class RegisterStudentViewmodel extends ChangeNotifier {
     final parts = value.split('/');
 
     if (parts.length != 3) {
-      return 'Informe uma data válida no formato dd/mm/aaaa';
+      return 'Informe uma data de nascimento válida';
     }
 
     final day = int.tryParse(parts[0]);
@@ -205,7 +206,7 @@ class RegisterStudentViewmodel extends ChangeNotifier {
     final year = int.tryParse(parts[2]);
 
     if (day == null || month == null || year == null) {
-      return 'Data inválida';
+      return 'Informe uma data de nascimento válida';
     }
 
     try {
@@ -213,7 +214,7 @@ class RegisterStudentViewmodel extends ChangeNotifier {
       final now = DateTime.now();
 
       if (date.day != day || date.month != month || date.year != year) {
-        return 'Data inválida';
+        return 'Informe uma data de nascimento válida';
       }
 
       if (date.isAfter(now)) {
@@ -232,7 +233,7 @@ class RegisterStudentViewmodel extends ChangeNotifier {
         return 'Informe uma data de nascimento válida';
       }
     } catch (_) {
-      return 'Data inválida';
+      return 'Informe uma data de nascimento válida';
     }
 
     return null;

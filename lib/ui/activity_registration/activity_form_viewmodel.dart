@@ -36,6 +36,7 @@ class ActivityFormViewmodel extends ChangeNotifier {
   int _currentPage = 0;
 
   bool _isLoading = false;
+  bool _changePhoto = false;
 
   bool get isLoading => _isLoading;
   String get city => _city;
@@ -60,10 +61,12 @@ class ActivityFormViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String _newImage = '';
   String get selectedCategory => _category;
   String get selectedCity => _city;
   String get selectedAccessibility => _accessibilityResources;
   String get image => _image;
+  String get newImage => _newImage;
 
   String get title => _activity?.title ?? '';
   String get description => _activity?.description ?? '';
@@ -191,6 +194,10 @@ class ActivityFormViewmodel extends ChangeNotifier {
     }
   }
 
+  set newImage(String value) {
+    _newImage = value;
+  }
+
   set title(String value) => _title = value.trim();
   set description(String value) => _description = value.trim();
   set category(String value) => _category = value.trim();
@@ -212,12 +219,15 @@ class ActivityFormViewmodel extends ChangeNotifier {
   Future<Result<void>> initEditing(String activityId) async {
     try {
       _isLoading = true;
-      final activityResult = await _activityRepository.getActivityData(activityId: activityId);
+      final activityResult = await _activityRepository.getActivityData(
+        activityId: activityId,
+      );
       switch (activityResult) {
         case Ok(value: final activity):
           _city = activity.city;
           _category = activity.category;
           _accessibilityResources = activity.accessibilityResources;
+          _image = activity.image;
           _activity = activity;
           return Result.ok(null);
         case Error(error: final e):
@@ -239,7 +249,8 @@ class ActivityFormViewmodel extends ChangeNotifier {
 
       switch (photoResult) {
         case Ok(value: final picture):
-          _image = picture!;
+          _newImage = picture!;
+          _changePhoto = true;
           return const Result.ok(null);
         case Error(error: final e):
           return Result.error(e);
@@ -262,11 +273,60 @@ class ActivityFormViewmodel extends ChangeNotifier {
             return Result.error(Exception("Apenas instrutores podem cadastrar ou editar atividades"));
           }
 
-          return await _activityRepository.updateActivity(activity: _activity!);
+          Result<void> result;
 
+          if (_changePhoto) {
+            result = await _activityRepository.updateActivityData(
+              activity: _activity!,
+              newImage: _newImage,
+            );
+          } else {
+            result = await _activityRepository.updateActivityData(activity: _activity!);
+          }
+          switch (result) {
+            case Ok():
+              return const Result.ok(null);
+            case Error(error: final e):
+              return Result.error(e);
+            }
         case Error(error: final e):
           return Result.error(e);
       }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> deletePhoto() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      if (_activity!.image.isEmpty && _newImage.isEmpty) {
+        return const Result.ok(null);
+      }
+
+      if (_activity!.image.isEmpty && _newImage.isNotEmpty) {
+        _newImage = '';
+        return const Result.ok(null);
+      }
+
+      if (_activity!.image.isNotEmpty) {
+        _newImage = '';
+        final deleteResult = await _activityRepository.deleteActivityImage(
+          activity: _activity!,
+        );
+
+        switch (deleteResult) {
+          case Ok():
+            _activity = _activity!.copyWith(image: '');
+            return const Result.ok(null);
+          case Error(error: final e):
+            return Result.error(e);
+        }
+      }
+      return const Result.ok(null);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -310,7 +370,7 @@ class ActivityFormViewmodel extends ChangeNotifier {
             accessibilityResources: _accessibilityResources,
             accessibilityDescription: _accessibilityDescription,
             comments: [],
-            image: _image,
+            image: _newImage,
             status: 'active',
           );
           

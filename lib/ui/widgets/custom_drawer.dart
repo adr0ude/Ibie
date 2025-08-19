@@ -124,7 +124,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             CustomPurpleButton(
               label: 'Fazer login',
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/login');
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
               },
               size: Size(280, 50),
             ),

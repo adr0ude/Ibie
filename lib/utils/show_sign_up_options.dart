@@ -32,7 +32,7 @@ Future<void> showSignUpOptions({required BuildContext context}) async {
                 label: 'Cadastrar como cliente',
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/registerStudent');
+                  Navigator.pushNamedAndRemoveUntil(context, '/registerStudent', (route) => false);
                 },
                 size: Size(354, 52),
               ),
@@ -44,7 +44,7 @@ Future<void> showSignUpOptions({required BuildContext context}) async {
                 label: 'Cadastrar como instrutor',
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/registerInstructor');
+                  Navigator.pushNamedAndRemoveUntil(context, '/registerInstructor', (route) => false);
                 },
                 size: Size(354, 52),
               ),

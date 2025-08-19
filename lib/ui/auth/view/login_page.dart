@@ -35,12 +35,17 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldContext = context;
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
       appBar: CustomAppBar(
         title: 'Login',
         onBack: () {
-          Navigator.pushReplacementNamed(context, '/welcome');
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/welcome',
+            (route) => false,
+          );
         },
       ),
 
@@ -195,68 +200,89 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: Material(
                   color: Colors.transparent,
-                  child: InkWell(
-                    onTap: !viewModel.isLoading
-                        ? () {
-                            if (viewModel.email.isEmpty) {
-                              showErrorMessage(context, 'Informe um e-mail');
-                            } else {
-                              showPopUp(
-                                context: context,
-                                title: 'Redefinir senha',
-                                text:
-                                    'Deseja receber um email para redefinição de senha?',
-                                onPressed: () async {
-                                  final result = await viewModel.sendEmail();
-                                  switch (result) {
-                                    case Ok():
-                                      Navigator.pop(context);
-                                      showOkMessage(context, 'E-mail enviado');
-                                    case Error():
-                                      showErrorMessage(
-                                        context,
-                                        result.errorMessage,
-                                      );
-                                  }
-                                },
-                              );
-                            }
-                          }
-                        : null,
-                    child: Padding(
-                      padding: EdgeInsets.all(4),
-                      child: Text(
-                        'Esqueceu a senha?',
-                        style: TextStyle(
-                          fontFamily: 'Comfortaa',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                          decoration: TextDecoration.underline,
+                  child: ListenableBuilder(
+                    listenable: viewModel,
+                    builder: (context, child) {
+                      return InkWell(
+                        onTap: !viewModel.isLoading
+                            ? () {
+                                if (viewModel.email.isEmpty) {
+                                  showErrorMessage(
+                                    scaffoldContext,
+                                    'Informe um e-mail',
+                                  );
+                                } else {
+                                  showPopUp(
+                                    context: scaffoldContext,
+                                    title: 'Redefinir senha',
+                                    text:
+                                        'Deseja receber um email para redefinição de senha?',
+                                    onPressed: () async {
+                                      final result = await viewModel
+                                          .sendEmail();
+                                      switch (result) {
+                                        case Ok():
+                                          Navigator.pop(scaffoldContext);
+                                          showOkMessage(
+                                            scaffoldContext,
+                                            'E-mail enviado',
+                                          );
+                                        case Error():
+                                          showErrorMessage(
+                                            scaffoldContext,
+                                            result.errorMessage,
+                                          );
+                                      }
+                                    },
+                                  );
+                                }
+                              }
+                            : null,
+                        child: Padding(
+                          padding: EdgeInsets.all(4),
+                          child: Text(
+                            'Esqueceu a senha?',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),
             ),
 
-            CustomPurpleButton(
-              label: 'Entrar',
-              onPressed: !viewModel.isLoading
-                  ? () async {
-                      if (_formKey.currentState!.validate()) {
-                        final result = await viewModel.loginEmail();
-                        switch (result) {
-                          case Ok():
-                            Navigator.pushReplacementNamed(context, '/home');
-                          case Error():
-                            showErrorMessage(context, result.errorMessage);
+            ListenableBuilder(
+              listenable: viewModel,
+              builder: (context, child) {
+                return CustomPurpleButton(
+                  label: 'Entrar',
+                  onPressed: !viewModel.isLoading
+                      ? () async {
+                          if (_formKey.currentState!.validate()) {
+                            final result = await viewModel.loginEmail();
+                            switch (result) {
+                              case Ok():
+                                Navigator.pushNamedAndRemoveUntil(
+                                  scaffoldContext,
+                                  '/home',
+                                  (route) => false,
+                                );
+                              case Error():
+                                showErrorMessage(scaffoldContext, result.errorMessage);
+                            }
+                          }
                         }
-                      }
-                    }
-                  : null,
-              size: Size(354, 52),
+                      : null,
+                  size: Size(354, 52),
+                );
+              },
             ),
             SizedBox(height: 100),
             Padding(

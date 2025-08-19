@@ -227,7 +227,7 @@ class DatabaseService {
       return Result.ok(enrolledActivities);
     } catch (e) {
       return Result.error(
-        Exception('Não foi possível carregar suas atividades inscritas'),
+        Exception('Não foi possível carregar suas atividades'),
       );
     }
   }

@@ -109,7 +109,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                   width: 365,
                   child: TextFormField(
                     controller: _dateController,
-                    inputFormatters: [dateFormatter],
+                    inputFormatters: [dateFormatter()],
                     keyboardType: TextInputType.number,
                     decoration: decorationForm("Data *"),
                     onChanged: (value) {
@@ -133,7 +133,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                   width: 365,
                   child: TextFormField(
                     controller: _timeController,
-                    inputFormatters: [timeFormatter],
+                    inputFormatters: [timeFormatter()],
                     keyboardType: TextInputType.number,
                     decoration: decorationForm("Horário *"),
                     onChanged: (value) {
@@ -337,7 +337,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                   width: 365,
                   child: TextFormField(
                     controller: _cepController,
-                    inputFormatters: [cepFormatter],
+                    inputFormatters: [cepFormatter()],
                     keyboardType: TextInputType.number,
                     decoration: decorationForm("CEP *"),
                     onChanged: (value) {
@@ -371,7 +371,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                             text:
                                 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/home');
+                              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                             },
                           );
                         } else {
@@ -381,7 +381,7 @@ class _ActivityFormLocationPageState extends State<ActivityFormLocationPage> {
                             text:
                                 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/home');
+                              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                             },
                           );
                         }

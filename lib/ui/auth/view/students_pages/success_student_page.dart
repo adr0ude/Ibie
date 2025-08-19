@@ -50,7 +50,7 @@ class SuccessStudentPage extends StatelessWidget {
               CustomPurpleButton(
                 label: 'Acessar', 
                 onPressed: (){
-                  Navigator.pushReplacementNamed(context, '/home');
+                  Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                 }, 
                 size: Size(354, 52),
               ),

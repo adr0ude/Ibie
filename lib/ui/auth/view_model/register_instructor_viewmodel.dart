@@ -28,6 +28,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get city => _city;
   String get photo => _photo;
+  String get cpf => _cpf;
 
   bool get isFormValid => _email.isNotEmpty && _password.isNotEmpty;
 
@@ -160,7 +161,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
     final parts = value.split('/');
 
     if (parts.length != 3) {
-      return 'Informe uma data válida no formato dd/mm/aaaa';
+      return 'Informe uma data de nascimento válida';
     }
 
     final day = int.tryParse(parts[0]);
@@ -168,7 +169,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
     final year = int.tryParse(parts[2]);
 
     if (day == null || month == null || year == null) {
-      return 'Data inválida';
+      return 'Informe uma data de nascimento válida';
     }
 
     try {
@@ -176,7 +177,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
       final now = DateTime.now();
 
       if (date.day != day || date.month != month || date.year != year) {
-        return 'Data inválida';
+        return 'Informe uma data de nascimento válida';
       }
 
       if (date.isAfter(now)) {
@@ -195,7 +196,7 @@ class RegisterInstructorViewmodel extends ChangeNotifier {
         return 'Informe uma data de nascimento válida';
       }
     } catch (_) {
-      return 'Data inválida';
+      return 'Informe uma data de nascimento válida';
     }
 
     return null;

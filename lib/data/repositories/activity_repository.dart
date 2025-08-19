@@ -12,7 +12,6 @@ import 'package:ibie/data/services/storage_service.dart';
 abstract class IActivityRepository extends ChangeNotifier {
   Future<Result<void>> createActivity({required Activity activity});
   Future<Result<List<Activity>>> getActivities();
-  Future<Result<void>> updateActivity({required Activity activity});
   Future<Result<void>> deleteActivity({required String activityId});
   Future<Result<List<EnrolledActivity>>> getEnrolledActivities();
   Future<Result<List<Activity>>> getInstructorActivities({
@@ -30,7 +29,7 @@ abstract class IActivityRepository extends ChangeNotifier {
   Future<Result<String?>> pickActivityImage({required String source});
   Future<Result<void>> updateActivityData({
     required Activity activity,
-    String? newPhoto,
+    String? newImage,
   });
   Future<Result<List<String>>> getStudentsNames({required String activityId});
   Future<Result<List<String>>> getFavorites({required String userId});
@@ -68,10 +67,21 @@ class ActivityRepository extends IActivityRepository {
 
       switch (userResult) {
         case Ok(value: final user):
-          final updatedActivity = activity.copyWith(userId: user.id);
+          activity = activity.copyWith(userId: user.id);
+
+          if (activity.image.isNotEmpty) {
+            final imageResult = await _storageService.uploadActivityImage(imagePath: activity.image);
+            switch(imageResult) {
+              case Ok(value: final imageUrl):
+                activity = activity.copyWith(image: imageUrl);
+                break;
+              case Error(error: final e):
+                return Result.error(e);
+            }
+          }
 
           final result = await _databaseService.createActivity(
-            activity: updatedActivity,
+            activity: activity,
           );
           return result;
 
@@ -96,13 +106,6 @@ class ActivityRepository extends IActivityRepository {
     } finally {
       notifyListeners();
     }
-  }
-
-  @override
-  Future<Result<void>> updateActivity({required Activity activity}) async {
-    final result = await _databaseService.updateActivity(activity: activity);
-    notifyListeners();
-    return result;
   }
 
   @override
@@ -210,13 +213,7 @@ class ActivityRepository extends IActivityRepository {
           );
           switch (subscribeResult) {
             case Ok():
-              //final favoriteResult = await _databaseService.removeFavorite(userId: user.id, activityId: activity.id);
-              //switch (favoriteResult) {
-              //case Ok():
               return Result.ok(null);
-            //case Error(error: final e):
-            //return Result.error(e);
-            //}
             case Error(error: final e):
               return Result.error(e);
           }
@@ -276,15 +273,15 @@ class ActivityRepository extends IActivityRepository {
   @override
   Future<Result<void>> updateActivityData({
     required Activity activity,
-    String? newPhoto,
+    String? newImage,
   }) async {
     try {
-      if (newPhoto != null) {
+      if (newImage != null) {
         // se há uma nova foto
         if (activity.image.isNotEmpty) {
           // se já havia uma foto
           final deleteResult = await _storageService.deleteActivityImage(
-            imageUrl: newPhoto,
+            imageUrl: activity.image,
           ); // deleta a antiga
           switch (deleteResult) {
             case Ok():
@@ -294,7 +291,7 @@ class ActivityRepository extends IActivityRepository {
           }
         }
         final imageResult = await _storageService.uploadActivityImage(
-          imagePath: newPhoto,
+          imagePath: newImage,
         ); // upload da nova
         switch (imageResult) {
           case Ok(value: final imageUrl):
@@ -305,12 +302,12 @@ class ActivityRepository extends IActivityRepository {
         }
       }
 
-      if (newPhoto != null) {
+      if (newImage != null) {
         // se há uma nova foto
-        if (newPhoto.isEmpty && activity.image.isNotEmpty) {
+        if (newImage.isEmpty && activity.image.isNotEmpty) {
           // ela é vazia e a antiga não
           final deleteResult = await _storageService.deleteActivityImage(
-            imageUrl: newPhoto,
+            imageUrl: activity.image,
           ); // deleta a antiga
           switch (deleteResult) {
             case Ok():
@@ -322,9 +319,7 @@ class ActivityRepository extends IActivityRepository {
         }
       }
 
-      final databaseResult = await _databaseService.updateActivity(
-        activity: activity,
-      );
+      final databaseResult = await _databaseService.updateActivity(activity: activity);
       switch (databaseResult) {
         case Ok():
           return const Result.ok(null);
@@ -344,9 +339,9 @@ class ActivityRepository extends IActivityRepository {
       ); // deleta a antiga
       switch (deleteResult) {
         case Ok():
-          activity = activity.copyWith(image: '');
+          final activityUp = activity.copyWith(image: '');
           final databaseResult = await _databaseService.updateActivity(
-            activity: activity,
+            activity: activityUp,
           );
 
           switch (databaseResult) {
@@ -356,37 +351,6 @@ class ActivityRepository extends IActivityRepository {
               return Result.error(e);
           }
 
-        case Error(error: final e):
-          return Result.error(e);
-      }
-    } finally {
-      notifyListeners();
-    }
-  }
-
-  @override
-  Future<Result<String?>> pickActivityImage({required String source}) async {
-    try {
-      Result<String?> imageResult;
-
-      if (source == 'camera') {
-        imageResult = await _imageService.pickImageFromCamera();
-      } else if (source == 'gallery') {
-        imageResult = await _imageService.pickImageFromGallery();
-      } else {
-        return Result.error(Exception('Fonte inválida'));
-      }
-
-      switch (imageResult) {
-        case Ok(value: final newImage):
-          if (newImage != null) {
-            final urlResult = await _storageService.uploadActivityImage(
-              imagePath: newImage,
-            );
-            return urlResult;
-          } else {
-            return Result.ok(null);
-          }
         case Error(error: final e):
           return Result.error(e);
       }
@@ -526,6 +490,32 @@ class ActivityRepository extends IActivityRepository {
       switch (listResult) {
         case Ok(value: final list):
           return Result.ok(list);
+        case Error(error: final e):
+          return Result.error(e);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  @override
+  Future<Result<String?>> pickActivityImage({required String source}) async {
+    try {
+      Result<String?> imageResult;
+      if (source == 'camera') {
+        imageResult = await _imageService.pickImageFromCamera();
+      } else if (source == 'gallery') {
+        imageResult = await _imageService.pickImageFromGallery();
+      } else {
+        return Result.error(Exception('Fonte inválida'));
+      }
+      switch (imageResult) {
+        case Ok(value: final newImage):
+          if (newImage != null) {
+            return Result.ok(newImage);
+          } else {
+            return Result.ok(null);
+          }
         case Error(error: final e):
           return Result.error(e);
       }

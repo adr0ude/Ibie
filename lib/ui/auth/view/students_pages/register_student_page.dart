@@ -10,6 +10,7 @@ import 'package:ibie/utils/list_cities.dart';
 import 'package:ibie/utils/input_formatters.dart';
 
 import 'package:ibie/ui/auth/view_model/register_student_viewmodel.dart';
+import 'package:ibie/utils/show_pop_up.dart';
 
 class RegisterStudentPage extends StatefulWidget {
   const RegisterStudentPage({super.key, required this.viewModel});
@@ -20,17 +21,19 @@ class RegisterStudentPage extends StatefulWidget {
   State<RegisterStudentPage> createState() => _RegisterStudentPageState();
 }
 
-final TextEditingController _dateController = TextEditingController();
-final TextEditingController _phoneController = TextEditingController();
-final TextEditingController _cpfController = TextEditingController();
-
 class _RegisterStudentPageState extends State<RegisterStudentPage> {
   late final RegisterStudentViewmodel viewModel;
+  late TextEditingController _dateController;
+  late TextEditingController _phoneController;
+  late TextEditingController _cpfController;
 
   @override
   void initState() {
     super.initState();
     viewModel = widget.viewModel;
+    _cpfController = TextEditingController();
+    _dateController = TextEditingController();
+    _phoneController = TextEditingController();
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -40,7 +43,12 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF4F5F9),
-      appBar: CustomAppBar(title: 'Cadastro de Conta'),
+      appBar: CustomAppBar(
+        title: 'Cadastro de Conta', 
+        onBack: () {
+          Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+        }
+      ),
 
       body: SingleChildScrollView(
         child: Padding(
@@ -74,7 +82,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe o nome completo';
+                        return 'Informe um nome válido';
                       } else if (value.length > 100) {
                         return 'O nome excede o limite de caracteres';
                       }
@@ -87,7 +95,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                   width: 365,
                   child: TextFormField(
                     controller: _cpfController,
-                    inputFormatters: [cpfFormatter],
+                    inputFormatters: [cpfFormatter()],
                     decoration: decorationForm("CPF *"),
                     onChanged: (value) => viewModel.cpf = value,
                     validator: (value) => viewModel.validateCpf(value ?? ''),
@@ -104,7 +112,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                   width: 365,
                   child: TextFormField(
                     controller: _dateController,
-                    inputFormatters: [dateFormatter],
+                    inputFormatters: [dateFormatter()],
                     onChanged: (value) => viewModel.dateBirth = value,
                     decoration: decorationForm("Data de Nascimento *"),
                     validator: (value) => viewModel.validateDate(value ?? ''),
@@ -134,8 +142,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                               state.didChange(value);
                             });
                           },
-                          validator: (value) =>
-                              value == null ? 'Selecione uma opção' : null,
+                          validator: (value) => value == null ? 'Selecione uma opção' : null,
                         ),
                         if (state.hasError)
                           Padding(
@@ -161,7 +168,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                   width: 365,
                   child: TextFormField(
                     controller: _phoneController,
-                    inputFormatters: [phoneFormatter],
+                    inputFormatters: [phoneFormatter()],
                     decoration: decorationForm("Número de Telefone *"),
                     onChanged: (value) => viewModel.phone = value,
                     validator: (value) => viewModel.validatePhone(value ?? ''),
@@ -187,7 +194,7 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Informe o e-mail';
+                        return 'Informe um email válido';
                       } else if (value.length > 256) {
                         return 'O e-mail excede o limite de caracteres';
                       }
@@ -199,7 +206,6 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                 SizedBox(
                   width: 365,
                   child: TextFormField(
-                    //controller: _passwordController,
                     onChanged: (value) => viewModel.password = value,
                     decoration: decorationForm("Senha *"),
                     style: TextStyle(
@@ -212,6 +218,8 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Informe a senha';
+                      } else if (value.length < 8) {
+                        return 'A senha deve ter mais de 8 caracteres';
                       }
                       return null;
                     },
@@ -266,7 +274,14 @@ class _RegisterStudentPageState extends State<RegisterStudentPage> {
                     CustomWhiteButton(
                       label: 'Cancelar',
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/login');
+                        showPopUp(
+                          context: context, 
+                          title: "Cancelar cadastro", 
+                          text: "Deseja realmente cancelar o cadastro? Todos os dados serão perdidos.", 
+                          onPressed: () {
+                            Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false,);
+                          }
+                        );
                       },
                       size: Size(175, 40),
                     ),

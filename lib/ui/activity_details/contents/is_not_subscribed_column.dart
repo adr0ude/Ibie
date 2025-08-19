@@ -20,6 +20,7 @@ class IsNotSubscribedColumn extends StatefulWidget {
 class _IsNotSubscribedColumnState extends State<IsNotSubscribedColumn> {
   @override
   Widget build(BuildContext context) {
+    final scaffoldContext = context;
     final viewModel = widget.viewModel;
 
     return Column(
@@ -84,64 +85,92 @@ class _IsNotSubscribedColumnState extends State<IsNotSubscribedColumn> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomPurpleButton(
-                label: 'Inscrever-se',
-                onPressed: !viewModel.isLoading
-                  ? () {
-                    showPopUp(
-                      context: context,
-                      title: 'Realizar Inscrição',
-                      text: 'Você confirma a sua inscrição na atividade ${viewModel.title}?',
-                      onPressed: () async {
-                        final subscribeResult = await viewModel.subscribe();
-                        Navigator.pop(context);
-                        switch (subscribeResult) {
-                          case Ok():
-                            showOkMessage(context, 'Inscrição bem-sucedida');
-                            Navigator.pushReplacementNamed(context, '/home');
-                          case Error():
-                            showErrorMessage(context, subscribeResult.errorMessage);
-                        }
-                      },
-                    );
-                  }
-                  : null,
-                size: const Size(285, 40),
+              ListenableBuilder(
+                listenable: viewModel,
+                builder: (context, child) {
+                  return CustomPurpleButton(
+                    label: 'Inscrever-se',
+                    onPressed: !viewModel.isLoading
+                        ? () {
+                            showPopUp(
+                              context: scaffoldContext,
+                              title: 'Realizar Inscrição',
+                              text:
+                                  'Você confirma a sua inscrição na atividade ${viewModel.title}?',
+                              onPressed: () async {
+                                final subscribeResult = await viewModel.subscribe();
+                                Navigator.pop(scaffoldContext);
+                                switch (subscribeResult) {
+                                  case Ok():
+                                    showOkMessage(scaffoldContext, 'Inscrição bem-sucedida');
+                                    Navigator.pushNamedAndRemoveUntil(
+                                      scaffoldContext,
+                                      '/home',
+                                      (route) => false,
+                                    );
+                                  case Error():
+                                    showErrorMessage(
+                                      scaffoldContext,
+                                      subscribeResult.errorMessage,
+                                    );
+                                }
+                              },
+                            );
+                          }
+                        : null,
+                    size: const Size(285, 40),
+                  );
+                },
               ),
               const SizedBox(width: 5),
-              CustomFavoriteButton(
-                onPressed: !viewModel.isLoading
-                  ? () async {
-                    if (viewModel.isFavorite) {
-                      final unfavoriteResult = await viewModel.unfavorite();
-                      switch (unfavoriteResult) {
-                        case Ok():
-                          break;
-                        case Error():
-                          showErrorMessage(context, unfavoriteResult.errorMessage);
-                      }
-                    } else {
-                      final favoriteResult = await viewModel.favorite();
-                      switch (favoriteResult) {
-                        case Ok():
-                          break;
-                        case Error():
-                          showErrorMessage(context, favoriteResult.errorMessage);
-                      }
-                    }
-                    final listResult = await viewModel.listFavorites();
-                    switch (listResult) {
-                      case Ok():
-                        break;
-                      case Error():
-                        showErrorMessage(context, listResult.errorMessage);
-                    }
-                    setState(() {});
-                  }
-                  : null,
-                icon: viewModel.isFavorite
-                    ? "assets/favorite-star-icon.svg"
-                    : "assets/unfavorite-star-icon.svg",
+              ListenableBuilder(
+                listenable: viewModel,
+                builder: (context, child) {
+                  return CustomFavoriteButton(
+                    onPressed: !viewModel.isLoading
+                        ? () async {
+                            if (viewModel.isFavorite) {
+                              final unfavoriteResult = await viewModel
+                                  .unfavorite();
+                              switch (unfavoriteResult) {
+                                case Ok():
+                                  break;
+                                case Error():
+                                  showErrorMessage(
+                                    scaffoldContext,
+                                    unfavoriteResult.errorMessage,
+                                  );
+                              }
+                            } else {
+                              final favoriteResult = await viewModel.favorite();
+                              switch (favoriteResult) {
+                                case Ok():
+                                  break;
+                                case Error():
+                                  showErrorMessage(
+                                    scaffoldContext,
+                                    favoriteResult.errorMessage,
+                                  );
+                              }
+                            }
+                            final listResult = await viewModel.listFavorites();
+                            switch (listResult) {
+                              case Ok():
+                                break;
+                              case Error():
+                                showErrorMessage(
+                                  scaffoldContext,
+                                  listResult.errorMessage,
+                                );
+                            }
+                            setState(() {});
+                          }
+                        : null,
+                    icon: viewModel.isFavorite
+                        ? "assets/favorite-star-icon.svg"
+                        : "assets/unfavorite-star-icon.svg",
+                  );
+                },
               ),
             ],
           ),

@@ -111,7 +111,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/home');
+                            Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                           },
                           child: const Text(
                             'Entrar como visitante',

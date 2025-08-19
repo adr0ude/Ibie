@@ -1,26 +1,26 @@
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-final phoneFormatter = MaskTextInputFormatter(
+MaskTextInputFormatter phoneFormatter() => MaskTextInputFormatter(
   mask: '(##) #####-####',
   filter: {"#": RegExp(r'[0-9]')},
 );
 
-final cpfFormatter = MaskTextInputFormatter(
+MaskTextInputFormatter cpfFormatter() => MaskTextInputFormatter(
   mask: '###.###.###-##',
   filter: {"#": RegExp(r'[0-9]')},
 );
 
-final cepFormatter = MaskTextInputFormatter(
+MaskTextInputFormatter cepFormatter() => MaskTextInputFormatter(
   mask: '#####-###',
   filter: {"#": RegExp(r'[0-9]')},
 );
 
-final dateFormatter = MaskTextInputFormatter(
+MaskTextInputFormatter dateFormatter() => MaskTextInputFormatter(
   mask: '##/##/####',
   filter: {"#": RegExp(r'[0-9]')},
 );
 
-final timeFormatter = MaskTextInputFormatter(
+MaskTextInputFormatter timeFormatter() => MaskTextInputFormatter(
   mask: '##:##',
   filter: {"#": RegExp(r'[0-9]')},
 );

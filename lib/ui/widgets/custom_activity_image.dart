@@ -51,12 +51,20 @@ class CustomActivityImage extends StatelessWidget {
             const Text(
               'Envie imagens de divulgação\nda atividade.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.black87),
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 4),
             const Text(
               'Selecione arquivos .png ou .jpg',
-              style: TextStyle(fontSize: 14, color: Colors.black45),
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                color: Colors.black45,
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -81,28 +89,36 @@ class CustomActivityImage extends StatelessWidget {
               ),
               child: const Text(
                 'Selecionar arquivo',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(fontFamily: 'Comfortaa', color: Colors.white),
               ),
             ),
           ] else ...[
             image.startsWith('http')
-                ? Image.network(
-                    image,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  )
+                ? Column(
+                  children: [
+                    Image.network(
+                        image,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    const SizedBox(height: 12),
+                    Text(
+                      getFileName(image),
+                        style: const TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                )
                 : Image.file(
                     File(image),
-                    width: 100,
-                    height: 100,
+                    width: 150,
+                    height: 150,
                     fit: BoxFit.cover,
                   ),
-            const SizedBox(height: 12),
-            Text(
-              getFileName(image), // ✅ Aqui a correção
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-            ),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () {

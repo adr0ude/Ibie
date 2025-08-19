@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ibie/ui/home/view_model/splash_page_viewmodel.dart';
 import 'package:ibie/utils/results.dart';
+import 'package:ibie/utils/show_error_message.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({
@@ -36,17 +37,15 @@ class _SplashPageState extends State<SplashPage> {
     switch (result) {
       case Ok():
         if (viewModel.isLoggedIn) {
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
         } else {
-          Navigator.pushReplacementNamed(context, '/welcome');
+          Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
         }
         break;
 
       case Error():
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result.errorMessage)),
-        );
-        Navigator.pushReplacementNamed(context, '/welcome');
+        showErrorMessage(context, result.errorMessage);
+        Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
     }
   }
 

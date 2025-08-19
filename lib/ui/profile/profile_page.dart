@@ -64,6 +64,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldContext = context;
     return AnimatedBuilder(
       animation: viewModel,
       builder: (context, child) {
@@ -71,7 +72,11 @@ class _ProfilePagePageState extends State<ProfilePage> {
           backgroundColor: Color(0xFFF4F5F9),
           appBar: CustomAppBar(
             title: 'Perfil',
-            onBack: () => Navigator.pushReplacementNamed(context, '/home'),
+            onBack: () => Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/home',
+              (route) => false,
+            ),
           ),
 
           body: viewModel.isLoading
@@ -99,7 +104,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                 onGallery: () async =>
                                     await viewModel.pickImage('gallery'),
                                 onDelete: () => showPopUp(
-                                  context: context,
+                                  context: scaffoldContext,
                                   title: 'Remover foto de perfil',
                                   text:
                                       'Deseja realmente remover sua foto de perfil?',
@@ -108,14 +113,15 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                         .deletePhoto();
                                     switch (result) {
                                       case Ok():
+                                        Navigator.of(scaffoldContext).pop();
                                         _init();
                                       case Error():
+                                        Navigator.of(scaffoldContext).pop();
                                         showErrorMessage(
-                                          context,
+                                          scaffoldContext,
                                           result.errorMessage,
                                         );
                                     }
-                                    Navigator.of(context).pop();
                                   },
                                 ),
                                 size: 230,
@@ -178,8 +184,8 @@ class _ProfilePagePageState extends State<ProfilePage> {
                                   color: Color.fromARGB(178, 0, 0, 0),
                                 ),
                                 validator: (value) {
-                                  if (value != null && value.length > 250) {
-                                    return 'A mini biografia excede o limite de caracteres';
+                                  if (value != null && value.length > 500) {
+                                    return 'A biografia excede o limite de caracteres';
                                   }
                                   return null;
                                 },
@@ -192,7 +198,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                             child: TextFormField(
                               controller: _dateController,
                               onChanged: (value) => viewModel.dateBirth = value,
-                              inputFormatters: [dateFormatter],
+                              inputFormatters: [dateFormatter()],
                               decoration: decorationForm("Data de Nascimento"),
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -251,7 +257,7 @@ class _ProfilePagePageState extends State<ProfilePage> {
                             width: 365,
                             child: TextFormField(
                               controller: _phoneController,
-                              inputFormatters: [phoneFormatter],
+                              inputFormatters: [phoneFormatter()],
                               onChanged: (value) => viewModel.phone = value,
                               decoration: decorationForm("Telefone"),
                               style: TextStyle(
@@ -310,48 +316,57 @@ class _ProfilePagePageState extends State<ProfilePage> {
                               CustomWhiteButton(
                                 label: 'Cancelar',
                                 onPressed: () {
-                                  Navigator.pushReplacementNamed(
+                                  Navigator.pushNamedAndRemoveUntil(
                                     context,
                                     '/home',
+                                    (route) => false,
                                   );
                                 },
                                 size: Size(175, 40),
                               ),
-                              CustomPurpleButton(
-                                label: 'Salvar',
-                                onPressed: !viewModel.isLoading
-                                    ? () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          showPopUp(
-                                            context: context,
-                                            title: 'Salvar alterações',
-                                            text:
-                                                'Deseja salvar as alterações?',
-                                            onPressed: () async {
-                                              final result = await viewModel
-                                                  .updateUserData();
-                                              showOkMessage(
-                                                context,
-                                                'Alteração bem-sucedida',
+
+                              ListenableBuilder(
+                                listenable: viewModel,
+                                builder: (context, child) {
+                                  return CustomPurpleButton(
+                                    label: 'Salvar',
+                                    onPressed: !viewModel.isLoading
+                                        ? () async {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              showPopUp(
+                                                context: scaffoldContext,
+                                                title: 'Salvar alterações',
+                                                text:
+                                                    'Deseja salvar as alterações?',
+                                                onPressed: () async {
+                                                  final result = await viewModel
+                                                      .updateUserData();
+                                                  showOkMessage(
+                                                    scaffoldContext,
+                                                    'Perfil atualizado com sucesso',
+                                                  );
+                                                  switch (result) {
+                                                    case Ok():
+                                                      Navigator.pushNamedAndRemoveUntil(
+                                                        scaffoldContext,
+                                                        '/home',
+                                                        (route) => false,
+                                                      );
+                                                    case Error():
+                                                      showErrorMessage(
+                                                        scaffoldContext,
+                                                        result.errorMessage,
+                                                      );
+                                                  }
+                                                },
                                               );
-                                              switch (result) {
-                                                case Ok():
-                                                  Navigator.pushReplacementNamed(
-                                                    context,
-                                                    '/home',
-                                                  );
-                                                case Error():
-                                                  showErrorMessage(
-                                                    context,
-                                                    result.errorMessage,
-                                                  );
-                                              }
-                                            },
-                                          );
-                                        }
-                                      }
-                                    : null,
-                                size: Size(175, 40),
+                                            }
+                                          }
+                                        : null,
+                                    size: Size(175, 40),
+                                  );
+                                },
                               ),
                             ],
                           ),

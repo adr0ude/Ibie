@@ -46,241 +46,295 @@ class _ActivityFormResourcesPageState extends State<ActivityFormResourcesPage> {
   }
 
   Future<void> _initEditing() async {
-    _accessibilityDescriptionController.text =
-        viewModel.accessibilityDescription;
+    _accessibilityDescriptionController.text = viewModel.accessibilityDescription;
   }
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFF4F5F9),
-      appBar: CustomAppBar(
-        title: widget.isEditing
-            ? 'Editar Atividade'
-            : 'Cadastro de Nova Atividade',
-        onBack: () {
-          viewModel.goToPreviousPage();
-          Navigator.pop(context);
-        },
-      ),
+    final scaffoldContext = context;
+    return AnimatedBuilder(
+      animation: viewModel,
+      builder: (context, child) {
+        return Scaffold(
+          backgroundColor: Color(0xFFF4F5F9),
+          appBar: CustomAppBar(
+            title: widget.isEditing
+                ? 'Editar Atividade'
+                : 'Cadastro de Nova Atividade',
+            onBack: () {
+              viewModel.goToPreviousPage();
+              Navigator.pop(context);
+            },
+          ),
 
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(22),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20),
-                Text(
-                  'Preencha os campos abaixo:',
-                  style: TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                SizedBox(height: 27),
-                Center(
-                  child: Text(
-                    'Acessibilidade e Inclusão',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF71A151),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(22),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20),
+                    Text(
+                      'Preencha os campos abaixo:',
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
                     ),
-                  ),
-                ),
-
-                SizedBox(height: 16),
-
-                FormField<String>(
-                  builder: (FormFieldState<String> state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomDropdown<String>(
-                          value:
-                              listAcessibility.contains(
-                                viewModel.selectedAccessibility,
-                              )
-                              ? viewModel.selectedAccessibility
-                              : null,
-                          label: "Recursos de Acessibilidade",
-                          items: listAcessibility,
-                          onChanged: (value) {
-                            setState(() {
-                              if (widget.isEditing) {
-                                viewModel.accessibilityResourcesEditing =
-                                    value!;
-                                viewModel.accessibilityResources = value;
-                              } else {
-                                viewModel.accessibilityResources = value!;
-                              }
-                              state.didChange(value);
-                            });
-                          },
+                    SizedBox(height: 27),
+                    Center(
+                      child: Text(
+                        'Acessibilidade e Inclusão',
+                        style: TextStyle(
+                          fontFamily: 'Comfortaa',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF71A151),
                         ),
-                        SizedBox(height: 29),
-                        if (viewModel.selectedAccessibility == 'Outros')
-                          SizedBox(
-                            width: 365,
-                            child: TextFormField(
-                              controller: _accessibilityDescriptionController,
-                              maxLength: 500,
-                              minLines: 1,
-                              maxLines: 6,
-                              textAlignVertical: TextAlignVertical.top,
-                              decoration: decorationForm("Descrição *"),
-                              onChanged: (value) =>
-                                  viewModel.accessibilityDescription = value,
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black.withAlpha(178),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Informe a descrição do recurso de acessibilidade.';
-                                } else if (value.length > 500) {
-                                  return 'A descrição excede o limite de caracteres.';
-                                }
-                                return null;
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+
+                    FormField<String>(
+                      builder: (FormFieldState<String> state) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDropdown<String>(
+                              value:
+                                  listAcessibility.contains(
+                                    viewModel.selectedAccessibility,
+                                  )
+                                  ? viewModel.selectedAccessibility
+                                  : null,
+                              label: "Recursos de Acessibilidade",
+                              items: listAcessibility,
+                              onChanged: (value) {
+                                setState(() {
+                                  if (widget.isEditing) {
+                                    viewModel.accessibilityResourcesEditing =
+                                        value!;
+                                    viewModel.accessibilityResources = value;
+                                  } else {
+                                    viewModel.accessibilityResources = value!;
+                                  }
+                                  state.didChange(value);
+                                  state.didChange(value);
+                                });
                               },
                             ),
-                          ),
-                        if (state.hasError)
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 6.0,
-                              left: 12.0,
-                            ),
-                            child: Text(
-                              state.errorText!,
-                              style: const TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 12,
-                                color: Colors.red,
+                            SizedBox(height: 29),
+                            if (viewModel.selectedAccessibility == 'Outros')
+                              SizedBox(
+                                width: 365,
+                                child: TextFormField(
+                                  controller:
+                                      _accessibilityDescriptionController,
+                                  maxLength: 200,
+                                  minLines: 1,
+                                  maxLines: 6,
+                                  textAlignVertical: TextAlignVertical.top,
+                                  decoration: decorationForm("Descrição *"),
+                                  onChanged: (value) =>
+                                      viewModel.accessibilityDescription =
+                                          value,
+                                  style: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black.withAlpha(178),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Informe a descrição do recurso de acessibilidade';
+                                    } else if (value.length > 500) {
+                                      return 'A descrição excede o limite de caracteres';
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
-                SizedBox(height: 27),
-
-                ListenableBuilder(
-                  listenable: viewModel,
-                  builder: (context, child) {
-                    return CustomActivityImage(
-                      image: viewModel.image,
-                      onCamera: () async => await viewModel.pickImage('camera'),
-                      onGallery: () async =>
-                          await viewModel.pickImage('gallery'),
-                      onDelete: () => viewModel.image = '',
-                    );
-                  },
-                ),
-
-                SizedBox(height: 32),
-
-                Align(alignment: Alignment.centerLeft),
-                SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomWhiteButton(
-                      label: 'Cancelar',
-                      onPressed: () {
-                        if (widget.isEditing) {
-                          showPopUp(
-                            context: context,
-                            title: 'Cancelar Edição',
-                            text:
-                                'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/home');
-                            },
-                          );
-                        } else {
-                          showPopUp(
-                            context: context,
-                            title: 'Cancelar Cadastro',
-                            text:
-                                'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/home');
-                            },
-                          );
-                        }
+                            if (state.hasError)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 6.0,
+                                  left: 12.0,
+                                ),
+                                child: Text(
+                                  state.errorText!,
+                                  style: const TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 12,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
                       },
-                      size: Size(175, 40),
                     ),
-                    CustomPurpleButton(
-                      label: 'Salvar',
-                      onPressed: !viewModel.isLoading
-                          ? () async {
-                              if (widget.isEditing) {
-                                final updateResult = await viewModel
-                                    .updateActivity();
-                                switch (updateResult) {
-                                  case Ok():
-                                    showOkMessage(
-                                      context,
-                                      'Edição bem-sucedida',
-                                    );
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      '/home',
-                                    );
-                                  case Error():
-                                    showErrorMessage(
-                                      context,
-                                      updateResult.errorMessage,
-                                    );
-                                }
-                              } else {
-                                final createResult = await viewModel
-                                    .createActivity();
-                                switch (createResult) {
-                                  case Ok():
-                                    showOkMessage(
-                                      context,
-                                      'Cadastro bem-sucedido',
-                                    );
-                                    Navigator.pushReplacementNamed(
-                                      context,
-                                      '/home',
-                                    );
-                                  case Error():
-                                    showErrorMessage(
-                                      context,
-                                      createResult.errorMessage,
-                                    );
-                                }
-                              }
+                    SizedBox(height: 27),
+                    Center(
+                      child: Text(
+                        'Upload de Imagem',
+                        style: TextStyle(
+                          fontFamily: 'Comfortaa',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF71A151),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+
+                    ListenableBuilder(
+                      listenable: viewModel,
+                      builder: (context, child) {
+                        return CustomActivityImage(
+                          image: viewModel.newImage.isEmpty
+                              ? viewModel.image
+                              : viewModel.newImage,
+                          onCamera: () async {
+                            await viewModel.pickImage('camera');
+                          },
+                          onGallery: () async {
+                            await viewModel.pickImage('gallery');
+                          },
+                          onDelete: () async {
+                            final result = await viewModel.deletePhoto();
+                            switch (result) {
+                              case Ok():
+                                viewModel.image = '';
+                                viewModel.newImage = '';
+                              case Error():
+                                Navigator.of(scaffoldContext).pop();
+                                showErrorMessage(
+                                  scaffoldContext,
+                                  result.errorMessage,
+                                );
                             }
-                          : null,
-                      size: Size(175, 40),
+                          },
+                        );
+                      },
+                    ),
+
+                    SizedBox(height: 32),
+
+                    Align(alignment: Alignment.centerLeft),
+                    SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomWhiteButton(
+                          label: 'Cancelar',
+                          onPressed: () {
+                            if (widget.isEditing) {
+                              showPopUp(
+                                context: context,
+                                title: 'Cancelar Edição',
+                                text:
+                                    'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                                onPressed: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/home',
+                                    (route) => false,
+                                  );
+                                },
+                              );
+                            } else {
+                              showPopUp(
+                                context: context,
+                                title: 'Cancelar Cadastro',
+                                text:
+                                    'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
+                                onPressed: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/home',
+                                    (route) => false,
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          size: Size(175, 40),
+                        ),
+                        ListenableBuilder(
+                          listenable: viewModel,
+                          builder: (context, child) {
+                            return CustomPurpleButton(
+                              label: 'Salvar',
+                              onPressed: !viewModel.isLoading
+                                  ? () async {
+                                      if (widget.isEditing) {
+                                        final updateResult = await viewModel
+                                            .updateActivity();
+                                        switch (updateResult) {
+                                          case Ok():
+                                            showOkMessage(
+                                              scaffoldContext,
+                                              'Edição bem-sucedida',
+                                            );
+                                            Navigator.pushNamedAndRemoveUntil(
+                                              scaffoldContext,
+                                              '/home',
+                                              (route) => false,
+                                            );
+                                          case Error():
+                                            showErrorMessage(
+                                              scaffoldContext,
+                                              updateResult.errorMessage,
+                                            );
+                                        }
+                                      } else {
+                                        final createResult = await viewModel
+                                            .createActivity();
+                                        switch (createResult) {
+                                          case Ok():
+                                            showOkMessage(
+                                              scaffoldContext,
+                                              'Cadastro bem-sucedido',
+                                            );
+                                            Navigator.pushNamedAndRemoveUntil(
+                                              scaffoldContext,
+                                              '/home',
+                                              (route) => false,
+                                            );
+                                          case Error():
+                                            showErrorMessage(
+                                              scaffoldContext,
+                                              createResult.errorMessage,
+                                            );
+                                        }
+                                      }
+                                    }
+                                  : null,
+                              size: Size(175, 40),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      bottomNavigationBar: ProgressBar(
-        currentStep: viewModel.currentPage,
-        totalSteps: 3,
-      ),
+          bottomNavigationBar: ProgressBar(
+            currentStep: viewModel.currentPage,
+            totalSteps: 3,
+          ),
+        );
+      },
     );
   }
 }

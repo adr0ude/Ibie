@@ -34,6 +34,7 @@ class ActivityDetailsViewmodel extends ChangeNotifier {
   String get image => _activity?.image ?? '';
   String get description => _activity?.description ?? '';
   String get remainingVacancies => _activity?.remainingVacancies ?? '';
+  String get status => _activity?.status ?? '';
   List<String> get comments => _activity?.comments ?? [];
 
   List<EnrolledActivity> _activities = [];

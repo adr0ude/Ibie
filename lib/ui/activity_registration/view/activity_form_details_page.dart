@@ -27,16 +27,14 @@ class ActivityFormDetailsPage extends StatefulWidget {
   final String activityId;
 
   @override
-  State<ActivityFormDetailsPage> createState() =>
-      _ActivityFormDetailsPageState();
+  State<ActivityFormDetailsPage> createState() => _ActivityFormDetailsPageState();
 }
 
 class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
   late final ActivityFormViewmodel viewModel;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _targetAudienceController =
-      TextEditingController();
+  final TextEditingController _targetAudienceController = TextEditingController();
   final TextEditingController _vacanciesController = TextEditingController();
   final TextEditingController _feeController = TextEditingController();
 
@@ -58,7 +56,13 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
         _descriptionController.text = viewModel.description;
         _targetAudienceController.text = viewModel.targetAudience;
         _vacanciesController.text = viewModel.vacancies;
-        _feeController.text = viewModel.fee;
+
+        if(viewModel.fee == "GRATUITO") {
+          _feeController.text = '0';
+        } else {
+          _feeController.text = viewModel.fee;
+        }
+        
       case Error():
         if (mounted) {
           showErrorMessage(context, result.errorMessage);
@@ -344,7 +348,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                             text:
                                 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/home');
+                              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                             },
                           );
                         } else {
@@ -354,7 +358,7 @@ class _ActivityFormDetailsPageState extends State<ActivityFormDetailsPage> {
                             text:
                                 'Os dados preenchidos não serão salvos. Deseja realmente cancelar esta operação?',
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/home');
+                              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                             },
                           );
                         }

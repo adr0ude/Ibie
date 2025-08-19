@@ -63,7 +63,7 @@ class EmptyScreenInstructor extends StatelessWidget {
           CustomPurpleButton(
             label: 'Explorar novas atividades',
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/home');
+              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
             },
             size: Size(354, 52),
           ),

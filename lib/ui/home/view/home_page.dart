@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
               context: context,
               onContinue: () {
                 Navigator.of(context).pop();
-                Navigator.pushReplacementNamed(context, '/profile');
+                Navigator.pushNamed(context, '/profile');
               },
             );
           }
@@ -110,12 +110,12 @@ class _HomePageState extends State<HomePage> {
                   final logOutResult = await viewModel.logOut();
                   switch (logOutResult) {
                     case Ok():
-                      Navigator.pushReplacementNamed(context, '/welcome');
+                      Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
                     case Error():
                       showErrorMessage(context, logOutResult.errorMessage);
                   }
                 } else {
-                  Navigator.pushReplacementNamed(context, '/welcome');
+                  Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
                 }
               }
             : null,

@@ -12,6 +12,7 @@ class PassPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldContext = context;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Row(
@@ -20,40 +21,53 @@ class PassPrompt extends StatelessWidget {
           SizedBox(width: 5),
           Material(
             color: Colors.transparent,
-            child: InkWell(
-              onTap: !viewModel.isLoading
-                ? () {
-                  showPopUp(
-                    context: context,
-                    title: 'Redefinir senha', 
-                    text: 'Deseja receber um email para redefinição de senha?', 
-                    onPressed: () async {
-                      final result = await viewModel.sendEmail();
-                        switch (result) {
-                          case Ok():
-                            Navigator.pushReplacementNamed(context, '/login');
-                            showOkMessage(context, 'E-mail enviado');
-                          case Error():
-                            showErrorMessage(context, result.errorMessage);
+            child: ListenableBuilder(
+              listenable: viewModel,
+              builder: (context, child) {
+                return InkWell(
+                  onTap: !viewModel.isLoading
+                      ? () {
+                          showPopUp(
+                            context: scaffoldContext,
+                            title: 'Redefinir senha',
+                            text:
+                                'Deseja receber um email para redefinição de senha?',
+                            onPressed: () async {
+                              final result = await viewModel.sendEmail();
+                              switch (result) {
+                                case Ok():
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    scaffoldContext,
+                                    '/login',
+                                    (route) => false,
+                                  );
+                                  showOkMessage(scaffoldContext, 'E-mail enviado');
+                                case Error():
+                                  showErrorMessage(
+                                    scaffoldContext,
+                                    result.errorMessage,
+                                  );
+                              }
+                            },
+                          );
                         }
-                    }
-                  );
-                }
-                : null,
-              child: Padding(
-                padding: EdgeInsetsGeometry.all(4),
-                child: Text(
-                  'Redefinir senha?',
-                  style: TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF9A31C9),
-                    decoration: TextDecoration.underline,
-                    decorationColor: const Color(0xFF9A31C9),
+                      : null,
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.all(4),
+                    child: Text(
+                      'Redefinir senha?',
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF9A31C9),
+                        decoration: TextDecoration.underline,
+                        decorationColor: const Color(0xFF9A31C9),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           SizedBox(width: 5),
